@@ -15,14 +15,14 @@ function PerformanceList() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
 
-  const getPerformance = async () => {
+  const getPerformance = async (searchQuery?: string) => {
     setLoading(true);
     try {
-      const url = query
-        ? `http://localhost:8080/prfDetails/search?prfNm=${encodeURIComponent(query)}`
+      const url = searchQuery
+        ? `http://localhost:8080/prfDetails/search?search=${encodeURIComponent(searchQuery)}`
         : `http://localhost:8080/prfDetails`;
       const response = await fetch(url);
-      const json: Performance[] = await response.json(); // 바로 배열로 받음
+      const json: Performance[] = await response.json();
       setPerformances(json);
       setLoading(false);
     } catch (err) {
@@ -65,7 +65,7 @@ function PerformanceList() {
           gap: "16px"
         }}
       >
-        {performances.slice(0, 30).map((p) => (
+        {performances.slice(0,30).map((p) => (
           <div key={p.prfId} style={{ textAlign: "center" }}>
             <a href={p.posterImgUrl} target="_blank" rel="noopener noreferrer">
               <img src={p.posterImgUrl} alt="poster" style={{ width: 200, cursor: "pointer" }} />
