@@ -6,9 +6,9 @@ function App() {
 
   return (
     <>
-     <BrowserRouter>
-     <MainRouter/>
-     </BrowserRouter>
+      <BrowserRouter>
+      <MainRouter/>
+      </BrowserRouter>
     </>
   )
 }
