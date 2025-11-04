@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Layout from "../../components/layout/Layout/Layout";
 import PerformanceRouter from "../PerformanceRouter/PerformanceRouter";
 import Home from "../../pages/Home/Home";
-import Theater from "../../pages/Theater/Theater";
+import Theater from "../../pages/PerformancePlace/PerformancePlace";
 import Login from "../../pages/Auth/Login/Login";
 
 function MainRouter() {
