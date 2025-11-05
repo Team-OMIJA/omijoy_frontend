@@ -37,6 +37,10 @@ function Login() {
       .catch((err) => console.log(err));
   };
 
+  if (isAuthenticate) {
+    window.location.replace(`${import.meta.env.BASE_URL}`);
+  }
+
   return (
     <Stack spacing={2} mt={2} alignItems='center'>
       <TextField label='Email' name='email' onChange={changeHandler} />
