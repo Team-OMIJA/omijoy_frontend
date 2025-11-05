@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { PiMagnifyingGlass} from "react-icons/pi";
 
 interface Performance {
   prfId: string;
@@ -46,18 +47,45 @@ function PerformanceList() {
   return (
     <div>
       <h2>PerformanceList</h2>
-      <div style={{ marginBottom: 30 }}>
-        <input
-          type="text"
-          placeholder="공연명 검색"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{ padding: 8, width: 250 }}
-        />
-        <button onClick={() => getPerformance(query)} style={{ padding: "8px 16px", marginLeft: 8 }}>
-          검색
-        </button>
-      </div>
+      <div 
+        style={{ 
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center", 
+          marginBottom: 30 
+        }}
+      >
+        <div style={{ position: "relative", width: 250 }}>
+          <input
+            type="text"
+            placeholder="공연명 검색"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") getPerformance(query);
+            }}
+            style={{
+              padding: "8px 36px 8px 12px",
+              width: 250,
+              borderRadius: 10,
+              border: "2px solid #ccc",
+              outline: "none",
+              boxSizing: "border-box",
+              }}
+            />
+          <PiMagnifyingGlass 
+            size={18}
+            onClick={() => getPerformance(query)}
+            style={{
+              position: "absolute",
+              right: 10,
+              top: 8,
+              color: "grey",
+              cursor: "pointer", 
+            }}
+          />
+          </div>
+        </div>
       <div
         style={{
           display: "grid",
