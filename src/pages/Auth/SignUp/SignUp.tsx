@@ -23,11 +23,11 @@ function SignUp() {
     message: '',
   });
 
-  const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [event.target.name]: event.target.value });
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const submitHandler = () => {
+  const signUpHandler = () => {
     if (!form.email || !form.password) {
       setSnack({ open: true, message: '이메일과 비밀번호를 입력해주세요.' });
       return;
@@ -55,6 +55,14 @@ function SignUp() {
       .catch(() => setSnack({ open: true, message: '회원가입에 실패했습니다.' }));
   };
 
+  const blurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    if (name === 'email') {
+    } else if (name === 'password') {
+    } else if (name === 'confirm') {
+    }
+  };
+
   const isDisabled = !form.email || !form.password || form.password !== form.confirm;
 
   return (
@@ -63,7 +71,7 @@ function SignUp() {
         <TextField label='이메일' name='email' type='email' value={form.email} onChange={changeHandler} />
         <TextField label='비밀번호' name='password' type='password' value={form.password} onChange={changeHandler} />
         <TextField label='비밀번호 확인' name='confirm' type='password' value={form.confirm} onChange={changeHandler} />
-        <Button variant='contained' color='primary' onClick={submitHandler} disabled={isDisabled}>
+        <Button variant='contained' color='primary' onClick={signUpHandler} disabled={isDisabled}>
           회원가입
         </Button>
       </Stack>

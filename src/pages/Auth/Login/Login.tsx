@@ -19,8 +19,8 @@ function Login() {
   const [isAuthenticate, setAuth] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, [event.target.name]: event.target.value });
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const loginHandler = () => {
