@@ -18,7 +18,6 @@ function PerformanceList() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("name");
-  const [filter, setFilter] = useState("");
 
   const getPerformance = async (searchQuery?: string) => {
   setLoading(true);
@@ -90,44 +89,20 @@ function PerformanceList() {
           outline: "none",
         }}
       >
-        <option value="">지역(전체)</option>
-        <option value="">서울</option>
-        <option value="">세종</option>
-        <option value="">부산</option>
-        <option value="">광주</option>
-        <option value="">대구</option>
-        <option value="">대전</option>
-        <option value="">인천</option>
-        <option value="">울산</option>
-        <option value="">강원도</option>
-        <option value="">경기도</option>
-        <option value="">경상남도</option>
-        <option value="">경상북도</option>
-        <option value="">전라남도</option>
-        <option value="">전라북도</option>
-        <option value="">충청남도</option>
-        <option value="">충청북도</option>
-        <option value="">제주도</option>
+        <option value="name">지역(전체)</option>
+        <option value="date">날짜순</option>
       </select>
       <select
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
+        value={sort}
+        onChange={(e) => setSort(e.target.value)}
         style={{
           padding: "8px 12px",
           border: "solid #ccc",
           outline: "none",
         }}
       >
-        <option value="">장르(전체)</option>
-        <option value="대중무용">대중무용</option>
-        <option value="대중음악">대중음악</option>
-        <option value="무용(서양/한국무용)">무용(서양/한국무용)</option>
-        <option value="뮤지컬">뮤지컬</option>
-        <option value="복합">복합</option>
-        <option value="서양음악(클래식)">서양음악(클래식)</option>
-        <option value="서커스/마술">서커스/마술</option>
-        <option value="연극">연극</option>
-        <option value="한국음악(국악)">한국음악(국악)</option>
+        <option value="name">이름순</option>
+        <option value="date">날짜순</option>
       </select>
       </div>
       <div 
