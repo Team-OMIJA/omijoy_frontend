@@ -40,7 +40,7 @@ function SignUp() {
 
     axios
       .post(
-        import.meta.env.VITE_API_URL + '/signup',
+        import.meta.env.VITE_API_BASE_URL + '/signup',
         { email: form.email, password: form.password },
         {
           headers: {
@@ -53,14 +53,6 @@ function SignUp() {
         navigate('/login', { replace: true });
       })
       .catch(() => setSnack({ open: true, message: '회원가입에 실패했습니다.' }));
-  };
-
-  const blurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
-    const name = e.target.name;
-    if (name === 'email') {
-    } else if (name === 'password') {
-    } else if (name === 'confirm') {
-    }
   };
 
   const isDisabled = !form.email || !form.password || form.password !== form.confirm;
