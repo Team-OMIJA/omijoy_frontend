@@ -4,6 +4,7 @@ import PerformanceRouter from "../PerformanceRouter/PerformanceRouter";
 import Home from "../../pages/Home/Home";
 import Theater from "../../pages/PerformancePlace/PerformancePlace";
 import Login from "../../pages/Auth/Login/Login";
+import MyPage from "../../pages/MyPage/MyPage";
 
 function MainRouter() {
   return (
@@ -15,8 +16,8 @@ function MainRouter() {
         <Route
           path="/login"
           element={
-            <Login />
-            // <MyPage />
+            // <Login />
+            <MyPage />
           }
         />
         {/* 퍼포먼스 라우터에서 페이지 전환이 있기 때문에 개별적으로 라우터 만들었습니다. 작업하시는 분이  라우터 대신 useNavigate쓰는게 옳다고 생각할 경우 usenavigate 써도 상관 없습니다.*/}
