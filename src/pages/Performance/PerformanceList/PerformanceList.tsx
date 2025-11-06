@@ -18,6 +18,8 @@ function PerformanceList() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("name");
+  const [arfilter, setArFilter] = useState("");
+  const [gefilter, setGeFilter] = useState("");
 
   const getPerformance = async (searchQuery?: string) => {
   setLoading(true);
@@ -43,10 +45,6 @@ function PerformanceList() {
 
   useEffect(() => {
     getPerformance();
-  }, []);
-
-  useEffect(() => {
-    getPerformance();
   }, [sort]);
 
   if (loading) {
@@ -67,7 +65,7 @@ function PerformanceList() {
           marginBottom: "20px",
         }}
       >
-      <h2>PerformanceList</h2>
+      <h2>공연 리스트</h2>
       <select
         value={sort}
         onChange={(e) => setSort(e.target.value)}
@@ -81,28 +79,52 @@ function PerformanceList() {
         <option value="date">날짜순</option>
       </select>
       <select
-        value={sort}
-        onChange={(e) => setSort(e.target.value)}
+        value={arfilter}
+        onChange={(e) => setArFilter(e.target.value)}
         style={{
           padding: "8px 12px",
           border: "solid #ccc",
           outline: "none",
         }}
       >
-        <option value="name">지역(전체)</option>
-        <option value="date">날짜순</option>
+        <option value="">지역(전체)</option>
+        <option value="">서울</option>
+        <option value="">부산</option>
+        <option value="">인천</option>
+        <option value="">대구</option>
+        <option value="">대전</option>
+        <option value="">광주</option>
+        <option value="">울산</option>
+        <option value="">세종</option>
+        <option value="">경기</option>
+        <option value="">강원</option>
+        <option value="">경북</option>
+        <option value="">경남</option>
+        <option value="">충북</option>
+        <option value="">충남</option>
+        <option value="">전북</option>
+        <option value="">전남</option>
+        <option value="">제주</option>
       </select>
       <select
-        value={sort}
-        onChange={(e) => setSort(e.target.value)}
+        value={gefilter}
+        onChange={(e) => setGeFilter(e.target.value)}
         style={{
           padding: "8px 12px",
           border: "solid #ccc",
           outline: "none",
         }}
       >
-        <option value="name">이름순</option>
-        <option value="date">날짜순</option>
+        <option value="">장르(전체)</option>
+        <option value="">대중무용</option>
+        <option value="">대중음악</option>
+        <option value="">무용(서양/한국무용)</option>
+        <option value="">뮤지컬</option>
+        <option value="">복합</option>
+        <option value="">서양음악(클래식)</option>
+        <option value="">서커스/마술</option>
+        <option value="">연극</option>
+        <option value="">한국음악(국악)</option>
       </select>
       </div>
       <div 
