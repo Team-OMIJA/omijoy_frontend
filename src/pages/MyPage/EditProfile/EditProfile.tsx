@@ -1,4 +1,6 @@
-import { Avatar } from "@mui/material";
+/** @jsxImportSource @emotion/react */
+import * as s from "./styles";
+import { Avatar, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useFirebaseUpload } from "../../../hooks/useFirebaseUpload";
@@ -6,36 +8,31 @@ import axios from "axios";
 
 function EditProfile() {
   const { principal } = usePrincipalState();
-  const { uploadFile, isUploading, progress } = useFirebaseUpload();
+  const { uploadFile } = useFirebaseUpload();
 
   const [username, setUsername] = useState(principal?.username || "");
   const [previewImg, setPreviewImg] = useState(principal?.profileImg || "");
-  const [file, setfile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
+  // 🔹 이미지 변경 시
   const fileOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      setfile(selectedFile);
+      setFile(selectedFile);
       setPreviewImg(URL.createObjectURL(selectedFile));
     }
   };
 
+  // 🔹 저장
   const handleSave = async () => {
     try {
-      // 나중에 값이 바뀔 가능성이 있기 때문에 let 사용
       let profileUrl = principal?.profileImg;
+      if (file) profileUrl = await uploadFile(file, "omijoy_storage/profile-img");
 
-      if (file) {
-        profileUrl = await uploadFile(file, "profile-img");
-      }
-
-      await axios.patch(
-        `${import.meta.env.VITE_API_BASE_URL}users/${principal?.id}`,
-        {
-          username,
-          profileImg: profileUrl,
-        }
-      );
+      await axios.patch(`${import.meta.env.VITE_API_BASE_URL}users/${principal?.id}`, {
+        username,
+        profileImg: profileUrl,
+      });
 
       alert("프로필이 수정되었습니다!");
       window.location.reload();
@@ -44,28 +41,54 @@ function EditProfile() {
       alert("프로필 수정 실패");
     }
   };
+
   return (
+    <s.ProfileContainer>
+      {/* 🔸 왼쪽 아바타 */}
+      <s.AvatarWrapper>
+        <Avatar
+          src={previewImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG}
+          sx={{ width: 100, height: 100 }}
+        />
+        <s.EditLabel htmlFor="profile-upload">✎</s.EditLabel>
+        <input
+          id="profile-upload"
+          type="file"
+          accept="image/*"
+          onChange={fileOnChangeHandler}
+          style={{ display: "none" }}
+        />
+      </s.AvatarWrapper>
 
-    <div>
-
-     <img
-        src={previewImg || "/default-profile.png"}
-        alt="profile"
-        style={{ width: 120, height: 120, borderRadius: "50%" }}
-      />
-      <input type="file" accept="image/*" onChange={fileOnChangeHandler} />
-
-      {isUploading && <p>업로드 중... {progress}%</p>}
-
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-
-      <button onClick={handleSave}>저장</button>
-
-    </div>
+      {/* 🔸 오른쪽 입력 + 저장 */}
+      <s.UserInfo>
+        <TextField
+          variant="standard"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          inputProps={{
+            style: {
+              fontSize: "1.2rem",
+              fontWeight: 500,
+              color: "#222",
+            },
+          }}
+          sx={{ width: "200px" }}
+        />
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleSave}
+          sx={{
+            marginTop: "8px",
+            textTransform: "none",
+            borderRadius: "8px",
+          }}
+        >
+          저장
+        </Button>
+      </s.UserInfo>
+    </s.ProfileContainer>
   );
 }
 

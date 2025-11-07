@@ -11,17 +11,20 @@ function NavBar() {
     { path: "/", label: "홈" },
     { path: "/performance", label: "공연" },
     { path: "/theater", label: "공연장" },
-    // { path: "/login", label: "로그인" },
   ];
 
-  // 나중에 Firebase 로그인 시 교체될 프로필 이미지
+  // 나중에 로그인 유저 정보로 교체될 이미지
   const userProfileImg = null;
+
+  // ✅ 기본 프로필 이미지 (환경변수 or public 이미지)
+  const defaultProfileImg = import.meta.env.VITE_PROFILE_DEFAULT_IMG || "/default-profile.png";
 
   return (
     <nav css={s.navStyle}>
       <div css={s.logo} onClick={() => navigate("/")}>
-        OMIJOY 
+        OMIJOY
       </div>
+
       <div css={s.navListStyle}>
         {navItems.map((item) => (
           <li key={item.path}>
@@ -40,9 +43,9 @@ function NavBar() {
         <Link to="/login">
           <Avatar
             alt="user-profile"
-            src={userProfileImg || ""}
+            src={userProfileImg || defaultProfileImg} //  기본 이미지 적용
             css={s.profileStyle(userProfileImg)}
-          ></Avatar>
+          />
         </Link>
       </div>
     </nav>
