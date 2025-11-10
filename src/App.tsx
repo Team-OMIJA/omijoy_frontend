@@ -20,7 +20,7 @@ import { useEffect } from "react";
 import { usePrincipalState } from "./stores/usePrincipalState";
 
 function App() {
-  const { login } = usePrincipalState();
+  // const { login } = usePrincipalState();
 
   // useEffect(() => {
   //   // 더미 로그인 유저 (프론트 전용)

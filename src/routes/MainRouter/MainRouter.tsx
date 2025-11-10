@@ -5,6 +5,7 @@ import Home from '../../pages/Home/Home';
 import Theater from '../../pages/PerformancePlace/PerformancePlace';
 import Login from '../../pages/Auth/Login/Login';
 import SignUp from '../../pages/Auth/SignUp/SignUp';
+import MyPage from '../../pages/MyPage/MyPage';
 
 function MainRouter() {
   return (
@@ -18,6 +19,7 @@ function MainRouter() {
         <Route path='/performance/*' element={<PerformanceRouter />} />
         {/* 공연장 */}
         <Route path='/theater' element={<Theater />} />
+        <Route path='/mypage' element={<MyPage />} />
         <Route path='/signup' element={<SignUp />} />
       </Route>
     </Routes>
