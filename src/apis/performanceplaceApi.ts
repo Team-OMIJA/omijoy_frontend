@@ -13,7 +13,7 @@ export interface PlaceMarker {
 }
 
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 현재 위치를 백엔드로 전송하고 마커 데이터를 받아옵니다.
 export const sendLocation = async (
@@ -25,7 +25,7 @@ export const sendLocation = async (
         region2
     };
     try {
-        const res = await axios.post(`${BASE_URL}performanceplace/currentlocation`,dataToSend)
+        const res = await axios.post(`${BASE_URL}/performanceplace/currentlocation`,dataToSend)
         
         // DTO 리스트를 반환
         return res.data as PlaceMarker[]; 
