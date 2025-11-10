@@ -23,7 +23,7 @@ function App() {
   // const { login } = usePrincipalState();
 
   // useEffect(() => {
-  //   // 더미 로그인 유저 (프론트 전용)
+    // 더미 로그인 유저 (프론트 전용)
   //   login({
   //     id: 2,
   //     username: "테스트유저",

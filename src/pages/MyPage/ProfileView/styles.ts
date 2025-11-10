@@ -7,13 +7,13 @@ export const ProfileContainer = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 2rem;
-
+  min-height: 160px;
   width: 100%;
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem 2.5rem;
 
-  background-color: #fff;
+  background-color: #ffffffff;
   border-bottom: 1px solid #eee;
 `;
 
@@ -52,3 +52,9 @@ export const UserInfo = styled.div`
   flex-direction: column;
   justify-content: center;
 `;
+
+
+export const BtnContainer = styled.div`
+display: flex;
+margin-top: 8px;
+`

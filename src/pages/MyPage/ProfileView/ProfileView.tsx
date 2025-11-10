@@ -15,7 +15,9 @@ function ProfileView({ onEdit }: ProfileViewProps) {
     <s.ProfileContainer>
       <s.AvatarWrapper>
         <Avatar
-          src={principal?.profileImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG}
+          src={
+            principal?.profileImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG
+          }
           sx={{ width: 100, height: 100 }}
         />
       </s.AvatarWrapper>
@@ -26,24 +28,25 @@ function ProfileView({ onEdit }: ProfileViewProps) {
             fontSize: "1.2rem",
             fontWeight: 500,
             color: "#222",
-            marginBottom: "8px",
+            marginBottom: "0px",
           }}
         >
           {principal?.username}
         </p>
-
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={onEdit}
-          sx={{
-            textTransform: "none",
-            borderRadius: "8px",
-            padding: "4px 16px",
-          }}
-        >
-          프로필 수정
-        </Button>
+        <s.BtnContainer>
+          <Button
+            // variant="outlined"
+            size="small"
+            onClick={onEdit}
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              marginTop:"0px",
+            }}
+          >
+            수정
+          </Button>
+        </s.BtnContainer>
       </s.UserInfo>
     </s.ProfileContainer>
   );

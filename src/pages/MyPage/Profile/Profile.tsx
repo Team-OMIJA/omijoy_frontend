@@ -6,11 +6,11 @@ import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useAuthState } from "../../../stores/useAuthState";
 
 function Profile() {
-  // const { principal } = usePrincipalState();
+  const { principal } = usePrincipalState();
   const [isEditing, setIsEditing] = useState(false);
-     const { isAuthenticated} = useAuthState();
 
-  if (!isAuthenticated) return <div>Loading...</div>;
+
+  if (!principal) return <div>Loading...</div>;
 
   if (!isEditing) {
     return (
