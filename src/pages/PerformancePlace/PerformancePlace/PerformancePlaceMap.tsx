@@ -1,12 +1,12 @@
-import { useCallback, useState } from "react";
-import KaKaoMap from "./KaKaoMap";
-import { sendLocation } from "../../../apis/performanceplaceApi";
+// src/components/map/PerformancePlaceMap.tsx
 
+import { useCallback, useState, useEffect } from "react";
+import KaKaoMap from "./KaKaoMap";
+import { sendLocation, PlaceMarker } from "../../../apis/performanceplaceApi";
 
 interface LocationState {
   latitude: number | null;
   longitude: number | null;
-  accuracy: number | null;
   error: string | null;
   region1: string | null;
   region2: string | null;
@@ -16,34 +16,19 @@ function PerformancePlaceMap() {
   const [location, setLocation] = useState<LocationState>({
     latitude: null,
     longitude: null,
-    accuracy: null,
     error: null,
     region1: null,
     region2: null,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [places, setPlaces] = useState<PlaceMarker[]>([]);
 
-  const getLocation = useCallback(() => {
-    setIsLoading(true);
-    setLocation((loca) => ({
-      ...loca,
-      latitude: null,
-      longitude: null,
-      error: null,
-    }));
+  const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
 
-    if (!navigator.geolocation) {
-      setLocation((prevState) => ({
-        ...prevState,
-        error: "이 브라우저에서는 위치 정보가 지원되지 않습니다.",
-      }));
-      setIsLoading(false);
-      return;
-    }
-    // 위도,경도로 주소 변환하는 함수
-    const getAddress = (lat: number, lng: number) => {
-      if (!window.kakao?.maps?.services) {
-        console.error("카카오맵 services 라이브러리가 로드되지 않았습니다.");
+  const executeGeocoder = useCallback(
+    (lat: number, lng: number) => {
+      if (!window.kakao.maps.services) {
+        console.error("카카오맵 services 라이브러리가 초기화되지 않았습니다.");
         return;
       }
 
@@ -60,35 +45,67 @@ function PerformancePlaceMap() {
             region1,
             region2,
           }));
-          sendLocation(region1, region2);
+
+          sendLocation(region1, region2)
+            .then((markerList: PlaceMarker[]) => {
+              setPlaces(markerList);
+              console.log(
+                `✅ ${markerList.length}개의 공연장 데이터를 수신했습니다.`
+              );
+            })
+            .catch((error: any) => {
+              console.error("공연장 데이터 로드 실패:", error);
+            });
         }
       });
+    },
+    [setLocation, setPlaces]
+  );
+
+  const getLocation = useCallback(() => {
+    setIsLoading(true);
+    setLocation((loca) => ({
+      ...loca,
+      latitude: null,
+      longitude: null,
+      error: null,
+    }));
+    setPlaces([]);
+
+    if (!navigator.geolocation) {
+      // ... (브라우저 오류 처리 생략)
+      setIsLoading(false);
+      return;
+    }
+
+    const getAddress = (lat: number, lng: number) => {
+      // isKakaoMapLoaded가 false일 때만 load 함수를 호출하여 중복 실행을 방지합니다.
+      if (!isKakaoMapLoaded) {
+        window.kakao.maps.load(() => {
+          setIsKakaoMapLoaded(true);
+          executeGeocoder(lat, lng);
+        });
+      } else {
+        // 이미 로드된 경우, 바로 executeGeocoder를 실행합니다.
+        executeGeocoder(lat, lng);
+      }
     };
 
     const handleSuccess = (position: GeolocationPosition) => {
-      const { latitude, longitude, accuracy } = position.coords;
-    
+      const { latitude, longitude } = position.coords;
 
-      if (accuracy > 4000) {
-        setLocation((currentState) => ({
-          ...currentState,
-          error: `위치 정확도가 낮습니다 (오차: ${Math.round(accuracy)}`,
-        }));
-        setIsLoading(false);
-        return;
-      }
       setLocation({
         latitude,
         longitude,
-        accuracy,
         error: null,
         region1: null,
         region2: null,
       });
+
       getAddress(latitude, longitude);
       setIsLoading(false);
-      console.log(latitude, longitude);// 현재 위치가 제대로 들어갔나 확인 용
     };
+
     const handleError = (error: GeolocationPositionError) => {
       let errorMessage = error.message;
       if (error.code === 1) {
@@ -109,26 +126,27 @@ function PerformancePlaceMap() {
       handleError,
       options
     );
-  }, []);
+  }, [executeGeocoder]);
+
+  useEffect(() => {
+    getLocation();
+  }, [getLocation]);
 
   return (
     <div>
-      <h1>현재 위치</h1>
-      {location.region1 && location.region2 && (
-        <p>
-          주소: {location.region1} {location.region2}
-        </p>
-      )}
-      <p>위도: {location.latitude}</p>
-      <p>경도: {location.longitude}</p>
-      <p>정확도: {location.accuracy}m</p>
+      <p>공연장 개수: {places.length}개</p>
       <button onClick={getLocation}>현재 위치 찾기</button>
-      {!isLoading && location.error && (
-        <p style={{ color: "red", whiteSpace: "pre-wrap" }}>{location.error}</p>
-      )}
 
-      {!isLoading && location.latitude && location.longitude ? (
-        <KaKaoMap latitude={location.latitude} longitude={location.longitude} />
+      {!isLoading &&
+      location.latitude &&
+      location.longitude &&
+      isKakaoMapLoaded ? (
+        <KaKaoMap
+          latitude={location.latitude}
+          longitude={location.longitude}
+          places={places}
+          isKakaoMapLoaded={isKakaoMapLoaded} // isKakaoMapLoaded prop 추가
+        />
       ) : (
         !isLoading && <p>지도를 표시할 위치 정보가 없습니다.</p>
       )}
