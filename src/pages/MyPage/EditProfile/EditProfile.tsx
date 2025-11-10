@@ -6,15 +6,18 @@ import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useFirebaseUpload } from "../../../hooks/useFirebaseUpload";
 import axios from "axios";
 
-function EditProfile() {
-  const { principal } = usePrincipalState();
+function EditProfile({ onCancel, onSave }: { 
+  onCancel: () => void;
+  onSave: () => void;
+}) {
+  const { principal, login } = usePrincipalState();
   const { uploadFile } = useFirebaseUpload();
 
   const [username, setUsername] = useState(principal?.username || "");
   const [previewImg, setPreviewImg] = useState(principal?.profileImg || "");
   const [file, setFile] = useState<File | null>(null);
 
-  // 🔹 이미지 변경 시
+  // 이미지 변경 시
   const fileOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -23,28 +26,41 @@ function EditProfile() {
     }
   };
 
-  // 🔹 저장
-  const handleSave = async () => {
-    try {
-      let profileUrl = principal?.profileImg;
-      if (file) profileUrl = await uploadFile(file, "omijoy_storage/profile-img");
+  // 저장
+  const onSaveHandler = async () => {
+  try {
+    console.log("1️⃣ 저장 버튼 클릭됨");
+    let profileUrl = principal?.profileImg;
 
-      await axios.patch(`${import.meta.env.VITE_API_BASE_URL}users/${principal?.id}`, {
-        username,
-        profileImg: profileUrl,
-      });
-
-      alert("프로필이 수정되었습니다!");
-      window.location.reload();
-    } catch (error) {
-      console.error(error);
-      alert("프로필 수정 실패");
+    if (file) {
+      console.log("2️⃣ 파일 업로드 시작");
+      profileUrl = await uploadFile(file, "omijoy_storage/profile-img");
+      console.log("3️⃣ 업로드 완료:", profileUrl);
     }
-  };
+
+    console.log("4️⃣ 서버 패치 요청 전송");
+    const res = await axios.patch(
+      `${import.meta.env.VITE_API_BASE_URL}users/${principal?.id}`,
+      { username, profileImg: profileUrl }
+    );
+    console.log("5️⃣ 서버 응답:", res);
+
+    login({
+      ...principal!,
+      username,
+      profileImg: profileUrl,
+    })
+
+    alert("프로필이 수정되었습니다!");
+    onSave();
+  } catch (error) {
+    console.error("❌ 에러 발생:", error);
+    alert("프로필 수정 실패");
+  }
+};
 
   return (
     <s.ProfileContainer>
-      {/* 🔸 왼쪽 아바타 */}
       <s.AvatarWrapper>
         <Avatar
           src={previewImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG}
@@ -60,25 +76,24 @@ function EditProfile() {
         />
       </s.AvatarWrapper>
 
-      {/* 🔸 오른쪽 입력 + 저장 */}
       <s.UserInfo>
         <TextField
           variant="standard"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          inputProps={{
-            style: {
+          sx={{
+            width: "200px",
+            "& .MuiInputBase-input": {
               fontSize: "1.2rem",
               fontWeight: 500,
               color: "#222",
             },
           }}
-          sx={{ width: "200px" }}
         />
         <Button
           variant="outlined"
           size="small"
-          onClick={handleSave}
+          onClick={onSaveHandler}
           sx={{
             marginTop: "8px",
             textTransform: "none",
@@ -86,6 +101,14 @@ function EditProfile() {
           }}
         >
           저장
+        </Button>
+        <Button
+          variant="text"
+          size="small"
+          onClick={onCancel}
+          sx={{ textTransform: "none", color: "gray" }}
+        >
+          취소
         </Button>
       </s.UserInfo>
     </s.ProfileContainer>

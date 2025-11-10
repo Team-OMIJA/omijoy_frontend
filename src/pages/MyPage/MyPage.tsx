@@ -5,8 +5,8 @@ import Profile from "./Profile/Profile";
 function MyPage() {
   return (
     <>
-      {/* <Profile /> */}
-      <EditProfile />
+      <Profile />
+      {/* <EditProfile /> */}
       <FavoriteList />
     </>
   );

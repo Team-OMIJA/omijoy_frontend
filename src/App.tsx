@@ -22,17 +22,17 @@ import { usePrincipalState } from "./stores/usePrincipalState";
 function App() {
   const { login } = usePrincipalState();
 
-  useEffect(() => {
-    // 🔹 더미 로그인 유저 (프론트 전용)
-    login({
-      id: 1,
-      username: "테스트유저",
-      email: "test@example.com",
-      profileImg:
-        "https://firebasestorage.googleapis.com/v0/b/runnershigh-c00a7.firebasestorage.app/o/profile-img%2Ff07b29c9-0252-4347-a351-e2c2c286d454.png?alt=media&token=868fcb4f-ae43-48ec-a69b-ebdc73f77270",
-      role: "USER",
-    });
-  }, [login]);
+  // useEffect(() => {
+  //   // 더미 로그인 유저 (프론트 전용)
+  //   login({
+  //     id: 2,
+  //     username: "테스트유저",
+  //     email: "test@example.com",
+  //     profileImg:
+  //       "https://firebasestorage.googleapis.com/v0/b/omijoy-project.firebasestorage.app/o/omijoy_storage%2Fprofile-img%2Ff07b29c9-0252-4347-a351-e2c2c286d454.png?alt=media&token=67d04ac8-25b4-44c1-a1dc-fae9c408b265",
+  //     role: "USER",  
+  //   });
+  // }, [login]);
 
   return (
     <>
