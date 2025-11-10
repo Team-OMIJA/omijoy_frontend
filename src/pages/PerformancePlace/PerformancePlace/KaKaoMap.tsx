@@ -39,7 +39,7 @@ function KaKaoMap({
     if (!mapRef.current) {
       const mapOption = {
         center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: 6,
+        level: 7,
       };
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
@@ -50,7 +50,7 @@ function KaKaoMap({
         map: newMap,
         averageCenter: true,
         gridSize: 300, // 💡 클러스터링 격자 크기를 늘려 하나의 클러스터로 합쳐질 확률을 높입니다.
-        minLevel: 7,
+        minLevel: 6,
         minClusterSize: 1, // 💡 최소 클러스터링 단위를 1로 변경
         styles: [
           {
@@ -74,7 +74,7 @@ function KaKaoMap({
         "clusterclick",
         function (cluster: any) {
           // 클러스터를 클릭했을 때, 지도의 레벨을 6으로 설정하고 클러스터의 중심으로 이동합니다.
-          newMap.setLevel(6, { anchor: cluster.getCenter() });
+          newMap.setLevel(5, { anchor: cluster.getCenter() });
         }
       );
       infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
