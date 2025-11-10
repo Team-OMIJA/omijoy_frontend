@@ -12,32 +12,19 @@ type Performance = {
 };
 
 function AwardRecommendList() {
-  const [allPerformances, setAllPerformances] = useState<Performance[]>([]);
+  const [allPerformances, setAllPerformances] = useState<Performance[]>([]); // API 호출로 100개 받아옴
   const [visiblePerformances, setVisiblePerformances] = useState<Performance[]>(
     []
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  ); // 실제로 프론트에 보여줄 5개
 
-  // 🎲 Fisher–Yates shuffle (진짜 랜덤)
-  const shuffleArray = <T,>(array: T[]): T[] => {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  };
-
-  // ✅ 5개 랜덤 선택
+  // Math.random() - 0.5 -> 정렬 순서 랜덤
   const pickRandomFive = (arr: Performance[]) => {
-    if (arr.length <= 5) return arr;
-    return shuffleArray(arr).slice(0, 5);
+    return [...arr].sort(() => Math.random() - 0.5).slice(0, 5);
   };
 
-  // ✅ API 요청
+  // API 요청
   const fetchPerformances = async () => {
     try {
-      setIsLoading(true);
       const API_KEY = import.meta.env.VITE_KOPIS_API_KEY;
 
       const today = new Date();
@@ -69,32 +56,29 @@ function AwardRecommendList() {
         })
       );
 
-      setAllPerformances(allPrfsList);
-      setVisiblePerformances(pickRandomFive(allPrfsList)); // 초기 표시
+      setAllPerformances(allPrfsList); // 전체 100개 저장
+      setVisiblePerformances(pickRandomFive(allPrfsList)); // 초기 5개 저장
     } catch (err) {
-      console.error("❌ Failed to fetch award data:", err);
-    } finally {
-      setIsLoading(false);
+      console.error("Failed to fetch award data:", err);
     }
   };
 
-  // ✅ 버튼 클릭 시 랜덤 5개 다시 표시
+  // 버튼 클릭 시 랜덤 5개 다시 표시
   const handleNext = () => {
-    if (allPerformances.length === 0) return;
     const newSet = pickRandomFive(allPerformances);
     setVisiblePerformances(newSet);
   };
 
-  // ✅ 컴포넌트 로드 시 API 호출
+  // 컴포넌트 로드 시 API 호출
   useEffect(() => {
     fetchPerformances();
   }, []);
 
-  // ✅ 렌더링
   return (
     <div
       style={{ width: "100%", padding: "40px 80px", boxSizing: "border-box" }}
     >
+      {/* 제목 + 버튼 */}
       <div
         style={{
           display: "flex",
@@ -106,97 +90,87 @@ function AwardRecommendList() {
         <h2 style={{ fontSize: "22px", fontWeight: "700", margin: 0 }}>
           수상작 추천 5
         </h2>
+
+        {/* 🔁 다른 추천 보기 버튼 */}
         <button
           onClick={handleNext}
-          disabled={isLoading || allPerformances.length === 0}
           style={{
-            backgroundColor: isLoading ? "#f0f0f0" : "#fff",
-            color: isLoading ? "#aaa" : "#000",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            padding: "6px 14px",
-            fontSize: "14px",
-            cursor: isLoading ? "not-allowed" : "pointer",
-            transition: "all 0.2s",
+            background: "none",
+            border: "none",
+            fontSize: "20px",
+            fontWeight: "600",
+            cursor: "pointer",
+            color: "#555",
+            transition: "color 0.2s ease",
           }}
-          onMouseOver={(e) => {
-            if (!isLoading) e.currentTarget.style.backgroundColor = "#f5f5f5";
-          }}
-          onMouseOut={(e) => {
-            if (!isLoading) e.currentTarget.style.backgroundColor = "#fff";
-          }}
+          onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "#555")}
+          title="다른 추천 보기"
         >
-          🔄 다른 추천 보기
+          🔁
         </button>
       </div>
 
-      {isLoading ? (
-        <p>로딩 중...</p>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-            gap: "30px",
-          }}
-        >
-          {visiblePerformances.map((p, i) => (
-            <div
-              key={i}
+      {/* 카드 리스트 */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: "30px",
+        }}
+      >
+        {visiblePerformances.map((p, i) => (
+          <div
+            key={i}
+            style={{
+              textAlign: "left",
+              transition: "transform 0.25s ease, box-shadow 0.25s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = "translateY(-6px)";
+              e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.1)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "none";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
+            <img
+              src={p.poster}
+              alt={p.title}
               style={{
-                textAlign: "left",
-                transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                width: "100%",
+                height: "250px",
+                objectFit: "cover",
+                borderRadius: "10px",
+                marginBottom: "10px",
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = "translateY(-6px)";
-                e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.1)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <img
-                src={p.poster}
-                alt={p.title}
+            />
+            <div>
+              <h4
                 style={{
-                  width: "100%",
-                  height: "250px",
-                  objectFit: "cover",
-                  borderRadius: "10px",
-                  marginBottom: "10px",
+                  fontSize: "15px",
+                  fontWeight: "600",
+                  color: "#111",
+                  marginBottom: "6px",
+                  lineHeight: "1.4",
                 }}
-              />
-              <div>
-                <h4
-                  style={{
-                    fontSize: "15px",
-                    fontWeight: "600",
-                    color: "#111",
-                    marginBottom: "6px",
-                    lineHeight: "1.4",
-                  }}
-                >
-                  {p.title}
-                </h4>
-                <p style={{ color: "#555", fontSize: "13px", margin: "2px 0" }}>
-                  {p.place}
-                </p>
-                <p
-                  style={{ color: "#777", fontSize: "12.5px", margin: "1px 0" }}
-                >
-                  {p.stDate} ~ {p.edDate}
-                </p>
-                <p
-                  style={{ color: "#999", fontSize: "12.5px", margin: "3px 0" }}
-                >
-                  {p.genre}
-                </p>
-              </div>
+              >
+                {p.title}
+              </h4>
+              <p style={{ color: "#555", fontSize: "13px", margin: "2px 0" }}>
+                {p.place}
+              </p>
+              <p style={{ color: "#777", fontSize: "12.5px", margin: "1px 0" }}>
+                {p.stDate} ~ {p.edDate}
+              </p>
+              <p style={{ color: "#999", fontSize: "12.5px", margin: "3px 0" }}>
+                {p.genre}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

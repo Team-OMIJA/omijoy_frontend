@@ -13,6 +13,17 @@ type Performance = {
 function UpcomingList() {
   const [performances, setPerformances] = useState<Performance[]>([]);
 
+  // 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}.${m}.${d}`;
+  };
+
+  // API 요청
   useEffect(() => {
     const getPerformances = async () => {
       try {
@@ -119,7 +130,7 @@ function UpcomingList() {
                   margin: "1px 0",
                 }}
               >
-                {p.prfStartDt} ~ {p.prfEndDt}
+                {formatDate(p.prfStartDt)} ~ {formatDate(p.prfEndDt)}
               </p>
 
               <p

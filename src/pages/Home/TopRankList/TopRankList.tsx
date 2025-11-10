@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 type Performance = {
@@ -12,6 +13,7 @@ type Performance = {
 
 function TopRankList() {
   const [performances, setPerformances] = useState<Performance[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPerformances = async () => {
@@ -65,7 +67,7 @@ function TopRankList() {
     <div
       style={{ width: "100%", padding: "40px 80px", boxSizing: "border-box" }}
     >
-      {/* 제목 */}
+      {/* 제목 + 이동 버튼 */}
       <div
         style={{
           display: "flex",
@@ -83,6 +85,24 @@ function TopRankList() {
         >
           전체 공연 순위 TOP 5
         </h2>
+
+        {/* 🔹 /performance로 이동 버튼 */}
+        <button
+          onClick={() => navigate("/performance")}
+          style={{
+            background: "none",
+            border: "none",
+            fontSize: "22px",
+            fontWeight: "700",
+            cursor: "pointer",
+            color: "#444",
+            transition: "color 0.2s ease",
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
+          onMouseOut={(e) => (e.currentTarget.style.color = "#444")}
+        >
+          &gt;
+        </button>
       </div>
 
       {/* 카드 리스트 */}
