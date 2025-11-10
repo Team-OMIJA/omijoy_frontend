@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 
 type Performance = {
   id: string;
@@ -15,6 +16,10 @@ type Performance = {
 function TopRankList() {
   const [performances, setPerformances] = useState<Performance[]>([]);
   const navigate = useNavigate();
+
+  // 모달 상태
+  const [open, setOpen] = useState(false);
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPerformances = async () => {
@@ -131,16 +136,21 @@ function TopRankList() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {/* 포스터 */}
+            {/* 🔹 포스터 클릭 시 모달 열기 */}
             <img
               src={p.poster}
               alt={p.title}
+              onClick={() => {
+                setSelectedPrfId(p.id);
+                setOpen(true);
+              }}
               style={{
                 width: "100%",
                 height: "250px",
                 objectFit: "cover",
                 borderRadius: "10px",
                 marginBottom: "10px",
+                cursor: "pointer",
               }}
             />
 
@@ -188,6 +198,9 @@ function TopRankList() {
           </div>
         ))}
       </div>
+
+      {/* 🔹 공연 상세 모달 (공통 모달) */}
+      <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );
 }

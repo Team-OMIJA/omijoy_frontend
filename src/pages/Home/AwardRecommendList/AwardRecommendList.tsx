@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 
 type Performance = {
   id: string;
@@ -17,6 +18,9 @@ function AwardRecommendList() {
   const [visiblePerformances, setVisiblePerformances] = useState<Performance[]>(
     []
   ); // 실제로 프론트에 보여줄 5개
+
+  const [open, setOpen] = useState(false); // 모달 열림/닫힘 상태
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null); // 🔹 선택된 공연 ID
 
   // Math.random() - 0.5 -> 정렬 순서 랜덤
   const pickRandomFive = (arr: Performance[]) => {
@@ -137,17 +141,24 @@ function AwardRecommendList() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
+            {/* 🔹 포스터 클릭 시 모달 열기 */}
             <img
               src={p.poster}
               alt={p.title}
+              onClick={() => {
+                setSelectedPrfId(p.id);
+                setOpen(true);
+              }}
               style={{
                 width: "100%",
                 height: "250px",
                 objectFit: "cover",
                 borderRadius: "10px",
                 marginBottom: "10px",
+                cursor: "pointer",
               }}
             />
+
             <div>
               <h4
                 style={{
@@ -173,6 +184,9 @@ function AwardRecommendList() {
           </div>
         ))}
       </div>
+
+      {/* 🔹 공연 상세 모달 */}
+      <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );
 }

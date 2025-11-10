@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 
 type Performance = {
   prfId: string;
@@ -13,6 +14,8 @@ type Performance = {
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<Performance[]>([]);
+  const [open, setOpen] = useState(false); // 모달 열림/닫힘 상태
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null); // 선택된 공연 ID
 
   // 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
   const formatDate = (dateString: string) => {
@@ -27,10 +30,10 @@ function UpcomingList() {
   // API 요청
   useEffect(() => {
     const getPerformances = async () => {
-      const API_KEY = import.meta.env.VITE_API_BASE_URL;
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
       try {
-        const response = await axios.get(`${API_KEY}/performances/upcoming`);
+        const response = await axios.get(`${BASE_URL}/performances/upcoming`);
         setPerformances(response.data);
       } catch (err) {
         console.error("Failed to fetch data from server", err);
@@ -87,16 +90,21 @@ function UpcomingList() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {/* 포스터 */}
+            {/* 🔹 포스터 클릭 시 모달 열기 */}
             <img
               src={p.posterImgUrl}
               alt={p.prfNm}
+              onClick={() => {
+                setSelectedPrfId(p.prfId);
+                setOpen(true);
+              }}
               style={{
                 width: "100%",
                 height: "250px",
                 objectFit: "cover",
                 borderRadius: "10px",
                 marginBottom: "10px",
+                cursor: "pointer",
               }}
             />
 
@@ -147,6 +155,9 @@ function UpcomingList() {
           </div>
         ))}
       </div>
+
+      {/* 🔹 공연 상세 모달 (공통 모달) */}
+      <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );
 }
