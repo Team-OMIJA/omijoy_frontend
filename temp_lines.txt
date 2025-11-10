@@ -1,0 +1,89 @@
+  1: import { ChangeEvent, useState } from 'react';
+  2: import { Button, Snackbar, Stack, TextField } from '@mui/material';
+  3: import axios from 'axios';
+  4: import { useNavigate } from 'react-router-dom';
+  5: 
+  6: type SignUpForm = {
+  7:   email: string;
+  8:   password: string;
+  9:   confirm: string;
+ 10: };
+ 11: 
+ 12: function SignUp() {
+ 13:   const navigate = useNavigate();
+ 14: 
+ 15:   const [form, setForm] = useState<SignUpForm>({
+ 16:     email: '',
+ 17:     password: '',
+ 18:     confirm: '',
+ 19:   });
+ 20: 
+ 21:   const [snack, setSnack] = useState<{ open: boolean; message: string }>({
+ 22:     open: false,
+ 23:     message: '',
+ 24:   });
+ 25: 
+ 26:   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+ 27:     setForm({ ...form, [e.target.name]: e.target.value });
+ 28:   };
+ 29: 
+ 30:   const signUpHandler = () => {
+ 31:     if (!form.email || !form.password) {
+ 32:       setSnack({ open: true, message: '?´ë©”?¼ê³¼ ë¹„ë?ë²ˆí˜¸ë¥??…ë ¥?´ì£¼?¸ìš”.' });
+ 33:       return;
+ 34:     }
+ 35: 
+ 36:     if (form.password !== form.confirm) {
+ 37:       setSnack({ open: true, message: 'ë¹„ë?ë²ˆí˜¸ê°€ ?¼ì¹˜?˜ì? ?ŠìŠµ?ˆë‹¤.' });
+ 38:       return;
+ 39:     }
+ 40: 
+ 41:     axios
+ 42:       .post(
+ 43:         import.meta.env.VITE_API_URL + '/signup',
+ 44:         { email: form.email, password: form.password },
+ 45:         {
+ 46:           headers: {
+ 47:             'Content-Type': 'application/json',
+ 48:           },
+ 49:         }
+ 50:       )
+ 51:       .then(() => {
+ 52:         setSnack({ open: true, message: '?Œì›ê°€?…ì´ ?„ë£Œ?˜ì—ˆ?µë‹ˆ??' });
+ 53:         navigate('/login', { replace: true });
+ 54:       })
+ 55:       .catch(() => setSnack({ open: true, message: '?Œì›ê°€?…ì— ?¤íŒ¨?ˆìŠµ?ˆë‹¤.' }));
+ 56:   };
+ 57: 
+ 58:   // Todo : ?Œì›ê°€??ë¡œì§???ì„±???„ìš”ê°€ ?ˆìŒ email ?€?…ì—??'.'???¬í•¨?˜ì–´ ?ˆëŠ”ì§€ ?•ì¸???„ìš”
+ 59:   const blurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+ 60:     const name = e.target.name;
+ 61:     if (name === 'email') {
+ 62:     } else if (name === 'password') {
+ 63:     } else if (name === 'confirm') {
+ 64:     }
+ 65:   };
+ 66: 
+ 67:   const isDisabled = !form.email || !form.password || form.password !== form.confirm;
+ 68: 
+ 69:   return (
+ 70:     <>
+ 71:       <Stack spacing={2} mt={2} alignItems='center'>
+ 72:         <TextField label='?´ë©”?? name='email' type='email' value={form.email} onChange={changeHandler} />
+ 73:         <TextField label='ë¹„ë?ë²ˆí˜¸' name='password' type='password' value={form.password} onChange={changeHandler} />
+ 74:         <TextField label='ë¹„ë?ë²ˆí˜¸ ?•ì¸' name='confirm' type='password' value={form.confirm} onChange={changeHandler} />
+ 75:         <Button variant='contained' color='primary' onClick={signUpHandler} disabled={isDisabled}>
+ 76:           ?Œì›ê°€??
+ 77:         </Button>
+ 78:       </Stack>
+ 79:       <Snackbar
+ 80:         open={snack.open}
+ 81:         autoHideDuration={2000}
+ 82:         onClose={() => setSnack({ ...snack, open: false })}
+ 83:         message={snack.message}
+ 84:       />
+ 85:     </>
+ 86:   );
+ 87: }
+ 88: 
+ 89: export default SignUp;
