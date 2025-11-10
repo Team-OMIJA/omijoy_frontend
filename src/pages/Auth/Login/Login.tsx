@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import { Button, Snackbar, Stack, TextField } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 type User = {
   email: string;
@@ -8,6 +9,8 @@ type User = {
 };
 
 function Login() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<User>({
     email: '',
     password: '',
@@ -16,13 +19,13 @@ function Login() {
   const [isAuthenticate, setAuth] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, [event.target.name]: event.target.value });
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const loginHandler = () => {
     axios
-      .post(import.meta.env.VITE_API_URL + '/login', user, {
+      .post(import.meta.env.VITE_API_BASE_URL + '/login', user, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -37,20 +40,34 @@ function Login() {
       .catch((err) => console.log(err));
   };
 
+  if (isAuthenticate) {
+    window.location.replace(`${import.meta.env.BASE_URL}`);
+  }
+
   return (
-    <Stack spacing={2} mt={2} alignItems='center'>
-      <TextField label='Email' name='email' onChange={changeHandler} />
-      <TextField type='password' label='Password' name='password' onChange={changeHandler} />
-      <Button variant='outlined' color='primary' onClick={loginHandler}>
-        Login
+    <>
+      <Stack spacing={2} mt={2} alignItems='center'>
+        <TextField label='Email' name='email' onChange={changeHandler} />
+        <TextField type='password' label='Password' name='password' onChange={changeHandler} />
+        <Button variant='outlined' color='primary' onClick={loginHandler}>
+          Login
+        </Button>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={() => setOpen(false)}
+          message='Id 혹은 비밀번호가 들렸습니다.'
+        />
+      </Stack>
+
+      <Button
+        onClick={() => {
+          navigate('/signup', { replace: true });
+        }}
+      >
+        회원가입
       </Button>
-      <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={() => setOpen(false)}
-        message='Id 혹은 비밀번호가 들렸습니다.'
-      />
-    </Stack>
+    </>
   );
 }
 
