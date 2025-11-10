@@ -38,13 +38,13 @@ function PerformanceList() {
 
     const response = await fetch(url);
     const json: Performance[] = await response.json();
-    setPerformances(json);
-  } catch (err) {
-    console.log("공연 정보 불러오는 중 오류 발생", err);
-  } finally {
-    setLoading(false);
-  }
-};
+        setPerformances(json);
+      } catch (err) {
+        console.log("공연 정보 불러오는 중 오류 발생", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
     getPerformance(query);
@@ -69,6 +69,9 @@ function PerformanceList() {
       setGeFilter(gefilter.filter((item) => item !== value));
     }
   };
+  
+  const AREA_OPTIONS = ["서울", "부산", "인천", "대구", "대전", "광주", "울산", "세종", "경기", "강원", "경북", "경남", "충북", "충남", "전북", "전남", "제주"];
+  const GENRE_OPTIONS = ["대중무용", "대중음악", "무용(서양/한국무용)", "뮤지컬", "복합", "서양음악(클래식)", "서커스/마술", "연극", "한국음악(국악)"];
 
   return (
     <div>
@@ -102,23 +105,7 @@ function PerformanceList() {
         }}
       >
         <option value="" hidden>지역</option>
-        <option value="서울">서울</option>
-        <option value="부산">부산</option>
-        <option value="인천">인천</option>
-        <option value="대구">대구</option>
-        <option value="대전">대전</option>
-        <option value="광주">광주</option>
-        <option value="울산">울산</option>
-        <option value="세종">세종</option>
-        <option value="경기">경기</option>
-        <option value="강원">강원</option>
-        <option value="경북">경북</option>
-        <option value="경남">경남</option>
-        <option value="충북">충북</option>
-        <option value="충남">충남</option>
-        <option value="전북">전북</option>
-        <option value="전남">전남</option>
-        <option value="제주">제주</option>
+        {AREA_OPTIONS.map(area => <option key={area} value={area}>{area}</option>)}
       </select>
       <select
         value={gefilter}
@@ -130,15 +117,7 @@ function PerformanceList() {
         }}
       >
         <option value="" hidden>장르</option>
-        <option value="대중무용">대중무용</option>
-        <option value="대중음악">대중음악</option>
-        <option value="무용(서양/한국무용)">무용(서양/한국무용)</option>
-        <option value="뮤지컬">뮤지컬</option>
-        <option value="복합">복합</option>
-        <option value="서양음악(클래식)">서양음악(클래식)</option>
-        <option value="서커스/마술">서커스/마술</option>
-        <option value="연극">연극</option>
-        <option value="한국음악(국악)">한국음악(국악)</option>
+        {GENRE_OPTIONS.map(genre => <option key={genre} value={genre}>{genre}</option>)}
       </select>
       <GrPowerReset 
         onClick={() => {
