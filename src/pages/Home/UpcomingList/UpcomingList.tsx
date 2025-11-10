@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 type Performance = {
+  prfId: string;
   posterImgUrl: string;
   prfNm: string;
   prfPlcNm: string;
@@ -26,10 +27,10 @@ function UpcomingList() {
   // API 요청
   useEffect(() => {
     const getPerformances = async () => {
+      const API_KEY = import.meta.env.VITE_API_BASE_URL;
+
       try {
-        const response = await axios.get(
-          "http://localhost:8080/performances/upcoming"
-        );
+        const response = await axios.get(`${API_KEY}/performances/upcoming`);
         setPerformances(response.data);
       } catch (err) {
         console.error("Failed to fetch data from server", err);

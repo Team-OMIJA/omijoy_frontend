@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 type Performance = {
+  id: string;
   poster: string;
   title: string;
   place: string;
@@ -45,6 +46,7 @@ function TopRankList() {
 
         // XML → JS 객체 변환
         const result = Array.from(boxList).map((box) => ({
+          id: box.getElementsByTagName("mt20id")[0]?.textContent || "",
           title: box.getElementsByTagName("prfnm")[0]?.textContent || "",
           place: box.getElementsByTagName("prfplcnm")[0]?.textContent || "",
           poster: box.getElementsByTagName("poster")[0]?.textContent || "",

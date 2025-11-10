@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 type Performance = {
+  id: string;
   poster: string;
   title: string;
   place: string;
@@ -46,6 +47,7 @@ function AwardRecommendList() {
 
       const allPrfsList = Array.from(xml.getElementsByTagName("db")).map(
         (item) => ({
+          id: item.getElementsByTagName("mt20id")[0]?.textContent || "",
           poster: item.getElementsByTagName("poster")[0]?.textContent || "",
           title: item.getElementsByTagName("prfnm")[0]?.textContent || "",
           place: item.getElementsByTagName("fcltynm")[0]?.textContent || "",
