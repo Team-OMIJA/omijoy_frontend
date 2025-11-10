@@ -1,3 +1,5 @@
+// 무한 스크롤 적용 전
+
 import { useState, useEffect } from "react";
 import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
