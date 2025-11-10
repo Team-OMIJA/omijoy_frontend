@@ -15,6 +15,8 @@
 // `;
 import { css } from "@emotion/react";
 
+
+
 export const navStyle = css`
   position: sticky;
   top: 0;
@@ -26,6 +28,11 @@ export const navStyle = css`
   justify-content: center;
   z-index: 100;
 `;
+
+export const logo = css`
+font-weight: bolder;
+cursor: pointer;
+`
 
 export const navListStyle = css`
   list-style: none;
@@ -44,3 +51,22 @@ export const linkStyle = (active: boolean) => css`
     color: #373737ff;
   }
 `;
+
+export const profileContainer = css`
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+`;
+
+// 유저가 가지고있는() 이미지에 적용시킴
+export const profileStyle = (hasImg) => css`
+  width: 32px;
+  height:32px;
+  background-color: ${hasImg ? "transparent" : "ccc"};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover {
+    transform: secale(1.05);
+  }
+`

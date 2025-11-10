@@ -1,23 +1,44 @@
-//여기 나중에 zustand 사용시 상태 관리 가능한 ts 파일 작성하면 됩니다.
-// zustand, queryClient 사용
-// 상태 관리이기 때문에 파일 명 000State.js
+import { queryClient } from "./../configs/queryClient";
+import { create } from "zustand";
+import { persist } from 'zustand/middleware'; // ✅ 추가
 
-// 예시 코드
-// import { create } from "zustand";
-// import { queryClient } from "../configs/queryClient";
+// 로그인 상태 유지
 
-// export const usePrincipalState = create((set) => ({
-//   isAuthenticated: false, //더 직관적인 명명(isLoggedIn)
-//   principal: null,
+// 로그인 유저의 핵심 데이터 - 로그인 성공 시 반환된 유저 정보 json으로 담음
+interface Principal {
+  id: number;
+  username: string;
+  email: string;
+  profileImg?: string;
+  role: string;
+}
 
-//   login: (userData) => set({ isAuthenticated: true, principal: userData }),
+interface PrincipalState {
+  isAuthenticated: boolean; // 로그인 여부
+  principal: Principal | null; // 로그인 사용자 정보
+  login: (userData: Principal) => void; // 로그인 시
+  logout: () => void; // 로그아웃 시
+}
 
-//   logout: () => {
-//     localStorage.removeItem("accessToken");
-//     queryClient.removeQueries({ queryKey: ["getPrincipal"], exact: true });
-//     queryClient.removeQueries({ queryKey: ["currentLocation"], exact: true });
-//     queryClient.clear(); //캐시 제거
-//     set({ isAuthenticated: false, principal: null });
-//     window.location.href = "/login";
-//   },
-// }));
+export const usePrincipalState = 
+
+create(
+   persist<PrincipalState>(
+    (set) => ({
+      isAuthenticated: false,
+      principal: null,
+
+      login: (userData) => set({ isAuthenticated: true, principal: userData }),
+
+      logout: () => {
+        sessionStorage.removeItem("jwt");
+        queryClient.clear();
+        set({ isAuthenticated: false, principal: null });
+        window.location.href = "/login";
+      },
+    }),
+    {
+      name: "principal-storage", // localStorage에 저장됨 - 이거 있으면 로그아웃 하기 전까지 로그아웃 x
+    }
+  )
+)
