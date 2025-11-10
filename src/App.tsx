@@ -37,7 +37,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <MainRouter />
+      <MainRouter/>
       </BrowserRouter>
     </>
   );
