@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
+import { useInfiniteScroll } from "../../../configs/useInfiniteScroll";
 
 interface Performance {
   prfId: string;
@@ -21,40 +22,65 @@ function PerformanceList() {
   const [sort, setSort] = useState("name");
   const [arfilter, setArFilter] = useState<string[]>([]);
   const [gefilter, setGeFilter] = useState<string[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const getPerformance = async (searchQuery?: string) => {
-  setLoading(true);
-  try {
-    const baseUrl = "http://localhost:8080/prfDetails";
-    const isSearch = searchQuery && searchQuery.trim() !== "";
+  const getPerformance = useCallback(
+    async (searchQuery?: string, append = false, pageToLoad = 0) => {
+      setLoading(true);
+      try {
+        const baseUrl = "http://localhost:8080/prfDetails";
+        const isSearch = searchQuery && searchQuery.trim() !== "";
 
-    const params = new URLSearchParams();
-    if (isSearch) params.append("search", searchQuery!);
-    params.append("sort", sort);
-    if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
-    if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
+        const params = new URLSearchParams();
+        if (isSearch) params.append("search", searchQuery!);
+        params.append("sort", sort);
+        params.append("page", String(pageToLoad));
+        params.append("size", "30");
+        if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
+        if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
 
-    const url = `${baseUrl}${isSearch ? "/search" : ""}?${params.toString()}`;
+        const url = `${baseUrl}${isSearch ? "/search" : ""}?${params.toString()}`;
 
-    const response = await fetch(url);
-    const json: Performance[] = await response.json();
-        setPerformances(json);
+        const response = await fetch(url);
+        const json: Performance[] = await response.json();
+
+        if (append) {
+          setPerformances((prev) => [...prev, ...json]);
+        } else {
+          setPerformances(json);
+        }
+
+        setHasMore(json.length > 0);
       } catch (err) {
         console.log("공연 정보 불러오는 중 오류 발생", err);
       } finally {
         setLoading(false);
       }
-    };
+    },
+    [sort, arfilter, gefilter]
+  );
 
   useEffect(() => {
-    getPerformance(query);
-  }, [sort, arfilter, gefilter]);
+    setPage(0);
+    getPerformance(query, false, 0);
+  }, [sort, arfilter, gefilter, query, getPerformance]);
 
   const handleAreaChange = (value: string) => {
     if (value && !arfilter.includes(value)) {
       setArFilter([...arfilter, value]);
     }
   };
+
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      getPerformance(query, true, nextPage);
+    }
+  }, [loading, hasMore, page, query, getPerformance]);
+
+  useInfiniteScroll(loadMore, hasMore);
 
   const handleGenreChange = (value: string) => {
     if (value && !gefilter.includes(value)) {
@@ -168,8 +194,6 @@ function PerformanceList() {
               size={12}
               onClick={() => {
                 setQuery("");
-                setArFilter([]);
-                setGeFilter([]);
                 getPerformance("");
               }}
               style={{
@@ -240,13 +264,11 @@ function PerformanceList() {
       >
       </div>
 
-      {loading ? (
-        <div className="detail-loading">공연 정보를 불러오는 중 ... </div>
-      ) : performances.length === 0 ? (
+      {performances.length === 0 && !loading && (
         <div className="detail-error" style={{ marginTop: "20px" }}>
           공연 정보를 찾을 수 없습니다.
         </div>
-      ) : (
+      )}
       <div
         style={{
           display: "grid",
@@ -254,7 +276,7 @@ function PerformanceList() {
           gap: "16px"
         }}
       >
-        {performances.slice(0,30).map((p) => (
+        {performances.map((p) => (
           <div key={p.prfId} style={{ textAlign: "center" }}>
             <a href={p.posterImgUrl} target="_blank" rel="noopener noreferrer">
               <img src={p.posterImgUrl} alt="poster" style={{ width: 200, cursor: "pointer" }} />
@@ -276,7 +298,6 @@ function PerformanceList() {
           </div>
         ))}
       </div>
-      )}
     </div>
   );
 }
