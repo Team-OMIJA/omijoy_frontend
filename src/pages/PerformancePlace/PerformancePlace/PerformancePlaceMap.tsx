@@ -1,155 +1,123 @@
-// src/components/map/PerformancePlaceMap.tsx
+// src/components/map/PerformancePlaceMap.tsx (대폭 수정)
 
 import { useCallback, useState, useEffect } from "react";
 import KaKaoMap from "./KaKaoMap";
-import { sendLocation, PlaceMarker } from "../../../apis/performanceplaceApi";
+import {
+  sendLocation,
+  getGugunSummaries, // ⭐️ '요약' API 임포트
+  PlaceMarker,
+  GugunSummary,
+} from "../../../apis/performanceplaceApi";
 
-interface LocationState {
-  latitude: number | null;
-  longitude: number | null;
-  error: string | null;
-  region1: string | null;
-  region2: string | null;
-}
+// ⭐️ 부산의 중심 좌표 (예: 부산시청)와 기본 줌 레벨
+const BUSAN_CENTER = { lat: 35.1795543, lng: 129.0756416 };
+const SUMMARY_LEVEL = 8; // '요약 뷰' 일 때 맵 레벨
+const DETAIL_LEVEL = 6; // '상세 뷰' 일 때 맵 레벨
 
 function PerformancePlaceMap() {
-  const [location, setLocation] = useState<LocationState>({
-    latitude: null,
-    longitude: null,
-    error: null,
-    region1: null,
-    region2: null,
-  });
   const [isLoading, setIsLoading] = useState(true);
-  const [places, setPlaces] = useState<PlaceMarker[]>([]);
-
   const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
 
-  const executeGeocoder = useCallback(
-    (lat: number, lng: number) => {
-      if (!window.kakao.maps.services) {
-        console.error("카카오맵 services 라이브러리가 초기화되지 않았습니다.");
-        return;
-      }
+  // ⭐️ 1. 뷰 모드와 마커 데이터를 상태로 관리
+  const [viewMode, setViewMode] = useState<"summary" | "detail">("summary");
+  const [markers, setMarkers] = useState<(PlaceMarker | GugunSummary)[]>([]);
 
-      const geocoder = new window.kakao.maps.services.Geocoder();
+  // ⭐️ 2. 맵 중심 좌표와 레벨을 상태로 관리
+  const [mapCenter, setMapCenter] = useState({
+    lat: BUSAN_CENTER.lat,
+    lng: BUSAN_CENTER.lng,
+  });
+  const [mapLevel, setMapLevel] = useState(SUMMARY_LEVEL);
 
-      geocoder.coord2Address(lng, lat, (result: any, status: any) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const addr = result[0];
-          const region1 = addr.address.region_1depth_name;
-          const region2 = addr.address.region_2depth_name;
-
-          setLocation((prev) => ({
-            ...prev,
-            region1,
-            region2,
-          }));
-
-          sendLocation(region1, region2)
-            .then((markerList: PlaceMarker[]) => {
-              setPlaces(markerList);
-              console.log(
-                `✅ ${markerList.length}개의 공연장 데이터를 수신했습니다.`
-              );
-            })
-            .catch((error: any) => {
-              console.error("공연장 데이터 로드 실패:", error);
-            });
-        }
-      });
-    },
-    [setLocation, setPlaces]
-  );
-
-  const getLocation = useCallback(() => {
-    setIsLoading(true);
-    setLocation((loca) => ({
-      ...loca,
-      latitude: null,
-      longitude: null,
-      error: null,
-    }));
-    setPlaces([]);
-
-    if (!navigator.geolocation) {
-      // ... (브라우저 오류 처리 생략)
-      setIsLoading(false);
-      return;
-    }
-
-    const getAddress = (lat: number, lng: number) => {
-      // isKakaoMapLoaded가 false일 때만 load 함수를 호출하여 중복 실행을 방지합니다.
-      if (!isKakaoMapLoaded) {
-        window.kakao.maps.load(() => {
-          setIsKakaoMapLoaded(true);
-          executeGeocoder(lat, lng);
-        });
-      } else {
-        // 이미 로드된 경우, 바로 executeGeocoder를 실행합니다.
-        executeGeocoder(lat, lng);
-      }
-    };
-
-    const handleSuccess = (position: GeolocationPosition) => {
-      const { latitude, longitude } = position.coords;
-
-      setLocation({
-        latitude,
-        longitude,
-        error: null,
-        region1: null,
-        region2: null,
-      });
-
-      getAddress(latitude, longitude);
-      setIsLoading(false);
-    };
-
-    const handleError = (error: GeolocationPositionError) => {
-      let errorMessage = error.message;
-      if (error.code === 1) {
-        errorMessage = "위치 정보 접근이 거부되었습니다.";
-      }
-      setLocation((errorState) => ({ ...errorState, error: errorMessage }));
-      setIsLoading(false);
-    };
-
-    const options: PositionOptions = {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0,
-    };
-
-    navigator.geolocation.getCurrentPosition(
-      handleSuccess,
-      handleError,
-      options
-    );
-  }, [executeGeocoder]);
-
+  // ⭐️ 3. 카카오맵 스크립트 로드 (최초 1회)
   useEffect(() => {
-    getLocation();
-  }, [getLocation]);
+    // ⭐️ 이 로직은 사용자의 기존 코드를 활용합니다. (스크립트 로드)
+    // ⭐️ window.kakao.maps.load()가 두 번 실행되지 않도록 isKakaoMapLoaded로 방어합니다.
+    if (!isKakaoMapLoaded) {
+      window.kakao.maps.load(() => {
+        setIsKakaoMapLoaded(true);
+      });
+    }
+  }, [isKakaoMapLoaded]); // isKakaoMapLoaded가 바뀔 때마다 실행(최초 1회)
+
+  // ⭐️ 4. '요약 뷰' 데이터를 로드하는 함수
+  const loadSummaryView = useCallback(async () => {
+    console.log("Loading Summary View...");
+    setIsLoading(true);
+    try {
+      const summaryData = await getGugunSummaries("부산");
+      setMarkers(summaryData);
+      setViewMode("summary");
+      setMapCenter(BUSAN_CENTER); // 맵 중심을 부산 전체로
+      setMapLevel(SUMMARY_LEVEL); // 맵 레벨을 '요약' 레벨로
+    } catch (error) {
+      console.error("요약 데이터 로드 실패:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // ⭐️ 5. 컴포넌트 마운트 시 '요약 뷰' 로드
+  useEffect(() => {
+    if (isKakaoMapLoaded) {
+      // 맵 스크립트가 로드된 후에 실행
+      loadSummaryView();
+    }
+  }, [isKakaoMapLoaded, loadSummaryView]); // 맵 로드 상태(true)가 되면 1회 실행
+
+  // ⭐️ 6. '요약' 마커 클릭 시 '개별 뷰'로 전환하는 핸들러
+  const handleSummaryClick = useCallback(async (item: GugunSummary) => {
+    console.log(`Loading Detail View for: ${item.gugun}`);
+    setIsLoading(true);
+    try {
+      // ⭐️ 백엔드가 수정되었으므로 '부산', '해운대구' 등으로 필터링
+      const detailData = await sendLocation("부산", item.gugun);
+      setMarkers(detailData);
+      setViewMode("detail");
+      setMapCenter({ lat: item.latitude, lng: item.longitude }); // 맵 중심을 클릭한 '구'로 이동
+      setMapLevel(DETAIL_LEVEL); // 맵 레벨을 '상세' 레벨로
+    } catch (error) {
+      console.error(`${item.gugun} 개별 데이터 로드 실패:`, error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []); // 의존성 배열 비움 (sendLocation은 외부 함수)
+
+  // (참고: 기존 '현재 위치 찾기' 기능은 이 로직과 분리하거나,
+  // geolocation 성공 시 handleSummaryClick(item)과 유사하게
+  // sendLocation을 호출하는 '개별 뷰'로 바로 진입하도록 구현할 수 있습니다.)
+  // const getLocation = ...
 
   return (
     <div>
-      <p>공연장 개수: {places.length}개</p>
-      <button onClick={getLocation}>현재 위치 찾기</button>
-
-      {!isLoading &&
-      location.latitude &&
-      location.longitude &&
-      isKakaoMapLoaded ? (
+      {isLoading && <p>데이터 로딩 중...</p>}
+      {/* ⭐️ '상세 뷰'일 때만 '요약 뷰로 돌아가기' 버튼 표시 */}
+      {viewMode === "detail" && (
+        <button onClick={loadSummaryView} style={{ marginBottom: "10px" }}>
+          ⬅️ 부산 전체 구군 보기
+        </button>
+      )}
+      {/* <button onClick={getLocation}>현재 위치 찾기</button> (기존 버튼) */} {" "}
+      <p>
+        현재 뷰: {viewMode === "summary" ? "부산시 전체 요약" : "구군별 상세"}{" "}
+        (표시 항목: {markers.length}개)
+      </p>{" "}
+      {isKakaoMapLoaded ? (
         <KaKaoMap
-          latitude={location.latitude}
-          longitude={location.longitude}
-          places={places}
-          isKakaoMapLoaded={isKakaoMapLoaded} // isKakaoMapLoaded prop 추가
+          latitude={mapCenter.lat}
+          longitude={mapCenter.lng}
+          level={mapLevel}
+          markers={markers}
+          viewMode={viewMode}
+          isKakaoMapLoaded={isKakaoMapLoaded}
+          onSummaryClick={handleSummaryClick} // ⭐️ 클릭 핸들러 전달
         />
       ) : (
-        !isLoading && <p>지도를 표시할 위치 정보가 없습니다.</p>
-      )}
+        <p>
+          지도 로딩 중... (index.html에 카카오맵 스크립트가 포함되어 있어야
+          합니다)
+        </p>
+      )}{" "}
     </div>
   );
 }

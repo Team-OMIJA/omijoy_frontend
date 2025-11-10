@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { PlaceMarker } from "../../../apis/performanceplaceApi";
+import { PlaceMarker, GugunSummary } from "../../../apis/performanceplaceApi";
 
+// 1. window.kakao 타입 선언
 declare global {
   interface Window {
     kakao: any;
@@ -8,178 +9,147 @@ declare global {
 }
 
 interface KakaoMapProps {
-  latitude: number;
-  longitude: number;
-  places: PlaceMarker[];
-  isKakaoMapLoaded: boolean; // isKakaoMapLoaded prop 추가
+  latitude: number; // 맵 중심 위도
+  longitude: number; // 맵 중심 경도
+  level: number; // 맵 확대 레벨
+  markers: (PlaceMarker | GugunSummary)[]; // ⭐️ 두 타입의 데이터를 모두 받음
+  viewMode: "summary" | "detail"; // ⭐️ 뷰 모드 ('요약' | '상세')
+  isKakaoMapLoaded: boolean;
+  // ⭐️ 요약 마커 클릭 시 'gugun' 정보를 부모로 전달하는 콜백
+  onSummaryClick: (gugun: GugunSummary) => void;
 }
 
 function KaKaoMap({
   latitude,
   longitude,
-  places,
+  level,
+  markers,
+  viewMode,
   isKakaoMapLoaded,
+  onSummaryClick,
 }: KakaoMapProps) {
   const mapContainer = useRef(null);
-  // 💡 지도와 마커 관련 객체를 컴포넌트 전역에서 관리하기 위해 ref를 사용합니다.a
   const mapRef = useRef<kakao.maps.Map | null>(null);
-  const markersRef = useRef<kakao.maps.Marker[]>([]);
-  const infowindowRef = useRef<kakao.maps.InfoWindow | null>(null);
-  const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
 
-  // 💡 지도 생성 및 마커/클러스터 업데이트를 위한 useEffect
+  // ⭐️ 2. 두 종류의 마커를 관리할 Ref
+  const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null); // '개별 뷰'용 클러스터러
+  const overlaysRef = useRef<kakao.maps.CustomOverlay[]>([]); // '요약 뷰'용 커스텀 오버레이
+  const infowindowRef = useRef<kakao.maps.InfoWindow | null>(null); // '개별 뷰'용 인포윈도우 // ⭐️ 3. 지도/마커 생성 및 업데이트
+
   useEffect(() => {
-    // 카카오 SDK 스크립트가 로드되지 않았거나, 지도를 담을 div가 없으면 중단
-    if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) {
-      // isKakaoMapLoaded 조건 추가
-      return;
-    }
+    if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
 
-    // 1. 지도 객체가 아직 생성되지 않았다면 최초 1회 생성
+    const mapOption = {
+      center: new window.kakao.maps.LatLng(latitude, longitude),
+      level: level, // ⭐️ 부모에게 받은 레벨 사용
+    }; // 4. 지도 최초 1회 생성
+
     if (!mapRef.current) {
-      const mapOption = {
-        center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: 7,
-      };
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
-      newMap.setMaxLevel(7);
+      newMap.setMaxLevel(8); // '요약 뷰'를 위해 최대 레벨 확장
 
-      // --- 💡 START: 클러스터러 생성 ---
-      const newClusterer = new window.kakao.maps.MarkerClusterer({
+      // '개별 뷰'에서 사용할 클러스터러와 인포윈도우도 최초 1회 생성
+      clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
-        gridSize: 300, // 💡 클러스터링 격자 크기를 늘려 하나의 클러스터로 합쳐질 확률을 높입니다.
-        minLevel: 6,
-        minClusterSize: 1, // 💡 최소 클러스터링 단위를 1로 변경
-        styles: [
-          {
-            width: "100px",
-            height: "30px",
-            background: "rgba(255, 255, 255, 0.9)",
-            borderRadius: "15px",
-            border: "1px solid #333",
-            color: "#000",
-            textAlign: "center",
-            lineHeight: "30px",
-            fontWeight: "bold",
-          },
-        ],
+        minLevel:3, // ⭐️ 개별 뷰에서 클러스터링이 시작될 레벨
       });
-      clustererRef.current = newClusterer;
-
-      // --- 💡 START: 클러스터 클릭 시 확대 레벨 조절 ---
-      window.kakao.maps.event.addListener(
-        newClusterer,
-        "clusterclick",
-        function (cluster: any) {
-          // 클러스터를 클릭했을 때, 지도의 레벨을 6으로 설정하고 클러스터의 중심으로 이동합니다.
-          newMap.setLevel(5, { anchor: cluster.getCenter() });
-        }
-      );
-      infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
-
-      // --- 💡 START: 레벨 컨트롤러 UI 생성 ---
-      const controlContainer = document.createElement("div");
-      controlContainer.style.cssText = `
-          position: absolute; top: 15px; right: 15px; padding: 5px 10px;
-          background: white; border: 1px solid #ccc; border-radius: 5px;
-          font-size: 12px; z-index: 2; display: flex; align-items: center;
-          flex-direction: column; gap: 10px;
-        `;
-
-      const levelLabel = document.createElement("span");
-      levelLabel.style.fontWeight = "bold";
-
-      const levelSlider = document.createElement("input");
-      levelSlider.type = "range";
-      const minMapLevel = 1;
-      const maxMapLevel = 7;
-      levelSlider.min = String(minMapLevel);
-      levelSlider.max = String(maxMapLevel);
-      levelSlider.className = "custom-v-slider";
-      levelSlider.style.cssText = `
-          -webkit-appearance: slider-vertical; writing-mode: bt-lr;
-          width: 8px; height: 100px; cursor: pointer; padding: 0 5px;
-        `;
-      levelSlider.oninput = () => {
-        const sliderValue = parseInt(levelSlider.value, 10);
-        const newLevel = maxMapLevel - sliderValue + minMapLevel;
-        newMap.setLevel(newLevel);
-      };
-
-      controlContainer.appendChild(levelLabel);
-      controlContainer.appendChild(levelSlider);
-      newMap.getNode().appendChild(controlContainer);
-
-      const toggleMarkers = () => {
-        const currentLevel = newMap.getLevel();
-        levelLabel.innerHTML = `레벨: ${currentLevel}`;
-        levelSlider.value = String(maxMapLevel - currentLevel + minMapLevel);
-      };
-
-      window.kakao.maps.event.addListener(
-        newMap,
-        "zoom_changed",
-        toggleMarkers
-      );
-      toggleMarkers();
+      infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 }); // (기존의 줌 슬라이더 등 UI 로직은 여기에 그대로 두셔도 됩니다)
     }
 
-    // 2. 지도 객체가 생성된 이후, 마커/클러스터 업데이트 로직
     const map = mapRef.current;
     const infowindow = infowindowRef.current;
     const clusterer = clustererRef.current;
 
     if (!map || !infowindow || !clusterer) return;
 
-    // 💡 위도, 경도가 변경되면 지도의 중심을 부드럽게 이동
+    // ⭐️ 5. 뷰가 변경될 때마다 지도 중심과 레벨 업데이트
     const newCenter = new window.kakao.maps.LatLng(latitude, longitude);
+    map.setLevel(level, { anchor: newCenter });
     map.panTo(newCenter);
 
-    // 기존 마커와 클러스터 내용 초기화
-    clusterer.clear();
-    markersRef.current = [];
+    // ⭐️ 6. 기존 마커/오버레이 모두 제거 (초기화)
+    clusterer.clear(); // 클러스터러 마커 제거
+    overlaysRef.current.forEach((overlay) => overlay.setMap(null)); // 오버레이 제거
+    overlaysRef.current = []; // 배열 비우기
 
-    const gugunName = places.length > 0 ? places[0].gugun : "";
+    // ⭐️ 7. 뷰 모드에 따라 분기
+    if (viewMode === "summary") {
+      // --- '요약 뷰' 로직: CustomOverlay 사용 ---
+      (markers as GugunSummary[]).forEach((item) => {
+        // 커스텀 오버레이에 표시할 DOM 요소 생성
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "summary-overlay"; // (CSS로 스타일링 가능)
+        contentDiv.style.cssText = `
+          padding: 5px 10px; background: rgba(255, 255, 255, 0.9); 
+          border: 1px solid #333; border-radius: 15px; font-weight: bold; 
+          text-align: center; font-size: 12px; cursor: pointer;
+        `;
+        contentDiv.innerHTML = `${item.gugun} (${item.count})`;
 
-    // `places` 데이터가 없으면 마커를 생성하지 않고 여기서 종료
-    if (!places || places.length === 0) {
-      return;
-    }
+        // ⭐️ 클릭 이벤트 바인딩
+        contentDiv.onclick = () => {
+          onSummaryClick(item); // ⭐️ 클릭 시 부모 컴포넌트로 item 정보 전달
+        };
 
-    const newMarkers = places.map((place) => {
-      const markerPosition = new window.kakao.maps.LatLng(
-        place.latitude,
-        place.longitude
-      );
-      const marker = new window.kakao.maps.Marker({
-        position: markerPosition,
-        title: place.prfPlcName,
-      });
-
-      window.kakao.maps.event.addListener(marker, "click", function () {
-        infowindow.setContent(
-          `<div style="padding:5px;font-size:12px; font-weight: bold;">${place.prfPlcName}</div>`
+        const position = new window.kakao.maps.LatLng(
+          item.latitude,
+          item.longitude
         );
-        infowindow.open(map, marker);
+
+        const overlay = new window.kakao.maps.CustomOverlay({
+          content: contentDiv, // ⭐️ DOM 요소를 content로 설정
+          position: position,
+          yAnchor: 1,
+        });
+
+        overlay.setMap(map);
+        overlaysRef.current.push(overlay);
+      });
+    } else {
+      // --- '개별 뷰' 로직: MarkerClusterer 사용 ---
+      const newMarkers = (markers as PlaceMarker[]).map((place) => {
+        const markerPosition = new window.kakao.maps.LatLng(
+          place.latitude,
+          place.longitude
+        );
+        const marker = new window.kakao.maps.Marker({
+          position: markerPosition,
+          title: place.prfPlcName,
+        });
+
+        // '개별' 마커 클릭 시 인포윈도우 표시
+        window.kakao.maps.event.addListener(marker, "click", function () {
+          infowindow.setContent(
+            `<div style="padding:5px;font-size:12px; font-weight: bold;">${place.prfPlcName}</div>`
+          );
+          infowindow.open(map, marker);
+        });
+        return marker;
       });
 
-      return marker;
-    });
-
-    clusterer.setTexts(() => gugunName);
-    clusterer.addMarkers(newMarkers);
-    markersRef.current = newMarkers;
-  }, [latitude, longitude, places, isKakaoMapLoaded]); // 의존성 배열에 isKakaoMapLoaded 추가
+      // ⭐️ 클러스터러에 '개별' 마커 추가
+      clusterer.addMarkers(newMarkers);
+    }
+  }, [
+    latitude,
+    longitude,
+    level,
+    markers,
+    viewMode,
+    isKakaoMapLoaded,
+    onSummaryClick,
+  ]);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "500px" }}>
+      {" "}
       <div
         id="map"
         ref={mapContainer}
         style={{ width: "100%", height: "500px" }}
-      ></div>
+      ></div>{" "}
     </div>
   );
 }
