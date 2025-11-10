@@ -5,12 +5,13 @@ import Home from '../../pages/Home/Home';
 import Theater from '../../pages/PerformancePlace/PerformancePlace';
 import Login from '../../pages/Auth/Login/Login';
 import SignUp from '../../pages/Auth/SignUp/SignUp';
+import MyPage from '../../pages/MyPage/MyPage';
 
 function MainRouter() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        {/* index 사옹시 기본 경로와 동일합니다. */}
+        {/* index 사용시 기본 경로와 동일합니다. */}
         <Route index element={<Home />} />
         {/* 로그인 엔드포인트 */}
         <Route path='/login' element={<Login />} />
@@ -18,6 +19,7 @@ function MainRouter() {
         <Route path='/performance/*' element={<PerformanceRouter />} />
         {/* 공연장 */}
         <Route path='/theater' element={<Theater />} />
+        <Route path='/mypage' element={<MyPage />} />
         <Route path='/signup' element={<SignUp />} />
       </Route>
     </Routes>

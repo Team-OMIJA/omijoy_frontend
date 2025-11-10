@@ -25,10 +25,11 @@ function Login() {
 
   const loginHandler = () => {
     axios
-      .post(import.meta.env.VITE_API_BASE_URL + '/login', user, {
+      .post(import.meta.env.VITE_API_BASE_URL + '/login', user, {       
         headers: {
           'Content-Type': 'application/json',
-        },
+          
+        },       
       })
       .then((res) => {
         const jwtToken = res.headers.authorization;
@@ -56,7 +57,7 @@ function Login() {
           open={open}
           autoHideDuration={2000}
           onClose={() => setOpen(false)}
-          message='Id 혹은 비밀번호가 들렸습니다.'
+          message='Id 혹은 비밀번호가 틀렸습니다.'
         />
       </Stack>
 
