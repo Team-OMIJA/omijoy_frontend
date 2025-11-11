@@ -28,7 +28,7 @@ function NavBar() {
 
   // 메뉴 열기 / 닫기
   const menuOpenHandler = (event: React.MouseEvent<HTMLElement>) => {
-    // 현재 상태값에 따라 바뀜 - 마우스 갖다대면 열림
+    // 클릭 시 열림
     setAnchorEl(event.currentTarget);
   };
 
