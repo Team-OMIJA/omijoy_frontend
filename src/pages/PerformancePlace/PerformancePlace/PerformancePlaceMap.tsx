@@ -6,6 +6,7 @@ import {
   PlaceMarker,
 } from "../../../apis/performanceplaceApi";
 import { KOREA_REGIONS } from "../../../utils/regions";
+import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
 const KOREA_LEVEL = 12;
@@ -32,6 +33,8 @@ function PerformancePlaceMap() {
     lat: number;
     lng: number;
   } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceMarker | null>(null);
 
   useEffect(() => {
     if (!isKakaoMapLoaded) {
@@ -71,16 +74,14 @@ function PerformancePlaceMap() {
         setIsLocationDenied(false);
       } catch (error) {
         setErrorMessage("근처 공연장 로드에 실패했습니다.");
-          setCurrentLocation(null);
+        setCurrentLocation(null);
       }
       setIsLoading(false);
     };
 
     const handleError = (error: GeolocationPositionError) => {
       if (error.code === 1) {
-        setErrorMessage(
-          "위치 권한이 거부되었습니다."
-        );
+        setErrorMessage("위치 권한이 거부되었습니다.");
         setIsLocationDenied(true);
         setMapCenter(KOREA_CENTER);
         setMapLevel(KOREA_LEVEL);
@@ -92,6 +93,17 @@ function PerformancePlaceMap() {
 
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
   }, []);
+
+  const handleMarkerClick = useCallback((placeData: PlaceMarker) => {
+        console.log("모달 열기 시도:", placeData.prfPlcName);
+        setSelectedPlace(placeData);
+        setIsModalOpen(true);
+    }, []);
+
+  const closeModal = useCallback(() => {
+        setIsModalOpen(false);
+        setSelectedPlace(null);
+    }, [])
 
   const handleFilterSearch = useCallback(async () => {
     if (!filterSido) {
@@ -193,10 +205,18 @@ function PerformancePlaceMap() {
           places={places}
           isKakaoMapLoaded={isKakaoMapLoaded}
           currentLocation={currentLocation}
+          onMarkerClick={handleMarkerClick}
         />
       ) : (
         <p>지도 로딩 중...</p>
       )}
+      {isModalOpen && selectedPlace ? (
+        <PerformancePlaceModal
+          place={selectedPlace}
+          onClose={closeModal}
+        />
+      ) : null 
+      }
     </div>
   );
 }
