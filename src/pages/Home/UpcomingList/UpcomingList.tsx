@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-type Performance = {
-  prfId: string;
-  posterImgUrl: string;
-  prfNm: string;
-  prfPlcNm: string;
-  prfStartDt: string;
-  prfEndDt: string;
-  genreNm: string;
-};
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
+import { UpcomingPerformance } from "../../../types/homeTypes";
+import { fetchUpcomingPerformances } from "../../../apis/performanceApi";
 
 function UpcomingList() {
-  const [performances, setPerformances] = useState<Performance[]>([]);
+  const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
 
-  // 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
+  // UI 용 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -24,19 +18,11 @@ function UpcomingList() {
     return `${y}.${m}.${d}`;
   };
 
-  // API 요청
   useEffect(() => {
-    const getPerformances = async () => {
-      const API_KEY = import.meta.env.VITE_API_BASE_URL;
-
-      try {
-        const response = await axios.get(`${API_KEY}/performances/upcoming`);
-        setPerformances(response.data);
-      } catch (err) {
-        console.error("Failed to fetch data from server", err);
-      }
-    };
-    getPerformances();
+    (async () => {
+      const data = await fetchUpcomingPerformances();
+      setPerformances(data);
+    })();
   }, []);
 
   return (
@@ -87,16 +73,21 @@ function UpcomingList() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {/* 포스터 */}
+            {/* 포스터 클릭 시 모달 열기 */}
             <img
               src={p.posterImgUrl}
               alt={p.prfNm}
+              onClick={() => {
+                setSelectedPrfId(p.prfId);
+                setOpen(true);
+              }}
               style={{
                 width: "100%",
                 height: "250px",
                 objectFit: "cover",
                 borderRadius: "10px",
                 marginBottom: "10px",
+                cursor: "pointer",
               }}
             />
 
@@ -147,6 +138,9 @@ function UpcomingList() {
           </div>
         ))}
       </div>
+
+      {/* 공연 상세 모달 (공통 모달) */}
+      <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );
 }

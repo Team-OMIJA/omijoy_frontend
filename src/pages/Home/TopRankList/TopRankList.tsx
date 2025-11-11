@@ -1,68 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-type Performance = {
-  id: string;
-  poster: string;
-  title: string;
-  place: string;
-  period: string;
-  genre: string;
-  rank: string;
-};
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
+import { TopRankPerformance } from "../../../types/homeTypes";
+import { fetchTopRankPerformances } from "../../../apis/performanceApi";
 
 function TopRankList() {
-  const [performances, setPerformances] = useState<Performance[]>([]);
-  const navigate = useNavigate();
+  const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
+  const [open, setOpen] = useState(false); // 모달 상태
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const navigate = useNavigate(); // 더보기
 
   useEffect(() => {
-    const fetchPerformances = async () => {
-      const API_KEY = import.meta.env.VITE_KOPIS_API_KEY;
-
-      const today = new Date();
-      const pastDate = new Date();
-      pastDate.setDate(pastDate.getDate() - 30);
-      today.getDate();
-
-      // 날짜 포맷팅 (YYYYMMDD)
-      const formatDate = (date: Date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}${month}${day}`;
-      };
-
-      const stDate = formatDate(pastDate);
-      const edDate = formatDate(today);
-
-      const url = `http://localhost:4000/kopis/boxoffice?service=${API_KEY}&stdate=${stDate}&eddate=${edDate}&catecode=&area=`;
-
-      try {
-        const response = await axios.get(url, { responseType: "text" });
-        const parser = new DOMParser();
-        const xmlData = parser.parseFromString(response.data, "text/xml");
-        const boxList = xmlData.getElementsByTagName("boxof");
-
-        // XML → JS 객체 변환
-        const result = Array.from(boxList).map((box) => ({
-          id: box.getElementsByTagName("mt20id")[0]?.textContent || "",
-          title: box.getElementsByTagName("prfnm")[0]?.textContent || "",
-          place: box.getElementsByTagName("prfplcnm")[0]?.textContent || "",
-          poster: box.getElementsByTagName("poster")[0]?.textContent || "",
-          period: box.getElementsByTagName("prfpd")[0]?.textContent || "",
-          rank: box.getElementsByTagName("rnum")[0]?.textContent || "",
-          genre: box.getElementsByTagName("cate")[0]?.textContent || "",
-        }));
-
-        // 1~5위까지만 표시
-        setPerformances(result.slice(0, 5));
-      } catch (err) {
-        console.error("Failed to fetch KOPIS API", err);
-      }
-    };
-
-    fetchPerformances();
+    (async () => {
+      const data = await fetchTopRankPerformances();
+      setPerformances(data);
+    })(); // useEffect안에서 async 바로 사용 불가기 때문 비동기 함수 정의하고 마지막 () 통해 즉시 실행
   }, []);
 
   return (
@@ -88,7 +40,7 @@ function TopRankList() {
           전체 공연 순위 TOP 5
         </h2>
 
-        {/* 🔹 /performance로 이동 버튼 */}
+        {/* /performance로 이동 버튼 */}
         <button
           onClick={() => navigate("/performance")}
           style={{
@@ -131,16 +83,21 @@ function TopRankList() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {/* 포스터 */}
+            {/* 포스터 클릭 시 모달 열기 */}
             <img
               src={p.poster}
               alt={p.title}
+              onClick={() => {
+                setSelectedPrfId(p.id);
+                setOpen(true);
+              }}
               style={{
                 width: "100%",
                 height: "250px",
                 objectFit: "cover",
                 borderRadius: "10px",
                 marginBottom: "10px",
+                cursor: "pointer",
               }}
             />
 
@@ -188,6 +145,9 @@ function TopRankList() {
           </div>
         ))}
       </div>
+
+      {/* 공연 상세 모달 (공통 모달) */}
+      <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );
 }
