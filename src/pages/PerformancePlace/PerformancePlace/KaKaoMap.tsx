@@ -1,5 +1,3 @@
-// src/components/map/KaKaoMap.tsx
-
 import { useEffect, useRef } from "react";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
 
@@ -15,6 +13,7 @@ interface KakaoMapProps {
   places: PlaceMarker[];
   isKakaoMapLoaded: boolean;
   level: number;
+  currentLocation: { lat: number; lng: number } | null;
 }
 
 function KaKaoMap({
@@ -23,15 +22,21 @@ function KaKaoMap({
   places,
   isKakaoMapLoaded,
   level,
+  currentLocation,
 }: KakaoMapProps) {
   const mapContainer = useRef(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
   const infowindowRef = useRef<kakao.maps.InfoWindow | null>(null);
-  const allMarkersRef = useRef<kakao.maps.Marker[]>([]);
+  const myLocationMarkerRef = useRef<kakao.maps.Marker | null>(null);
+  
+  
+  
 
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
+
+
 
     const mapOption = {
       center: new window.kakao.maps.LatLng(latitude, longitude),
@@ -46,9 +51,10 @@ function KaKaoMap({
       clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
-        minLevel: 1,
+        minLevel: 4,
         maxLevel: 12,
-        Gridsize: 1000,
+        gridSize: 140,
+        minClusterSize: 2,
       });
       infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
 
@@ -65,7 +71,7 @@ function KaKaoMap({
       const levelSlider = document.createElement("input");
       levelSlider.type = "range";
       const minMapLevel = 1;
-      const maxMapLevel = 12; // ⭐️
+      const maxMapLevel = 12; 
       levelSlider.min = String(minMapLevel);
       levelSlider.max = String(maxMapLevel);
       levelSlider.className = "custom-v-slider";
@@ -81,6 +87,16 @@ function KaKaoMap({
       controlContainer.appendChild(levelLabel);
       controlContainer.appendChild(levelSlider);
       newMap.getNode().appendChild(controlContainer);
+
+      if(currentLocation){
+      const currentPosition = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng)
+      const myMarker = new window.kakao.maps.Marker({
+        position : currentPosition,
+        map : mapRef.current,
+        title : "내 위치"
+      });
+      myLocationMarkerRef.current = myMarker;
+      }
 
       const updateZoomUI = () => {
         const currentLevel = newMap.getLevel();
@@ -99,6 +115,19 @@ function KaKaoMap({
     if (!map || !infowindow || !clusterer) return;
 
     const newCenter = new window.kakao.maps.LatLng(latitude, longitude);
+
+    if(currentLocation && myLocationMarkerRef.current){
+      myLocationMarkerRef.current.setPosition(newCenter);
+    } else if (currentLocation && map && !myLocationMarkerRef.current){
+      const myMarker = new window.kakao.maps.Marker({
+        position : newCenter,
+        map : map,
+        title : "내 위치"
+      });
+      myLocationMarkerRef.current = myMarker;
+    }
+
+
     map.setLevel(level);
     map.panTo(newCenter);
 
@@ -125,7 +154,7 @@ function KaKaoMap({
     });
 
     clusterer.addMarkers(newMarkers);
-  }, [latitude, longitude, places, isKakaoMapLoaded, level]);
+  }, [latitude, longitude, places, isKakaoMapLoaded, level , currentLocation]);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "500px" }}>

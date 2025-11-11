@@ -1,17 +1,15 @@
-// src/components/map/PerformancePlaceMap.tsx
-
 import { useCallback, useState, useEffect } from "react";
 import KaKaoMap from "./KaKaoMap";
 import {
-  findNearbyPlaces, // '내 근처' API
-  findPlacesByGugun, // '지역 필터' API
+  findNearbyPlaces,
+  findPlacesByGugun,
   PlaceMarker,
 } from "../../../apis/performanceplaceApi";
-import { KOREA_REGIONS} from "../../../utils/regions";
+import { KOREA_REGIONS } from "../../../utils/regions";
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
 const KOREA_LEVEL = 12;
-const LOCAL_LEVEL = 7;
+const LOCAL_LEVEL = 3;
 const GU_LEVEL = 8;
 
 function PerformancePlaceMap() {
@@ -30,8 +28,11 @@ function PerformancePlaceMap() {
 
   const [filterSido, setFilterSido] = useState<SidoKey | "">("");
   const [filterGugun, setFilterGugun] = useState<string>("");
+  const [currentLocation, setCurrentLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
-  // ⭐️ 1. 카카오맵 스크립트 로드
   useEffect(() => {
     if (!isKakaoMapLoaded) {
       window.kakao.maps.load(() => {
@@ -40,13 +41,12 @@ function PerformancePlaceMap() {
     }
   }, [isKakaoMapLoaded]);
 
-  // ⭐️ 2. (기본 기능) '내 근처' 찾기
   const getLocation = useCallback(() => {
     setIsLoading(true);
     setErrorMessage(null);
-    setPlaces([]); // ⭐️ 새로고침 시 기존 마커 초기화
+    setPlaces([]);
 
-    setMapCenter(KOREA_CENTER); 
+    setMapCenter(KOREA_CENTER);
     setMapLevel(KOREA_LEVEL);
 
     if (!navigator.geolocation) {
@@ -65,20 +65,21 @@ function PerformancePlaceMap() {
         const markerList = await findNearbyPlaces(latitude, longitude, 5000);
 
         setPlaces(markerList);
+        setCurrentLocation({ lat: latitude, lng: longitude });
         setMapCenter({ lat: latitude, lng: longitude });
         setMapLevel(LOCAL_LEVEL);
         setIsLocationDenied(false);
       } catch (error) {
         setErrorMessage("근처 공연장 로드에 실패했습니다.");
+          setCurrentLocation(null);
       }
       setIsLoading(false);
     };
 
     const handleError = (error: GeolocationPositionError) => {
       if (error.code === 1) {
-        // 권한 거부 (핵심 폴백)
         setErrorMessage(
-          "위치 권한이 거부되었습니다. '지역 필터'로 검색해 주세요."
+          "위치 권한이 거부되었습니다."
         );
         setIsLocationDenied(true);
         setMapCenter(KOREA_CENTER);
@@ -94,16 +95,19 @@ function PerformancePlaceMap() {
 
   const handleFilterSearch = useCallback(async () => {
     if (!filterSido) {
-      alert("시/도를 선택해주세요."); 
-      return; 
+      alert("시/도를 선택해주세요.");
+      return;
     }
 
     setIsLoading(true);
     setErrorMessage(null);
     setPlaces([]);
 
+    setCurrentLocation(null);
+
     try {
       const markerList = await findPlacesByGugun(filterSido, filterGugun);
+
       setPlaces(markerList);
 
       if (markerList.length > 0) {
@@ -119,13 +123,7 @@ function PerformancePlaceMap() {
       setErrorMessage("지역 필터 검색에 실패했습니다.");
     }
     setIsLoading(false);
-  }, [filterSido, filterGugun]); // ⭐️ 4. 맵 스크립트 로드 완료 시 '현재 위치' 자동 실행
-
-  useEffect(() => {
-    if (isKakaoMapLoaded) {
-      getLocation();
-    }
-  }, [isKakaoMapLoaded, getLocation]);
+  }, [filterSido, filterGugun]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -144,13 +142,13 @@ function PerformancePlaceMap() {
         <select
           value={filterSido}
           onChange={(e) => {
-            const newSido = e.target.value as| "";
+            const newSido = e.target.value as "";
             setFilterSido(newSido);
-            setFilterGugun(""); // Sido 변경 시 Gugun 초기화
+            setFilterGugun("");
           }}
         >
           <option value="">-- 시/도 선택 --</option>
-          {(Object.keys(KOREA_REGIONS)).map((s) => (
+          {Object.keys(KOREA_REGIONS).map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
@@ -159,7 +157,7 @@ function PerformancePlaceMap() {
         <select
           value={filterGugun}
           onChange={(e) => setFilterGugun(e.target.value)}
-          disabled={!filterSido} // Sido가 ""이면 비활성화
+          disabled={!filterSido}
         >
           <option value="">-- 시/군/구 (전체) --</option>
           {filterSido &&
@@ -168,19 +166,19 @@ function PerformancePlaceMap() {
                 {g}
               </option>
             ))}
-
         </select>
-        <button onClick={handleFilterSearch} disabled={isLoading}>찾기</button>
+        <button onClick={handleFilterSearch} disabled={isLoading}>
+          찾기
+        </button>
       </div>
-    
+
       {!isLocationDenied && (
         <button
           onClick={getLocation}
           disabled={isLoading}
           style={{ marginBottom: "10px" }}
         >
-          {isLoading ? "위치 찾는 중..." : "📍 내 근처 새로고침"}
-          {" "}
+          {isLoading ? "위치 찾는 중..." : "📍 내 근처 새로고침"}{" "}
         </button>
       )}
       <p>표시된 공연장: {places.length}개</p>
@@ -194,11 +192,10 @@ function PerformancePlaceMap() {
           level={mapLevel}
           places={places}
           isKakaoMapLoaded={isKakaoMapLoaded}
+          currentLocation={currentLocation}
         />
       ) : (
-        <p>
-          지도 로딩 중... 
-        </p>
+        <p>지도 로딩 중...</p>
       )}
     </div>
   );

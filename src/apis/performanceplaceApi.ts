@@ -1,8 +1,5 @@
-// src/apis/performanceplaceApi.ts
-
 import axios from "axios";
 
-// ⭐️ 백엔드의 PlaceMarker record와 동일한 인터페이스
 export interface PlaceMarker {
   prfPlcId: string;
   sido: string;
@@ -10,17 +7,18 @@ export interface PlaceMarker {
   prfPlcName: string;
   latitude: number;
   longitude: number;
+  address : string | null;
+  tel : string | null;
+  url : string | null;
 }
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/**
- * ⭐️ 1. '내 근처' API (캐시 기반, sido가 필요 없음)
- */
+
 export const findNearbyPlaces = async (
   latitude: number,
   longitude: number,
-  radius: number = 5000 // 기본 5km
+  radius: number = 5000 // 5km 설정
 ): Promise<PlaceMarker[]> => {
   const dataToSend = { latitude, longitude, radius };
   try {
@@ -35,9 +33,6 @@ export const findNearbyPlaces = async (
   }
 };
 
-/**
- * ⭐️ 2. '지역 필터' API
- */
 export const findPlacesByGugun = async (
   sido: string,
   gugun: string
