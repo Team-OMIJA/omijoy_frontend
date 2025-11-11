@@ -34,6 +34,7 @@ function PerformanceDetail() {
       try {
         const res = await fetch(`http://localhost:8080/prfDetails/${id}`);
         const data: PerformanceDetail = await res.json();
+        console.log(data); 
         setPerformance(data);
       } catch (err) {
         console.error("공연 상세 정보 불러오기 실패", err);
@@ -52,44 +53,44 @@ function PerformanceDetail() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <div style={{ display: "flex",backgroundColor: "#f8f8f8", padding: "40px", borderRadius: "16px", width: "75%", marginTop: "20px", alignItems: "center", position: "relative"}}>
+      <div style={{ display: "flex", padding: "40px", borderRadius: "16px", width: "75%", marginRight: "120px", marginTop: "25px", alignItems: "center", position: "relative"}}>
         <img src={performance.posterImgUrl} alt={performance.prfNm} width={400} height={500} style={{ borderRadius: "10px" }}/>
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", marginLeft: "100px"}}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", marginTop: "-95px",marginLeft: "120px"}}>
           <div>
-            <h2 style={{ marginBottom: "10px" }}>{performance.prfNm}</h2>
+            <h1 style={{marginBottom: "29px"}}>{performance.prfNm}</h1>
           </div>
-          <div style={{ lineHeight: "1.8" }}>
-            <h3>{performance.area}</h3>
-            <p>기간: {performance.prfStartDt} ~ {performance.prfEndDt}</p>
-            <p>공연 시간: {performance.dtGuidance?.toString()}</p>
-            <p>장르: {performance.genreNm}</p>
-            <p>장소: {performance.prfPlcNm}</p>
-            <p>러닝타임: {performance.runtime}</p>
-            <p>관람등급: {performance.prfAge}</p>
-            <p>가격: {performance.ticketPrice}</p>
-            <p>내한: {performance.visit === "Y" ? "O" : "X"}</p>
-            <p>어린이 관람: {performance.child === "Y" ? "O" : "X"}</p>
-            <p>축제 여부: {performance.festival === "Y" ? "O" : "X"}</p>
+          <div style={{ lineHeight: "1" }}>
+            <h2>{performance.area}</h2>
+            <p>{performance.prfPlcNm}</p>
+            <p>{performance.prfStartDt} ~ {performance.prfEndDt}<br />{performance.dtGuidance?.toString()}<br />{performance.runtime}</p>
+            <p>{performance.genreNm}<br />{performance.prfAge}</p>
+            <p>{performance.ticketPrice}</p>
+            {performance.visit === "Y" && <p>내한: O</p>}
+            {performance.festival === "Y" && <p>축제 여부: O</p>}
+            <p>어린이 동반 가능 여부: {performance.child === "Y" ? "O" : "X"}</p>
+
           </div>
         </div>
-        <HeartIcon style={{position: "absolute", top: "20", right: "30", fontSize: "28px", color: "crimson", cursor: "pointer"}} onClick={() => setLiked(!liked)}/>
+        <HeartIcon style={{position: "absolute", top: "75", right: "-60", fontSize: "40px", color: "crimson", cursor: "pointer"}} onClick={() => setLiked(!liked)}/>
         {performance.providerUrl && (
         <button
           onClick={() => {const firstUrl = performance.providerUrl.split(",")[0].trim();
             const validUrl = firstUrl.startsWith("http") ? firstUrl : `https://${firstUrl}`;
             window.open(validUrl, "_blank");
           }}
-          style={{position: "absolute", bottom: "40px", right: "60px", padding: "20px 50px", fontSize: "16px", cursor: "pointer", borderRadius: "30px"}}>예매하기</button>)}
+          style={{position: "absolute", bottom: "40px", right: "-80px", padding: "0 30px", lineHeight: "60px", fontSize: "23px",cursor: "pointer", borderRadius: "30px", backgroundColor: "black", color: "white"}}>예매 바로가기→</button>)}
       </div>
+        <hr style={{ width: "100%", border: "1px solid #ccc", margin: "50px 0" }} />
+
 
       {performance.detailImgUrl && performance.detailImgUrl.trim() !== "" && (
-        <div style={{display: "flex", flexDirection: "column", marginTop: "100px", alignItems: "center",}}>
+        <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
           {performance.detailImgUrl
             .split(",")
             .map(url => url.trim())
             .filter(url => url)
             .map((url, idx) => (
-              <img key={idx} src={url} alt={`detail-${idx}`} style={{ width: "80%", maxWidth: "800px"}}/>
+              <img key={idx} src={url} alt={`detail-${idx}`} style={{ width: "100%", maxWidth: "800px"}}/>
           ))}
         </div>
       )}
