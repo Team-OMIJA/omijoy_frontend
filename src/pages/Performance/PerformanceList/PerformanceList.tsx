@@ -278,12 +278,12 @@ function PerformanceList() {
       >
         {performances.map((p) => (
           <div key={p.prfId} style={{ textAlign: "center" }}>
-            <a href={p.posterImgUrl} target="_blank" rel="noopener noreferrer">
+            <a href={`/performance/${p.prfId}`} target="_blank" rel="noopener noreferrer">
               <img src={p.posterImgUrl} alt="poster" style={{ width: 200, cursor: "pointer" }} />
             </a>
             <div>
               <a 
-                href={p.posterImgUrl} 
+                href={`/performance/${p.prfId}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ textDecoration: "none", color: "black", cursor: "pointer" }}
@@ -293,8 +293,8 @@ function PerformanceList() {
             </div>
             <div>({p.prfStartDt} ~ {p.prfEndDt})</div>
             <div>{p.prfPlcNm}</div>
-            <div><strong>{p.area}</strong></div>
-            <div><strong>{p.genreNm}</strong></div>
+            {/* <div><strong>{p.area}</strong></div>
+            <div><strong>{p.genreNm}</strong></div> */}
           </div>
         ))}
       </div>
