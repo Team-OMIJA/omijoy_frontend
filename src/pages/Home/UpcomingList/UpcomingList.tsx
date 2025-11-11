@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
-
-type Performance = {
-  prfId: string;
-  posterImgUrl: string;
-  prfNm: string;
-  prfPlcNm: string;
-  prfStartDt: string;
-  prfEndDt: string;
-  genreNm: string;
-};
+import { UpcomingPerformance } from "../../../types/homeTypes";
+import { fetchUpcomingPerformances } from "../../../apis/performanceApi";
 
 function UpcomingList() {
-  const [performances, setPerformances] = useState<Performance[]>([]);
-  const [open, setOpen] = useState(false); // 모달 열림/닫힘 상태
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null); // 선택된 공연 ID
+  const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
 
-  // 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
+  // UI 용 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -27,19 +18,11 @@ function UpcomingList() {
     return `${y}.${m}.${d}`;
   };
 
-  // API 요청
   useEffect(() => {
-    const getPerformances = async () => {
-      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-      try {
-        const response = await axios.get(`${BASE_URL}/performances/upcoming`);
-        setPerformances(response.data);
-      } catch (err) {
-        console.error("Failed to fetch data from server", err);
-      }
-    };
-    getPerformances();
+    (async () => {
+      const data = await fetchUpcomingPerformances();
+      setPerformances(data);
+    })();
   }, []);
 
   return (
@@ -90,7 +73,7 @@ function UpcomingList() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {/* 🔹 포스터 클릭 시 모달 열기 */}
+            {/* 포스터 클릭 시 모달 열기 */}
             <img
               src={p.posterImgUrl}
               alt={p.prfNm}
@@ -156,7 +139,7 @@ function UpcomingList() {
         ))}
       </div>
 
-      {/* 🔹 공연 상세 모달 (공통 모달) */}
+      {/* 공연 상세 모달 (공통 모달) */}
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );
