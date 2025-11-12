@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
+import { useNavigate } from "react-router-dom";
 import { useInfiniteScroll } from "../../../configs/useInfiniteScroll";
-import { useNavigate } from 'react-router-dom'
 
 interface Performance {
   prfId: string;
@@ -21,7 +21,7 @@ function PerformanceList() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [query, setQuery] = useState(sessionStorage.getItem("query") || "");
   const [sort, setSort] = useState(sessionStorage.getItem("sort") || "name");
   const [arfilter, setArFilter] = useState<string[]>(JSON.parse(sessionStorage.getItem("arfilter") || "[]"));
@@ -64,11 +64,6 @@ function PerformanceList() {
   );
 
   useEffect(() => {
-    setPage(0);
-    getPerformance(query, false, 0);
-  }, [getPerformance]);
-
-  useEffect(() => {
     sessionStorage.setItem("query", query);
   }, [query]);
 
@@ -83,7 +78,12 @@ function PerformanceList() {
   useEffect(() => {
     sessionStorage.setItem("gefilter", JSON.stringify(gefilter));
   }, [gefilter]);
-    
+
+  useEffect(() => {
+    setPage(0);
+    getPerformance(query, false, 0);
+  }, [getPerformance, query]);
+
   const handleAreaChange = (value: string) => {
     if (value && !arfilter.includes(value)) {
       setArFilter([...arfilter, value]);
@@ -97,6 +97,13 @@ function PerformanceList() {
       getPerformance(query, true, nextPage);
     }
   }, [loading, hasMore, page, query, getPerformance]);
+
+  useEffect(() => {
+    const savedY = sessionStorage.getItem("scroll-performance");
+    if (!loading && performances.length > 0 && savedY) {
+      window.scrollTo(0, Number(savedY));
+    }
+  }, [loading, performances]);
 
   useInfiniteScroll(loadMore, hasMore);
 
@@ -299,11 +306,13 @@ function PerformanceList() {
         {performances.map((p) => (
           <div key={p.prfId} style={{ textAlign: "center" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
               <img src={p.posterImgUrl} alt="poster" style={{ width: 200, cursor: "pointer" }} />
-            <div onClick={() => navigate(`/performance/${p.prfId}`)} style={{ textDecoration: "none", color: "black", cursor: "pointer" }}>
-                <strong>{p.prfNm}</strong>
+            <div style={{ textDecoration: "none", color: "black", cursor: "pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
+              <strong>{p.prfNm}</strong>
             </div>
             <div>({p.prfStartDt} ~ {p.prfEndDt})</div>
             <div>{p.prfPlcNm}</div>
+            {/* <div><strong>{p.area}</strong></div>
+            <div><strong>{p.genreNm}</strong></div> */}
           </div>
         ))}
       </div>

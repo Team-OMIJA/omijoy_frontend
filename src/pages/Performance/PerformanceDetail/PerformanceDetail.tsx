@@ -63,13 +63,11 @@ function PerformanceDetail() {
           <div style={{ position: "absolute", marginTop: "-10px", lineHeight: "1" }}>
             <h2>{performance.area}</h2>
             <p>{performance.prfPlcNm}</p>
-            <p>{performance.prfStartDt} ~ {performance.prfEndDt}<br />{performance.dtGuidance?.toString()}<br />{performance.runtime}</p>
-            <p>{performance.genreNm}<br />{performance.prfAge}</p>
+            <p>{performance.prfStartDt} ~ {performance.prfEndDt}<br />{performance.dtGuidance?.toString()}<br /><br />{performance.runtime}</p>
+            <p>{performance.genreNm}<br />{performance.prfAge}<br />{performance.child === "Y" && "어린이 동반 가능 여부: O"}</p>
             <p>{performance.ticketPrice}</p>
             {performance.visit === "Y" && <p>내한: O</p>}
             {performance.festival === "Y" && <p>축제 여부: O</p>}
-            <p>어린이 동반 가능 여부: {performance.child === "Y" ? "O" : "X"}</p>
-
           </div>
         </div>
         <HeartIcon style={{position: "absolute", top: "40px", right: "-70px", fontSize: "40px", color: "crimson", cursor: "pointer"}} onClick={() => setLiked(!liked)}/>

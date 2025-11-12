@@ -18,7 +18,7 @@ import { BrowserRouter } from "react-router-dom";
 import MainRouter from "./routes/MainRouter/MainRouter";
 import { useEffect } from "react";
 import { usePrincipalState } from "./stores/usePrincipalState";
-import ScrollToTop from "./components/common/Render/ScrollToTop";
+import ScrollBack from "./components/common/Render/ScrollBack";
 
 function App() {
   // const { login } = usePrincipalState();
@@ -38,7 +38,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-      <ScrollToTop />
+      <ScrollBack />
       <MainRouter/>
       </BrowserRouter>
     </>
