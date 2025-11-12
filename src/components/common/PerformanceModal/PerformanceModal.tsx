@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
+import { toggleFavoriteReq } from "../../../apis/favoriteApi";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { instance } from "../../../apis/instance";
+import { useFavoriteState } from "../../../stores/useFavoriteState";
 
 type PerformanceDetail = {
   prfId: string;
@@ -17,6 +22,7 @@ type PerformanceDetail = {
   prfAge: string;
   ticketPrice: string;
   providerUrl: string;
+  favorited: boolean;
 };
 
 type CommonModalProps = {
@@ -27,17 +33,52 @@ type CommonModalProps = {
 
 function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
   const [data, setData] = useState<PerformanceDetail | null>(null);
+  // zustand로 관리
+  const { favorites, fetchFavoriteState, toggleFavorite } = useFavoriteState();
+  const isLiked = prfId ? favorites[prfId] ?? false : false;
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+  // 모달이 열릴 때 공연 정보 + 좋아요 상태 불러옴
   useEffect(() => {
-    axios
-      .get(`${BASE_URL}/commonmodal/${prfId}`)
-      .then((res) => setData(res.data))
-      .catch((err) => console.error("모달 데이터 요청 실패:", err));
-  }, [prfId]);
+    if (!open || !prfId) return;
 
-  const handleClose = () => setOpen(false);
+    const fetchData = async () => {
+      try {
+        //  setIsLiked((prev) => !prev);
+        //  await toggleFavoriteReq(prfId);
+
+        const response = await instance.get(`/commonmodal/${prfId}`);
+        setData(response.data);
+
+        // 서버에서 현재 사용자의 좋아요 여부 함께 반환(백엔드에서 boolean favorited 로 정의 해놨음 )
+        // zustand 전역상태에서도 현재 좋아요 여부 반영
+        await fetchFavoriteState(prfId);
+      } catch (error) {
+        console.error("모달 데이터 요청 실패 : ", error);
+      }
+    };
+
+    // axios
+    //   .get(`${BASE_URL}/commonmodal/${prfId}`)
+    //   .then((res) => setData(res.data))
+    //   .catch((err) => console.error("모달 데이터 요청 실패:", err));
+    fetchData();
+  }, [open, prfId]);
+
+  // 모달 닫을 때 최종 상태가 바뀌었다면 DB 반영
+  // favorite 누를때 마다 요청 x
+  const handleClose = async () => {
+    setOpen(false);
+  };
+
+  // 유저가 아이콘 클릭으로 상태만 토글
+  // const handleToggleLocalFavorite = () => {
+  //   setIsLiked((prev) => !prev);
+  // };
+
+  const handleToggleLocalFavorite = async () => {
+    if (!prfId) return;
+    await toggleFavorite(prfId);
+  };
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -114,7 +155,7 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
                 {data.prfStartDt} ~ {data.prfEndDt}
               </Typography>
 
-              {/* 🔹 공연 시간 — 모두 시작시간이므로 ,로 구분 */}
+              {/* 공연 시간 - 모두 시작시간이므로 , 로 구분*/}
               <Typography
                 sx={{
                   color: "#aaa",
@@ -144,7 +185,7 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
 
               <Box sx={{ height: 8 }} />
 
-              {/* 🔹 가격 줄바꿈 (콤마는 숫자 안에서는 유지, 항목 사이에서만 줄바꿈) */}
+              {/* 가격 줄바꿈 (콤마는 숫자 안에서는 유지, 항목 사이에서만 줄바꿈)*/}
               <Typography
                 sx={{
                   color: "#bbb",
@@ -152,30 +193,29 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
                   fontSize: "0.8rem",
                 }}
               >
-                {" "}
                 {(() => {
-                  // 1️⃣ 쉼표 기준으로 각 항목 분리
+                  // 쉼표 기준으로 각 항목 분리
                   const priceArray = data.ticketPrice
                     .split(",")
                     .map((p) => p.trim())
                     .filter((p) => p !== "");
-
-                  // 2️⃣ "석"이 포함된 부분만 남기고 불필요한 숫자 조각 제거
+                  // "석" 이 포함된 부분만 남기고 불필요한 숫자 조각 제거
                   const grouped = [];
                   for (let i = 0; i < priceArray.length; i++) {
-                    // 다음 항목이 "000원"으로 끝나면 합쳐줌
                     if (
                       priceArray[i + 1] &&
+                      // 다음 항목이 "000원"으로 끝나면 합쳐줌
                       /^[0-9]+원$/.test(priceArray[i + 1])
                     ) {
                       grouped.push(`${priceArray[i]},${priceArray[i + 1]}`);
-                      i++; // 다음 항목 건너뛰기
+                      i++;
+                      // 다음 항목 건너뛰기
                     } else {
                       grouped.push(priceArray[i]);
                     }
                   }
 
-                  // 3️⃣ 두 개씩 묶어서 한 줄로 표시
+                  // 두 개씩 묶어서 한 줄로 표시
                   const lines = [];
                   for (let i = 0; i < grouped.length; i += 2) {
                     if (grouped[i + 1]) {
@@ -184,11 +224,32 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
                       lines.push(grouped[i]);
                     }
                   }
-
-                  // 4️⃣ 줄바꿈 적용
+                  // 줄바꿈 적용
                   return lines.join("\n");
                 })()}
               </Typography>
+
+              {/* ❤️ 좋아요 버튼 */}
+              <Box
+                sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <IconButton
+                  onClick={handleToggleLocalFavorite}
+                  sx={{
+                    color: isLiked ? "red" : "#777",
+                    transition: "color 0.2s ease",
+                    "&:hover": {
+                      color: "red", // 마우스 올렸을 때 빨갛게
+                      transform: "scale(1.1)", // 살짝 커지는 애니메이션 (선택)
+                    },
+                  }}
+                >
+                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+                <Typography sx={{ fontSize: "0.9rem" }}>
+                  {isLiked ? "스크랩됨" : "스크랩"}
+                </Typography>
+              </Box>
 
               {/* 버튼 */}
               <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
@@ -213,7 +274,8 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
                   }}
                   onClick={() => {
                     if (data.providerUrl) {
-                      window.open(data.providerUrl, "_blank"); // 새 탭에서 열기
+                      window.open(data.providerUrl, "_blank");
+                      // 새 탭에서 열기
                     } else {
                       alert("예매 링크가 없습니다.");
                     }
