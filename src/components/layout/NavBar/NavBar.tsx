@@ -56,6 +56,7 @@ function NavBar() {
 
   return (
     <nav css={s.navStyle}>
+      {/* 로고 왼쪽 */}
       <div css={s.logo} onClick={() => navigate("/")}>
         OMIJOY
       </div>
@@ -90,20 +91,17 @@ function NavBar() {
         >
           {principal ? (
             <>
-              <MenuItem onClick={() => menuOnClickHandler("logout")}>
-                로그아웃
-              </MenuItem>
               <MenuItem onClick={() => menuOnClickHandler("/mypage")}>
                 마이페이지
+              </MenuItem>
+              <MenuItem onClick={() => menuOnClickHandler("logout")}>
+                로그아웃
               </MenuItem>
             </>
           ) : (
             <>
               <MenuItem onClick={() => menuOnClickHandler("/login")}>
                 로그인
-              </MenuItem>
-              <MenuItem onClick={() => menuOnClickHandler("/login")}>
-                마이페이지
               </MenuItem>
             </>
           )}
