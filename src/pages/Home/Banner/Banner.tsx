@@ -14,7 +14,7 @@ function Banner() {
       <Box
         sx={{
           width: "1200px",
-          height: "260px",
+          height: "300px",
           backgroundColor: "#e5e7eb",
           borderRadius: "18px",
           display: "flex",

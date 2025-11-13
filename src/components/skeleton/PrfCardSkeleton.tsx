@@ -4,8 +4,8 @@ import "react-loading-skeleton/dist/skeleton.css"; // 기본 스타일(CSS 애�
 export default function PrfCardSkeleton() {
   return (
     <div style={{ width: "190px" }}>
-      <Skeleton height={250} borderRadius={8} />
-      <Skeleton height={30} style={{ marginTop: 20 }} borderRadius={8} />
+      <Skeleton height={245} borderRadius={8} />
+      <Skeleton height={30} style={{ marginTop: 25 }} borderRadius={8} />
       <Skeleton
         height={60} // 공연장 + 기간 + 장르
         style={{ marginTop: 10 }}
