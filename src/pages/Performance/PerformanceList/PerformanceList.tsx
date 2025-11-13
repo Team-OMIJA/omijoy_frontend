@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
-import { useNavigate } from "react-router-dom";
 import useInfiniteScroll from "../../../configs/useInfiniteScroll";
+import { useNavigate } from "react-router-dom";
 
 interface Performance {
   prfId: string;
@@ -19,14 +19,13 @@ interface Performance {
 function PerformanceList() {
   const [performances, setPerformances] = useState<Performance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState("name");
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const navigate = useNavigate();
-  const [query, setQuery] = useState(sessionStorage.getItem("query") || "");
-  const [sort, setSort] = useState(sessionStorage.getItem("sort") || "name");
-  const [arfilter, setArFilter] = useState<string[]>(JSON.parse(sessionStorage.getItem("arfilter") || "[]"));
-  const [gefilter, setGeFilter] = useState<string[]>(JSON.parse(sessionStorage.getItem("gefilter") || "[]"));
-
+  const [query, setQuery] = useState(() => sessionStorage.getItem('scroll-performance-query') || '');
+  const [arfilter, setArFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem('scroll-performance-arfilter') || '[]'));
+  const [gefilter, setGeFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem('scroll-performance-gefilter') || '[]'));
   const getPerformance = useCallback(
     async (searchQuery?: string, append = false, pageToLoad = 0) => {
       setLoading(true);
@@ -62,27 +61,18 @@ function PerformanceList() {
     },
     [sort, arfilter, gefilter]
   );
-
+  
   useEffect(() => {
-    sessionStorage.setItem("query", query);
-  }, [query]);
+    sessionStorage.setItem('scroll-performance-query', query);
+    sessionStorage.setItem('scroll-performance-arfilter', JSON.stringify(arfilter));
+    sessionStorage.setItem('scroll-performance-gefilter', JSON.stringify(gefilter));
+  }, [query, arfilter, gefilter]);
 
-  useEffect(() => {
-    sessionStorage.setItem("sort", sort);
-  }, [sort]);
-
-  useEffect(() => {
-    sessionStorage.setItem("arfilter", JSON.stringify(arfilter));
-  }, [arfilter]);
-
-  useEffect(() => {
-    sessionStorage.setItem("gefilter", JSON.stringify(gefilter));
-  }, [gefilter]);
 
   useEffect(() => {
     setPage(0);
     getPerformance(query, false, 0);
-  }, [getPerformance, query]);
+  }, [sort, arfilter, gefilter, query, getPerformance]);
 
   const handleAreaChange = (value: string) => {
     if (value && !arfilter.includes(value)) {
@@ -97,7 +87,7 @@ function PerformanceList() {
       getPerformance(query, true, nextPage);
     }
   }, [loading, hasMore, page, query, getPerformance]);
-  
+
   useInfiniteScroll(loadMore, hasMore);
 
   const handleGenreChange = (value: string) => {
@@ -168,8 +158,6 @@ function PerformanceList() {
         onClick={() => {
           setArFilter([]);
           setGeFilter([]);
-          sessionStorage.removeItem("arfilter");
-          sessionStorage.removeItem("gefilter");
           getPerformance(query);
         }}
         style={{
@@ -304,8 +292,6 @@ function PerformanceList() {
             </div>
             <div>({p.prfStartDt} ~ {p.prfEndDt})</div>
             <div>{p.prfPlcNm}</div>
-            {/* <div><strong>{p.area}</strong></div>
-            <div><strong>{p.genreNm}</strong></div> */}
           </div>
         ))}
       </div>

@@ -9,13 +9,12 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
 
   const storageKey = `scroll-performance-${pathname}`;
 
-  // 뒤로가기 시 직전 페이지 위치 복원
   useEffect(() => {
     if (navigationType === "POP") {
-      const savedY = sessionStorage.getItem("scroll-performance-prev");
-      if (savedY) {
+      const savedScroll = sessionStorage.getItem("scroll-performance-prev");
+      if (savedScroll) {
         requestAnimationFrame(() => {
-          window.scrollTo(0, Number(savedY));
+          window.scrollTo(0, Number(savedScroll));
         });
       }
     } else {
@@ -23,32 +22,30 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
     }
   }, [navigationType]);
 
-  // 스크롤 이벤트 기록
   useEffect(() => {
     finished.current = !hasMore;
 
     const handleScroll = () => {
-      if (!hasMore || finished.current) return;
+    const scrollY = document.documentElement.scrollTop;
 
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    sessionStorage.setItem(storageKey, String(scrollY));
 
-      // 현재 페이지 스크롤 저장
-      sessionStorage.setItem(storageKey, String(scrollTop));
+    sessionStorage.setItem("scroll-performance-prev", String(scrollY));
 
-      if (scrollHeight - scrollTop <= clientHeight + 10) {
-        const now = Date.now();
-        if (now - lastCalled.current >= 200) {
-          lastCalled.current = now;
-          callback();
-          if (!hasMore) finished.current = true;
-        }
+    const { scrollHeight, clientHeight } = document.documentElement;
+    if (scrollHeight - scrollY <= clientHeight + 10) {
+      const now = Date.now();
+      if (now - lastCalled.current >= 200) {
+        lastCalled.current = now;
+        callback();
+        if (!hasMore) finished.current = true;
       }
-    };
+    }
+  };
 
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      // 페이지 이동 직전에 현재 위치를 prev에 저장
       sessionStorage.setItem("scroll-performance-prev", String(window.scrollY));
       window.removeEventListener("scroll", handleScroll);
     };

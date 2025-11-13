@@ -5,10 +5,6 @@ function ScrollBack() {
   const { pathname } = useLocation();
   const navigationType = useNavigationType();
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [pathname]);
-
   useEffect(() => {
     if (pathname.startsWith("/performance") && navigationType === "POP") return;
 
