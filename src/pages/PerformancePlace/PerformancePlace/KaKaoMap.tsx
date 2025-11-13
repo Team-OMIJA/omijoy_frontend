@@ -133,6 +133,53 @@ function KaKaoMap({
       myLocationBtn.appendChild(btnIcon);
       newMap.getNode().appendChild(myLocationBtn);
 
+      const mapTypeContainer = document.createElement("div");
+      mapTypeContainer.style.cssText = `
+        position: absolute; 
+        top: 60px; 
+        left: 15px;
+        z-index: 10;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        overflow: hidden;
+      `;
+
+      const roadmapBtn = document.createElement("button");
+      roadmapBtn.innerHTML = "지도";
+      roadmapBtn.style.cssText =
+        "padding: 5px 8px; font-size: 12px; border: none; background: #e9e9e9; cursor: pointer;";
+
+      const hybridBtn = document.createElement("button");
+      hybridBtn.innerHTML = "위성";
+      hybridBtn.style.cssText =
+        "padding: 5px 8px; font-size: 12px; border: none; background: white; cursor: pointer;";
+
+      const setActiveButton = (
+        activeBtn: HTMLButtonElement,
+        inactiveBtn: HTMLButtonElement
+      ) => {
+        activeBtn.style.background = "#e9e9e9";
+        activeBtn.style.fontWeight = "bold";
+        inactiveBtn.style.background = "white";
+        inactiveBtn.style.fontWeight = "normal";
+      };
+
+      setActiveButton(roadmapBtn, hybridBtn);
+
+      roadmapBtn.onclick = () => {
+        newMap.setMapTypeId(window.kakao.maps.MapTypeId.ROADMAP);
+        setActiveButton(roadmapBtn, hybridBtn);
+      };
+
+      hybridBtn.onclick = () => {
+        newMap.setMapTypeId(window.kakao.maps.MapTypeId.HYBRID);
+        setActiveButton(hybridBtn, roadmapBtn);
+      };
+
+      mapTypeContainer.appendChild(roadmapBtn);
+      mapTypeContainer.appendChild(hybridBtn);
+      newMap.getNode().appendChild(mapTypeContainer);
+
       if (currentLocation) {
         const currentPosition = new window.kakao.maps.LatLng(
           currentLocation.lat,
@@ -162,6 +209,11 @@ function KaKaoMap({
     if (!map || !infowindow || !clusterer) return;
 
     const newCenter = new window.kakao.maps.LatLng(latitude, longitude);
+
+    if (!currentLocation && myLocationMarkerRef.current) {
+      myLocationMarkerRef.current.setMap(null);
+      myLocationMarkerRef.current = null;
+    }
 
     if (currentLocation && myLocationMarkerRef.current) {
       myLocationMarkerRef.current.setPosition(newCenter);
