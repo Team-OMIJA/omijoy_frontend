@@ -45,7 +45,7 @@ function PerformanceList() {
 
         const response = await fetch(url);
         const json: Performance[] = await response.json();
-
+        
         if (append) {
           setPerformances((prev) => [...prev, ...json]);
         } else {
@@ -72,8 +72,8 @@ function PerformanceList() {
   useEffect(() => {
     setPage(0);
     getPerformance(query, false, 0);
-  }, [sort, arfilter, gefilter, query, getPerformance]);
-
+  }, [sort, arfilter, gefilter, getPerformance]);
+  
   const handleAreaChange = (value: string) => {
     if (value && !arfilter.includes(value)) {
       setArFilter([...arfilter, value]);
@@ -285,8 +285,8 @@ function PerformanceList() {
         }}
       >
         {performances.map((p) => (
-          <div key={p.prfId} style={{ textAlign: "center" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
-              <img src={p.posterImgUrl} alt="poster" width="300" height="300" style={{ width: 200, cursor: "pointer" }} />
+          <div key={p.prfId} style={{ textAlign: "center", width: "300", height: "300"}} onClick={() => navigate(`/performance/${p.prfId}`)}>
+              <img src={p.posterImgUrl} alt="poster" width="300" height="300" style={{ width: 200, height: 300, cursor: "pointer" }}  loading="eager" />
             <div style={{ textDecoration: "none", color: "black", cursor: "pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
               <strong>{p.prfNm}</strong>
             </div>

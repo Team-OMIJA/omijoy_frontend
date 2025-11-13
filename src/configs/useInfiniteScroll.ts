@@ -33,17 +33,19 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
     sessionStorage.setItem("scroll-performance-prev", String(scrollY));
 
     const { scrollHeight, clientHeight } = document.documentElement;
-    if (scrollHeight - scrollY <= clientHeight + 10) {
-      const now = Date.now();
-      if (now - lastCalled.current >= 200) {
-        lastCalled.current = now;
-        callback();
-        if (!hasMore) finished.current = true;
+      if (scrollHeight - scrollY <= clientHeight + 10) {
+        const now = Date.now();
+        if (now - lastCalled.current >= 10) {
+          lastCalled.current = now;
+          callback();
+          if (!hasMore) finished.current = true;
+        }
       }
-    }
-  };
+    };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('load', () => {
+      window.scrollTo(0, 0);
+    });
 
     return () => {
       sessionStorage.setItem("scroll-performance-prev", String(window.scrollY));
