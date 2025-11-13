@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
-import { useInfiniteScroll } from "../../../configs/useInfiniteScroll";
+import useInfiniteScroll from "../../../configs/useInfiniteScroll";
 
 interface Performance {
   prfId: string;
@@ -97,14 +97,7 @@ function PerformanceList() {
       getPerformance(query, true, nextPage);
     }
   }, [loading, hasMore, page, query, getPerformance]);
-
-  useEffect(() => {
-    const savedY = sessionStorage.getItem("scroll-performance");
-    if (!loading && performances.length > 0 && savedY) {
-      window.scrollTo(0, Number(savedY));
-    }
-  }, [loading, performances]);
-
+  
   useInfiniteScroll(loadMore, hasMore);
 
   const handleGenreChange = (value: string) => {
@@ -305,7 +298,7 @@ function PerformanceList() {
       >
         {performances.map((p) => (
           <div key={p.prfId} style={{ textAlign: "center" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
-              <img src={p.posterImgUrl} alt="poster" style={{ width: 200, cursor: "pointer" }} />
+              <img src={p.posterImgUrl} alt="poster" width="300" height="300" style={{ width: 200, cursor: "pointer" }} />
             <div style={{ textDecoration: "none", color: "black", cursor: "pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
               <strong>{p.prfNm}</strong>
             </div>

@@ -10,6 +10,8 @@ function ScrollBack() {
   // }, [pathname]);
 
   useEffect(() => {
+    if (pathname.startsWith("/performance") && navigationType === "POP") return;
+
     if (navigationType !== "POP") {
       window.scrollTo(0, 0);
     }
