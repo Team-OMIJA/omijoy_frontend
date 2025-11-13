@@ -11,9 +11,9 @@ import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModa
 type SidoKey = keyof typeof KOREA_REGIONS;
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
-const KOREA_LEVEL = 8;
+const KOREA_LEVEL = 12;
 const LOCAL_LEVEL = 3;
-const GU_LEVEL = 8;
+const GU_LEVEL = 10;
 
 function PerformancePlaceMap() {
   const [mapCenter, setMapCenter] = useState({
@@ -52,7 +52,7 @@ function PerformancePlaceMap() {
         (position) => {
           const { latitude, longitude } = position.coords;
           setMapCenter({ lat: latitude, lng: longitude });
-          setMapLevel(LOCAL_LEVEL);
+          setMapLevel(LOCAL_LEVEL+1);
         },
         (error) => {
           console.error("초기 위치 로드 실패:", error.message);

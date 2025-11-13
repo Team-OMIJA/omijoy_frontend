@@ -57,13 +57,13 @@ function KaKaoMap({
     if (!mapRef.current) {
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
-      newMap.setMaxLevel(8);
+      newMap.setMaxLevel(12);
 
       clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
         minLevel: 4,
-        maxLevel: 8,
+        maxLevel: 12,
         gridSize: 100,
         minClusterSize: 1,
       });
@@ -84,7 +84,7 @@ function KaKaoMap({
       const levelSlider = document.createElement("input");
       levelSlider.type = "range";
       const minMapLevel = 1;
-      const maxMapLevel = 8;
+      const maxMapLevel = 12;
       levelSlider.min = String(minMapLevel);
       levelSlider.max = String(maxMapLevel);
       levelSlider.className = "custom-v-slider";
@@ -150,7 +150,7 @@ function KaKaoMap({
         "padding: 5px 8px; font-size: 12px; border: none; background: #e9e9e9; cursor: pointer;";
 
       const hybridBtn = document.createElement("button");
-      hybridBtn.innerHTML = "위성";
+      hybridBtn.innerHTML = "스카이뷰";
       hybridBtn.style.cssText =
         "padding: 5px 8px; font-size: 12px; border: none; background: white; cursor: pointer;";
 
