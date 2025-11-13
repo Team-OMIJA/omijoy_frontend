@@ -46,6 +46,24 @@ function PerformancePlaceMap() {
     }
   }, [isKakaoMapLoaded]);
 
+  useEffect(() => {
+    if (isKakaoMapLoaded) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setMapCenter({ lat: latitude, lng: longitude });
+          setMapLevel(LOCAL_LEVEL);
+        },
+        (error) => {
+          console.error("초기 위치 로드 실패:", error.message);
+        },
+        {
+          enableHighAccuracy: true,
+        }
+      );
+    }
+  }, [isKakaoMapLoaded]);
+
   const getLocation = useCallback(() => {
     setIsLoading(true);
     setErrorMessage(null);
