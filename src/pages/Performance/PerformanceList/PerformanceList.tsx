@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
-import { useInfiniteScroll } from "../../../configs/useInfiniteScroll";
+import useInfiniteScroll from "../../../configs/useInfiniteScroll";
+import { useNavigate } from "react-router-dom";
 
 interface Performance {
   prfId: string;
@@ -18,13 +19,13 @@ interface Performance {
 function PerformanceList() {
   const [performances, setPerformances] = useState<Performance[]>([]);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
   const [sort, setSort] = useState("name");
-  const [arfilter, setArFilter] = useState<string[]>([]);
-  const [gefilter, setGeFilter] = useState<string[]>([]);
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-
+  const [query, setQuery] = useState(() => sessionStorage.getItem('scroll-performance-query') || '');
+  const [arfilter, setArFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem('scroll-performance-arfilter') || '[]'));
+  const [gefilter, setGeFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem('scroll-performance-gefilter') || '[]'));
   const getPerformance = useCallback(
     async (searchQuery?: string, append = false, pageToLoad = 0) => {
       setLoading(true);
@@ -60,6 +61,13 @@ function PerformanceList() {
     },
     [sort, arfilter, gefilter]
   );
+  
+  useEffect(() => {
+    sessionStorage.setItem('scroll-performance-query', query);
+    sessionStorage.setItem('scroll-performance-arfilter', JSON.stringify(arfilter));
+    sessionStorage.setItem('scroll-performance-gefilter', JSON.stringify(gefilter));
+  }, [query, arfilter, gefilter]);
+
 
   useEffect(() => {
     setPage(0);
@@ -277,24 +285,13 @@ function PerformanceList() {
         }}
       >
         {performances.map((p) => (
-          <div key={p.prfId} style={{ textAlign: "center" }}>
-            <a href={`/performance/${p.prfId}`} target="_blank" rel="noopener noreferrer">
-              <img src={p.posterImgUrl} alt="poster" style={{ width: 200, cursor: "pointer" }} />
-            </a>
-            <div>
-              <a 
-                href={`/performance/${p.prfId}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ textDecoration: "none", color: "black", cursor: "pointer" }}
-              >
-                <strong>{p.prfNm}</strong>
-              </a>
+          <div key={p.prfId} style={{ textAlign: "center" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
+              <img src={p.posterImgUrl} alt="poster" width="300" height="300" style={{ width: 200, cursor: "pointer" }} />
+            <div style={{ textDecoration: "none", color: "black", cursor: "pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
+              <strong>{p.prfNm}</strong>
             </div>
             <div>({p.prfStartDt} ~ {p.prfEndDt})</div>
             <div>{p.prfPlcNm}</div>
-            {/* <div><strong>{p.area}</strong></div>
-            <div><strong>{p.genreNm}</strong></div> */}
           </div>
         ))}
       </div>
