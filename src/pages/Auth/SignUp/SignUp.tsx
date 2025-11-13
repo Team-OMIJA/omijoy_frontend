@@ -1,7 +1,7 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Snackbar, Stack, TextField } from '@mui/material';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { instance } from '../../../apis/instance';
 
 type SignUpForm = {
   email: string;
@@ -18,10 +18,46 @@ function SignUp() {
     confirm: '',
   });
 
+  const [errorMessage, setErrorMessage] = useState<{
+    email: string;
+    password: string;
+    confirm: string;
+  }>({
+    email: '',
+    password: '',
+    confirm: '',
+  });
+
   const [snack, setSnack] = useState<{ open: boolean; message: string }>({
     open: false,
     message: '',
   });
+
+  // 정규식: 기본 이메일 형식, 비밀번호는 영문/숫자/특수문자 포함 8~15자
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  const pwRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+
+  useEffect(() => {
+    const nextErrors: { email: string; password: string; confirm: string } = {
+      email: '',
+      password: '',
+      confirm: '',
+    };
+
+    if (form.email.length > 0 && !emailRegex.test(form.email)) {
+      nextErrors.email = '올바른 이메일 형식이 아닙니다.';
+    }
+
+    if (form.password.length > 0 && !pwRegex.test(form.password)) {
+      nextErrors.password = '영문/숫자/특수문자 조합 8~15자';
+    }
+
+    if (form.confirm.length > 0 && form.confirm !== form.password) {
+      nextErrors.confirm = '비밀번호가 일치하지 않습니다.';
+    }
+
+    setErrorMessage(nextErrors);
+  }, [form.email, form.password, form.confirm]);
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +65,17 @@ function SignUp() {
 
   const signUpHandler = () => {
     if (!form.email || !form.password) {
-      setSnack({ open: true, message: '이메일과 비밀번호를 입력해주세요.' });
+      setSnack({ open: true, message: '이메일과 비밀번호를 입력해 주세요.' });
+      return;
+    }
+
+    if (!emailRegex.test(form.email)) {
+      setSnack({ open: true, message: '올바른 이메일 형식이 아닙니다.' });
+      return;
+    }
+
+    if (!pwRegex.test(form.password)) {
+      setSnack({ open: true, message: '영문/숫자/특수문자 조합 8~15자' });
       return;
     }
 
@@ -38,16 +84,8 @@ function SignUp() {
       return;
     }
 
-    axios
-      .post(
-        import.meta.env.VITE_API_BASE_URL + '/signup',
-        { email: form.email, password: form.password },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+    instance
+      .post('/signup', { email: form.email, password: form.password })
       .then(() => {
         setSnack({ open: true, message: '회원가입이 완료되었습니다.' });
         navigate('/login', { replace: true });
@@ -55,14 +93,44 @@ function SignUp() {
       .catch(() => setSnack({ open: true, message: '회원가입에 실패했습니다.' }));
   };
 
-  const isDisabled = !form.email || !form.password || form.password !== form.confirm;
+  const isDisabled =
+    !form.email ||
+    !form.password ||
+    !form.confirm ||
+    !emailRegex.test(form.email) ||
+    !pwRegex.test(form.password) ||
+    form.password !== form.confirm;
 
   return (
     <>
       <Stack spacing={2} mt={2} alignItems='center'>
-        <TextField label='이메일' name='email' type='email' value={form.email} onChange={changeHandler} />
-        <TextField label='비밀번호' name='password' type='password' value={form.password} onChange={changeHandler} />
-        <TextField label='비밀번호 확인' name='confirm' type='password' value={form.confirm} onChange={changeHandler} />
+        <TextField
+          label='이메일'
+          name='email'
+          type='email'
+          value={form.email}
+          onChange={changeHandler}
+          error={!!errorMessage.email}
+          helperText={errorMessage.email || ' '}
+        />
+        <TextField
+          label='비밀번호'
+          name='password'
+          type='password'
+          value={form.password}
+          onChange={changeHandler}
+          error={!!errorMessage.password}
+          helperText={errorMessage.password || ' '}
+        />
+        <TextField
+          label='비밀번호 확인'
+          name='confirm'
+          type='password'
+          value={form.confirm}
+          onChange={changeHandler}
+          error={!!errorMessage.confirm}
+          helperText={errorMessage.confirm || ' '}
+        />
         <Button variant='contained' color='primary' onClick={signUpHandler} disabled={isDisabled}>
           회원가입
         </Button>

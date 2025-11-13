@@ -6,6 +6,7 @@ import Theater from '../../pages/PerformancePlace/PerformancePlace';
 import Login from '../../pages/Auth/Login/Login';
 import SignUp from '../../pages/Auth/SignUp/SignUp';
 import MyPage from '../../pages/MyPage/MyPage';
+import OAuth2Redirect from '../../pages/Auth/OAuth2/OAuth2Redirect';
 
 function MainRouter() {
   return (
@@ -21,6 +22,7 @@ function MainRouter() {
         <Route path='/theater' element={<Theater />} />
         <Route path='/mypage' element={<MyPage />} />
         <Route path='/signup' element={<SignUp />} />
+        <Route path='/login/oauth2' element={<OAuth2Redirect />} />
       </Route>
     </Routes>
   );
