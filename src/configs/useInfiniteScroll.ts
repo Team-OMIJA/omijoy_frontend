@@ -43,6 +43,8 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
       }
     };
 
+    window.addEventListener("scroll", handleScroll);
+
     window.addEventListener('load', () => {
       window.scrollTo(0, 0);
     });
