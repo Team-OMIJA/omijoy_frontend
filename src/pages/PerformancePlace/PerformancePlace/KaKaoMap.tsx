@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
-import axios from "axios";
+
 
 declare global {
   interface Window {

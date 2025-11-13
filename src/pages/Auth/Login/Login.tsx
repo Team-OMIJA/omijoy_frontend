@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from 'react';
-import { Button, Snackbar, Stack, TextField } from '@mui/material';
-import axios from 'axios';
+import { Alert, Button, Snackbar, Stack, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { instance } from '../../../apis/instance';
 
 type User = {
   email: string;
@@ -18,19 +18,15 @@ function Login() {
 
   const [isAuthenticate, setAuth] = useState(false);
   const [open, setOpen] = useState(false);
+  const [errMsg, setErrMsg] = useState('login failed');
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const loginHandler = () => {
-    axios
-      .post(import.meta.env.VITE_API_BASE_URL + '/login', user, {       
-        headers: {
-          'Content-Type': 'application/json',
-          
-        },       
-      })
+    instance
+      .post('/login', user)
       .then((res) => {
         const jwtToken = res.headers.authorization;
         if (jwtToken != null) {
@@ -38,7 +34,10 @@ function Login() {
           setAuth(true);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setErrMsg(err);
+      });
   };
 
   if (isAuthenticate) {
@@ -53,6 +52,9 @@ function Login() {
         <Button variant='outlined' color='primary' onClick={loginHandler}>
           Login
         </Button>
+        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`}>구글 로그인</a>
+        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`}>카카오 로그인</a>
+        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`}>네이버 로그인</a>
         <Snackbar
           open={open}
           autoHideDuration={2000}
@@ -68,6 +70,11 @@ function Login() {
       >
         회원가입
       </Button>
+      <Snackbar open={open} onClose={() => setOpen(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity='error' onClose={() => setOpen(false)}>
+          {errMsg}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
