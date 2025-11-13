@@ -13,6 +13,11 @@ const formatDate = (date: Date) => {
   return `${year}${month}${day}`;
 };
 
+// [지역] 제거
+const removeRegionTag = (text: string) => {
+  return text.replace(/\[.*?\]/g, "").trim();
+};
+
 // TopRankList
 export const fetchTopRankPerformances = async (): Promise<
   TopRankPerformance[]
@@ -37,7 +42,9 @@ export const fetchTopRankPerformances = async (): Promise<
     // XML → JS 객체 변환
     const result = Array.from(boxList).map((box) => ({
       id: box.getElementsByTagName("mt20id")[0]?.textContent || "",
-      title: box.getElementsByTagName("prfnm")[0]?.textContent || "",
+      title: removeRegionTag(
+        box.getElementsByTagName("prfnm")[0]?.textContent || ""
+      ),
       place: box.getElementsByTagName("prfplcnm")[0]?.textContent || "",
       poster: box.getElementsByTagName("poster")[0]?.textContent || "",
       period: box.getElementsByTagName("prfpd")[0]?.textContent || "",
@@ -76,7 +83,9 @@ export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
     ).map((item) => ({
       id: item.getElementsByTagName("mt20id")[0]?.textContent || "",
       poster: item.getElementsByTagName("poster")[0]?.textContent || "",
-      title: item.getElementsByTagName("prfnm")[0]?.textContent || "",
+      title: removeRegionTag(
+        item.getElementsByTagName("prfnm")[0]?.textContent || ""
+      ),
       place: item.getElementsByTagName("fcltynm")[0]?.textContent || "",
       stDate: item.getElementsByTagName("prfpdfrom")[0]?.textContent || "",
       edDate: item.getElementsByTagName("prfpdto")[0]?.textContent || "",
@@ -111,7 +120,12 @@ export const fetchUpcomingPerformances = async (): Promise<
 
   try {
     const response = await axios.get(`${BASE_URL}/performances/upcoming`);
-    return response.data as UpcomingPerformance[];
+
+    return (response.data as UpcomingPerformance[]).map((p) => ({
+      ...p,
+      prfNm: removeRegionTag(p.prfNm),
+      prfPlcNm: p.prfPlcNm,
+    }));
   } catch (err) {
     console.error("Failed to fetch upcoming data from server", err);
     return [];
