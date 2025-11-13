@@ -3,6 +3,7 @@ import * as s from "./styles";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFavoritePrfListReq } from "../../../apis/favoriteApi";
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 
 type Performance = {
   prfId: string;
@@ -16,6 +17,8 @@ type Performance = {
 
 function FavoriteList() {
   const [favorites, setFavorites] = useState<Performance[]>([]);
+  const [open, setOpen] = useState(false);
+   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -28,7 +31,14 @@ function FavoriteList() {
     };
     fetchFavorites();
   }, []);
+
+  const openModalHandler = (prfId: string) => {
+    setSelectedPrfId(prfId);
+    setOpen(true);
+
+  }
   return (
+    <>
     <div css={s.container}>
       <h2 css={s.title}>❤️My Favorites</h2>
       {favorites.length === 0 ? (
@@ -36,7 +46,7 @@ function FavoriteList() {
       ) : (
         <ul css={s.list}>
           {favorites.map((item) => (
-            <li key={item.prfId} css={s.card}>
+            <li key={item.prfId} css={s.card} onClick={() => openModalHandler(item.prfId)}>
               <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
 
               <div css={s.info}>
@@ -48,6 +58,8 @@ function FavoriteList() {
         </ul>
       )}
     </div>
+  <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId}/>
+  </>
   );
 }
 
