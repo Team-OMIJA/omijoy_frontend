@@ -37,7 +37,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
                     onClick={handleUrlClick}
                     disabled={!hasValidUrl} 
                 >
-                    {hasValidUrl ? '공연장 방문' : '공연장 정보 없음'}ㅎ
+                    {hasValidUrl ? '공연장 방문' : '공연장 정보 없음'}
                 </button>
                 
                 <button style={styles.closeButton} onClick={onClose}>

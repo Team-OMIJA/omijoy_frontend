@@ -8,8 +8,10 @@ import {
 import { KOREA_REGIONS } from "../../../utils/regions";
 import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
 
+type SidoKey = keyof typeof KOREA_REGIONS;
+
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
-const KOREA_LEVEL = 12;
+const KOREA_LEVEL = 8;
 const LOCAL_LEVEL = 3;
 const GU_LEVEL = 8;
 
@@ -37,7 +39,7 @@ function PerformancePlaceMap() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceMarker | null>(null);
 
   useEffect(() => {
-    if (!isKakaoMapLoaded) {
+    if (!isKakaoMapLoaded && window.kakao && window.kakao.maps) {
       window.kakao.maps.load(() => {
         setIsKakaoMapLoaded(true);
       });
@@ -47,10 +49,7 @@ function PerformancePlaceMap() {
   const getLocation = useCallback(() => {
     setIsLoading(true);
     setErrorMessage(null);
-    setPlaces([]);
-
-    setMapCenter(KOREA_CENTER);
-    setMapLevel(KOREA_LEVEL);
+    setPlaces([]); // ⭐️
 
     if (!navigator.geolocation) {
       setErrorMessage(
@@ -95,15 +94,15 @@ function PerformancePlaceMap() {
   }, []);
 
   const handleMarkerClick = useCallback((placeData: PlaceMarker) => {
-        console.log("모달 열기 시도:", placeData.prfPlcName);
-        setSelectedPlace(placeData);
-        setIsModalOpen(true);
-    }, []);
+    console.log("모달 열기 시도:", placeData.prfPlcName);
+    setSelectedPlace(placeData);
+    setIsModalOpen(true);
+  }, []);
 
   const closeModal = useCallback(() => {
-        setIsModalOpen(false);
-        setSelectedPlace(null);
-    }, [])
+    setIsModalOpen(false);
+    setSelectedPlace(null);
+  }, []);
 
   const handleFilterSearch = useCallback(async () => {
     if (!filterSido) {
@@ -154,7 +153,7 @@ function PerformancePlaceMap() {
         <select
           value={filterSido}
           onChange={(e) => {
-            const newSido = e.target.value as "";
+            const newSido = e.target.value as SidoKey | "";
             setFilterSido(newSido);
             setFilterGugun("");
           }}
@@ -173,7 +172,7 @@ function PerformancePlaceMap() {
         >
           <option value="">-- 시/군/구 (전체) --</option>
           {filterSido &&
-            KOREA_REGIONS[filterSido]?.map((g) => (
+            KOREA_REGIONS[filterSido as SidoKey]?.map((g) => (
               <option key={g} value={g}>
                 {g}
               </option>
@@ -184,39 +183,49 @@ function PerformancePlaceMap() {
         </button>
       </div>
 
-      {!isLocationDenied && (
-        <button
-          onClick={getLocation}
-          disabled={isLoading}
-          style={{ marginBottom: "10px" }}
-        >
-          {isLoading ? "위치 찾는 중..." : "📍 내 근처 새로고침"}{" "}
-        </button>
-      )}
       <p>표시된 공연장: {places.length}개</p>
       {errorMessage && (
         <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>
       )}
-      {isKakaoMapLoaded ? (
-        <KaKaoMap
-          latitude={mapCenter.lat}
-          longitude={mapCenter.lng}
-          level={mapLevel}
-          places={places}
-          isKakaoMapLoaded={isKakaoMapLoaded}
-          currentLocation={currentLocation}
-          onMarkerClick={handleMarkerClick}
-        />
-      ) : (
-        <p>지도 로딩 중...</p>
-      )}
+
+      <div
+        style={{
+          width: "100%",
+          height: "500px",
+          position: "relative",
+          background: "#f8f8f8",
+          contain: "layout paint size",
+        }}
+      >
+        {isKakaoMapLoaded ? (
+          <KaKaoMap
+            latitude={mapCenter.lat}
+            longitude={mapCenter.lng}
+            level={mapLevel}
+            places={places}
+            isKakaoMapLoaded={isKakaoMapLoaded}
+            currentLocation={currentLocation}
+            onMarkerClick={handleMarkerClick}
+            onMyLocationClick={getLocation} 
+          />
+        ) : (
+          <p
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              color: "#666",
+            }}
+          >
+            지도 로딩 중...
+          </p>
+        )}
+      </div>
+
       {isModalOpen && selectedPlace ? (
-        <PerformancePlaceModal
-          place={selectedPlace}
-          onClose={closeModal}
-        />
-      ) : null 
-      }
+        <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
+      ) : null}
     </div>
   );
 }

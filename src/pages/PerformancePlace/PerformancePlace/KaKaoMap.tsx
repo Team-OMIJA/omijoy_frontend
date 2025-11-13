@@ -15,6 +15,7 @@ interface KakaoMapProps {
   level: number;
   currentLocation: { lat: number; lng: number } | null;
   onMarkerClick: (place: PlaceMarker) => void;
+  onMyLocationClick: () => void;
 }
 
 function KaKaoMap({
@@ -25,6 +26,7 @@ function KaKaoMap({
   level,
   currentLocation,
   onMarkerClick,
+  onMyLocationClick,
 }: KakaoMapProps) {
   const mapContainer = useRef(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
@@ -35,6 +37,18 @@ function KaKaoMap({
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
 
+    const myPinIconUrl = "/my_pin.svg";
+    const myPinImageSize = new window.kakao.maps.Size(50, 62);
+
+    const myPinImageOption = {
+      offset: new window.kakao.maps.Point(15, 42),
+    };
+    const myLocationMarkerImage = new window.kakao.maps.MarkerImage(
+      myPinIconUrl,
+      myPinImageSize,
+      myPinImageOption
+    );
+
     const mapOption = {
       center: new window.kakao.maps.LatLng(latitude, longitude),
       level: level,
@@ -43,15 +57,15 @@ function KaKaoMap({
     if (!mapRef.current) {
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
-      newMap.setMaxLevel(12);
+      newMap.setMaxLevel(8);
 
       clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
         minLevel: 4,
-        maxLevel: 12,
-        gridSize: 140,
-        minClusterSize: 2,
+        maxLevel: 8,
+        gridSize: 100,
+        minClusterSize: 1,
       });
       infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
 
@@ -60,34 +74,64 @@ function KaKaoMap({
         position: absolute; top: 15px; right: 15px; padding: 5px 10px;
         background: white; border: 1px solid #ccc; border-radius: 5px;
         font-size: 12px; z-index: 2; display: flex; align-items: center;
-        justify-content: space-between; lex-direction: column; gap: 10px;
+        justify-content: space-between; flex-direction: column; gap: 10px;
         pointer-events: none; 
-`;
-
+      `;
       const levelLabel = document.createElement("span");
       levelLabel.style.fontWeight = "bold";
-
+      levelLabel.style.minWidth = "50px";
+      levelLabel.style.textAlign = "center";
       const levelSlider = document.createElement("input");
       levelSlider.type = "range";
       const minMapLevel = 1;
-      const maxMapLevel = 12;
+      const maxMapLevel = 8;
       levelSlider.min = String(minMapLevel);
       levelSlider.max = String(maxMapLevel);
       levelSlider.className = "custom-v-slider";
       levelSlider.style.cssText = `
         -webkit-appearance: slider-vertical; writing-mode: bt-lr;
         width: 8px; height: 100px; cursor: pointer; padding: 0 5px;
-        pointer-events: auto; /* ⭐️ 2. 슬라이더는 클릭 이벤트를 다시 받음 */
+        pointer-events: auto;
         `;
       levelSlider.oninput = () => {
         const sliderValue = parseInt(levelSlider.value, 10);
         const newLevel = maxMapLevel - sliderValue + minMapLevel;
         newMap.setLevel(newLevel);
       };
-
       controlContainer.appendChild(levelLabel);
       controlContainer.appendChild(levelSlider);
       newMap.getNode().appendChild(controlContainer);
+
+      const myLocationBtn = document.createElement("div");
+      myLocationBtn.style.cssText = `
+        position: absolute; 
+        top: 15px; 
+        left: 15px;
+        cursor: pointer; 
+        z-index: 10; /* 
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none; 
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      `;
+      myLocationBtn.onclick = onMyLocationClick;
+
+      const btnIcon = document.createElement("img");
+      btnIcon.src = "/my_location.svg";
+
+      const newSize = 20 * 2;
+      btnIcon.style.width = `${newSize}px`;
+      btnIcon.style.height = `${newSize}px`;
+      btnIcon.alt = "내 위치";
+
+      btnIcon.style.filter = "brightness(0)";
+
+      myLocationBtn.appendChild(btnIcon);
+      newMap.getNode().appendChild(myLocationBtn);
 
       if (currentLocation) {
         const currentPosition = new window.kakao.maps.LatLng(
@@ -98,6 +142,7 @@ function KaKaoMap({
           position: currentPosition,
           map: mapRef.current,
           title: "내 위치",
+          image: myLocationMarkerImage,
         });
         myLocationMarkerRef.current = myMarker;
       }
@@ -107,11 +152,9 @@ function KaKaoMap({
         levelLabel.innerHTML = `레벨: ${currentLevel}`;
         levelSlider.value = String(maxMapLevel - currentLevel + minMapLevel);
       };
-
       window.kakao.maps.event.addListener(newMap, "zoom_changed", updateZoomUI);
       updateZoomUI();
     }
-
     const map = mapRef.current;
     const infowindow = infowindowRef.current;
     const clusterer = clustererRef.current;
@@ -127,12 +170,13 @@ function KaKaoMap({
         position: newCenter,
         map: map,
         title: "내 위치",
+        image: myLocationMarkerImage,
       });
       myLocationMarkerRef.current = myMarker;
     }
 
     map.setLevel(level);
-    map.panTo(newCenter);
+    map.setCenter(newCenter);
 
     clusterer.clear();
 
@@ -146,7 +190,6 @@ function KaKaoMap({
         position: markerPosition,
         title: place.prfPlcName,
       });
-
       window.kakao.maps.event.addListener(marker, "click", function () {
         console.log("마커 클릭됨:", place.prfPlcName);
         onMarkerClick(place);
@@ -163,16 +206,16 @@ function KaKaoMap({
     level,
     currentLocation,
     onMarkerClick,
+    onMyLocationClick,
   ]);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "500px" }}>
-      {" "}
       <div
         id="map"
         ref={mapContainer}
         style={{ width: "100%", height: "500px" }}
-      ></div>{" "}
+      ></div>
     </div>
   );
 }
