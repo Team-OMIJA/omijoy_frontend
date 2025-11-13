@@ -15,29 +15,32 @@
 // `;
 import { css } from "@emotion/react";
 
-
-
 export const navStyle = css`
   position: sticky;
   top: 0;
   background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-  height: 60px;
+  border-bottom: 1px solid #eaeaeaff;
+  height: 75px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+
   z-index: 100;
 `;
 
 export const logo = css`
-font-weight: bolder;
-cursor: pointer;
-`
+  font-weight: bolder;
+  font-size: 1.2em;
+  margin-left: 100px;
+  cursor: pointer;
+`;
 
 export const navListStyle = css`
+  font-size: 1em;
   list-style: none;
   display: flex;
-  gap: 24px;
+  gap: 50px;
+
   padding: 0;
   margin: 0;
 `;
@@ -53,15 +56,15 @@ export const linkStyle = (active: boolean) => css`
 `;
 
 export const profileContainer = css`
-  margin-left: 8px;
+  margin-right: 100px;
   display: flex;
   align-items: center;
 `;
 
 // 유저가 가지고있는() 이미지에 적용시킴
 export const profileStyle = (hasImg) => css`
-  width: 32px;
-  height:32px;
+  width: 40px;
+  height: 40px;
   background-color: ${hasImg ? "transparent" : "ccc"};
   font-size: 14px;
   cursor: pointer;
@@ -69,4 +72,4 @@ export const profileStyle = (hasImg) => css`
   &:hover {
     transform: secale(1.05);
   }
-`
+`;
