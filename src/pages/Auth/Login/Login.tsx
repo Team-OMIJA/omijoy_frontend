@@ -54,6 +54,7 @@ function Login() {
         </Button>
         <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`}>구글 로그인</a>
         <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`}>카카오 로그인</a>
+        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`}>네이버 로그인</a>
         <Snackbar
           open={open}
           autoHideDuration={2000}
