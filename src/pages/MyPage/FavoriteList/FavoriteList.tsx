@@ -18,7 +18,7 @@ type Performance = {
 function FavoriteList() {
   const [favorites, setFavorites] = useState<Performance[]>([]);
   const [open, setOpen] = useState(false);
-   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFavorites = async () => {

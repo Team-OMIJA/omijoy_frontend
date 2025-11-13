@@ -1,30 +1,55 @@
 import { useEffect, useRef } from "react";
+import { useLocation, useNavigationType } from "react-router-dom";
 
-export function useInfiniteScroll(callback: () => void, hasMore: boolean) {
+function useInfiniteScroll(callback: () => void, hasMore: boolean) {
   const lastCalled = useRef<number>(0);
   const finished = useRef(false);
+  const navigationType = useNavigationType();
+  const { pathname } = useLocation();
+
+  const storageKey = `scroll-performance-${pathname}`;
+
+  useEffect(() => {
+    if (navigationType === "POP") {
+      const savedScroll = sessionStorage.getItem("scroll-performance-prev");
+      if (savedScroll) {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, Number(savedScroll));
+        });
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [navigationType]);
 
   useEffect(() => {
     finished.current = !hasMore;
 
     const handleScroll = () => {
-      if (!hasMore || finished.current) return;
+    const scrollY = document.documentElement.scrollTop;
 
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = document.documentElement.scrollTop;
-      const clientHeight = document.documentElement.clientHeight;
+    sessionStorage.setItem(storageKey, String(scrollY));
 
-      if (scrollHeight - scrollTop <= clientHeight + 10) {
-        const now = Date.now();
-        if (now - lastCalled.current >= 1) {
-          lastCalled.current = now;
-          callback();
-          if (!hasMore) finished.current = true;
-        }
+    sessionStorage.setItem("scroll-performance-prev", String(scrollY));
+
+    const { scrollHeight, clientHeight } = document.documentElement;
+    if (scrollHeight - scrollY <= clientHeight + 10) {
+      const now = Date.now();
+      if (now - lastCalled.current >= 200) {
+        lastCalled.current = now;
+        callback();
+        if (!hasMore) finished.current = true;
       }
-    };
+    }
+  };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [callback, hasMore]);
+
+    return () => {
+      sessionStorage.setItem("scroll-performance-prev", String(window.scrollY));
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [callback, hasMore, storageKey]);
 }
+
+export default useInfiniteScroll;
