@@ -34,7 +34,12 @@ type CommonModalProps = {
 function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
   const [data, setData] = useState<PerformanceDetail | null>(null);
   // zustand로 관리
-  const { favorites, fetchFavoriteState, toggleFavorite } = useFavoriteState();
+  const {
+    favorites,
+    fetchFavoriteState,
+    toggleFavorite,
+    removeFromFavoriteList,
+  } = useFavoriteState();
   const isLiked = prfId ? favorites[prfId] ?? false : false;
 
   // [지역] 제거
@@ -83,6 +88,16 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
   const handleToggleLocalFavorite = async () => {
     if (!prfId) return;
     await toggleFavorite(prfId);
+
+    // 최신 zustand 상태 얻기
+    const newState = useFavoriteState.getState().favorites[prfId];
+
+    // 좋아요 취소일 때만 리스트에서 제거
+    if (!newState) {
+      removeFromFavoriteList(prfId);
+      // 취소 시 모달 닫힘
+      setOpen(false);
+    }
   };
 
   return (
