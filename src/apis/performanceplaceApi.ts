@@ -12,7 +12,22 @@ export interface PlaceMarker {
   url : string | null;
 }
 
+export interface PrfPlcModal {
+  prfId : string;
+  posterImgUrl : string | null;
+}
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export const findByPlaceId = async (prfPlcId: string): Promise<PlaceMarker> => {
+  try {
+    const res = await axios.get(`${BASE_URL}/prfDetails/${prfPlcId}`);
+    return res.data as PlaceMarker;
+  } catch (err) {
+    console.error("findByPlaceId API 오류:", err);
+    throw err; 
+  }
+}
 
 
 export const findNearbyPlaces = async (

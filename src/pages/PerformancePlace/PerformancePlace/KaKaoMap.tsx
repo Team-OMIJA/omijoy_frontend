@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
+import axios from "axios";
 
 declare global {
   interface Window {
@@ -243,7 +244,7 @@ function KaKaoMap({
         title: place.prfPlcName,
       });
       window.kakao.maps.event.addListener(marker, "click", function () {
-        console.log("마커 클릭됨:", place.prfPlcName);
+        console.log("마커 클릭됨:", place.prfPlcName, place.prfPlcId);
         onMarkerClick(place);
       });
       return marker;
