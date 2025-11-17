@@ -3,6 +3,7 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { AwardPerformance } from "../../../types/homeTypes";
 import { fetchAwardPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
+import CachedIcon from "@mui/icons-material/Cached";
 
 function AwardRecommendList() {
   const [allPerformances, setAllPerformances] = useState<AwardPerformance[]>(
@@ -35,7 +36,7 @@ function AwardRecommendList() {
 
   return (
     <div
-      style={{ width: "100%", padding: "40px 80px", boxSizing: "border-box" }}
+      style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}
     >
       {/* 제목 + 버튼 */}
       <div
@@ -63,13 +64,12 @@ function AwardRecommendList() {
             transition: "color 0.2s ease",
           }}
           onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
-          onMouseOut={(e) => (e.currentTarget.style.color = "#555")}
-          title="다른 추천 보기"
+          onMouseOut={(e) => (e.currentTarget.style.color = "#444")}
         >
-          🔁
+          <CachedIcon style={{ fontSize: "25px" }} />
         </button>
       </div>
-      {/* 카드 리스트 */}
+
       {/* 로딩일 때: 리스트 전체를 스켈레톤으로 교체 */}
       {loading ? (
         <PrfListSkeleton />
@@ -86,20 +86,11 @@ function AwardRecommendList() {
               key={i}
               style={{
                 textAlign: "left",
-                padding: "5px", // hover 여유 공간
-                borderRadius: "14px", // 카드 둥글게
-                transition: "transform 0.25s ease, box-shadow 0.25s ease",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = "translateY(-6px)";
-                e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.1)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
+                padding: "5px",
+                borderRadius: "14px",
               }}
             >
-              {/* 포스터 클릭 시 모달 열기 */}
+              {/* 포스터 클릭 시 모달 열기 (포스터만 hover 적용됨) */}
               <img
                 src={p.poster}
                 alt={p.title}
@@ -109,11 +100,21 @@ function AwardRecommendList() {
                 }}
                 style={{
                   width: "100%",
-                  height: "250px",
+                  height: "260px",
                   objectFit: "cover",
                   borderRadius: "10px",
                   marginBottom: "10px",
                   cursor: "pointer",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(0,0,0,0.15)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "none";
                 }}
               />
 
@@ -125,11 +126,23 @@ function AwardRecommendList() {
                     color: "#111",
                     marginBottom: "6px",
                     lineHeight: "1.4",
+                    wordBreak: "keep-all",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
                   }}
                 >
                   {p.title}
                 </h4>
-                <p style={{ color: "#555", fontSize: "13px", margin: "2px 0" }}>
+                <p
+                  style={{
+                    color: "#555",
+                    fontSize: "13px",
+                    margin: "2px 0",
+                    wordBreak: "keep-all",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
                   {p.place}
                 </p>
                 <p
@@ -147,6 +160,7 @@ function AwardRecommendList() {
           ))}
         </div>
       )}
+
       {/* 공연 상세 모달 */}
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>

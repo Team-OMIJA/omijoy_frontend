@@ -3,6 +3,7 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { UpcomingPerformance } from "../../../types/homeTypes";
 import { fetchUpcomingPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
+import { formatDateRange } from "../../../apis/favoriteApi";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
@@ -30,7 +31,7 @@ function UpcomingList() {
 
   return (
     <div
-      style={{ width: "100%", padding: "40px 80px", boxSizing: "border-box" }}
+      style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}
     >
       {/* 제목 */}
       <div
@@ -51,7 +52,7 @@ function UpcomingList() {
           전체 공연 예정 (가까운 날짜순)
         </h2>
       </div>
-      {/* 카드 리스트 */}
+
       {/* 로딩일 때: 리스트 전체를 스켈레톤으로 교체 */}
       {loading ? (
         <PrfListSkeleton />
@@ -68,20 +69,11 @@ function UpcomingList() {
               key={i}
               style={{
                 textAlign: "left",
-                padding: "5px", // hover 여유 공간
-                borderRadius: "14px", // 카드 둥글게
-                transition: "transform 0.25s ease, box-shadow 0.25s ease",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = "translateY(-6px)";
-                e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.1)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
+                padding: "5px",
+                borderRadius: "14px",
               }}
             >
-              {/* 포스터 클릭 시 모달 열기 */}
+              {/* 포스터 (포스터만 hover 효과 적용) */}
               <img
                 src={p.posterImgUrl}
                 alt={p.prfNm}
@@ -91,11 +83,21 @@ function UpcomingList() {
                 }}
                 style={{
                   width: "100%",
-                  height: "250px",
+                  height: "260px",
                   objectFit: "cover",
                   borderRadius: "10px",
                   marginBottom: "10px",
                   cursor: "pointer",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 18px rgba(0,0,0,0.15)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "none";
                 }}
               />
 
@@ -108,6 +110,9 @@ function UpcomingList() {
                     color: "#111",
                     marginBottom: "6px",
                     lineHeight: "1.4",
+                    wordBreak: "keep-all",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
                   }}
                 >
                   {p.prfNm}
@@ -118,6 +123,9 @@ function UpcomingList() {
                     fontSize: "13px",
                     color: "#555",
                     margin: "2px 0",
+                    wordBreak: "keep-all",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
                   }}
                 >
                   {p.prfPlcNm}
@@ -130,7 +138,10 @@ function UpcomingList() {
                     margin: "1px 0",
                   }}
                 >
-                  {formatDate(p.prfStartDt)} ~ {formatDate(p.prfEndDt)}
+                  {formatDateRange(
+                    formatDate(p.prfStartDt),
+                    formatDate(p.prfEndDt)
+                  )}
                 </p>
 
                 <p
@@ -147,7 +158,8 @@ function UpcomingList() {
           ))}
         </div>
       )}
-      {/* 공연 상세 모달 (공통 모달) */}
+
+      {/* 공연 상세 모달 */}
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );

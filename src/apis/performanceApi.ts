@@ -3,6 +3,7 @@ import {
   TopRankPerformance,
   AwardPerformance,
   UpcomingPerformance,
+  KidsNewPerformancs,
 } from "../types/homeTypes";
 
 // 날짜 포맷팅 (YYYYMMDD)
@@ -14,7 +15,7 @@ const formatDate = (date: Date) => {
 };
 
 // [지역] 제거
-const removeRegionTag = (text: string) => {
+export const removeRegionTag = (text: string) => {
   return text.replace(/\[.*?\]/g, "").trim();
 };
 
@@ -52,7 +53,6 @@ export const fetchTopRankPerformances = async (): Promise<
       genre: box.getElementsByTagName("cate")[0]?.textContent || "",
     }));
 
-    // 상위 5개만 반환
     return result.slice(0, 5);
   } catch (err) {
     console.error("Failed to fetch KOPIS API", err);
@@ -128,6 +128,21 @@ export const fetchUpcomingPerformances = async (): Promise<
     }));
   } catch (err) {
     console.error("Failed to fetch upcoming data from server", err);
+    return [];
+  }
+};
+
+// KidPrfs for Banner
+export const fetchKidsPrfsThisMonth = async (): Promise<
+  KidsNewPerformancs[]
+> => {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  try {
+    const res = await axios.get(`${BASE_URL}/performances/kids`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch kidsNewPerformances data from server", err);
     return [];
   }
 };

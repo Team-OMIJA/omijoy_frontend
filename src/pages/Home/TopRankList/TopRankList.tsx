@@ -4,6 +4,7 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { TopRankPerformance } from "../../../types/homeTypes";
 import { fetchTopRankPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
@@ -22,7 +23,7 @@ function TopRankList() {
 
   return (
     <div
-      style={{ width: "100%", padding: "40px 80px", boxSizing: "border-box" }}
+      style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}
     >
       {/* 제목 + 이동 버튼 */}
       <div
@@ -33,13 +34,7 @@ function TopRankList() {
           marginBottom: "25px",
         }}
       >
-        <h2
-          style={{
-            fontSize: "22px",
-            fontWeight: "700",
-            margin: 0,
-          }}
-        >
+        <h2 style={{ fontSize: "22px", fontWeight: "700", margin: 0 }}>
           전체 공연 순위 TOP 5
         </h2>
 
@@ -57,11 +52,11 @@ function TopRankList() {
           onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
           onMouseOut={(e) => (e.currentTarget.style.color = "#444")}
         >
-          &gt;
+          <ArrowForwardIosIcon style={{ fontSize: "22px" }} />
         </button>
       </div>
 
-      {/* 로딩일 때: 리스트 전체를 스켈레톤으로 교체 */}
+      {/* 로딩 */}
       {loading ? (
         <PrfListSkeleton />
       ) : (
@@ -79,35 +74,78 @@ function TopRankList() {
                 textAlign: "left",
                 padding: "5px",
                 borderRadius: "14px",
-                transition: "transform 0.25s ease, box-shadow 0.25s ease",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = "translateY(-6px)";
-                e.currentTarget.style.boxShadow =
-                  "0 6px 18px rgba(0, 0, 0, 0.1)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
               }}
             >
-              <img
-                src={p.poster}
-                alt={p.title}
-                onClick={() => {
-                  setSelectedPrfId(p.id);
-                  setOpen(true);
-                }}
+              {/* 포스터 + 순위 + 그라데이션 레이어 */}
+              <div
                 style={{
+                  position: "relative",
                   width: "100%",
                   height: "250px",
-                  objectFit: "cover",
                   borderRadius: "10px",
-                  marginBottom: "10px",
-                  cursor: "pointer",
+                  overflow: "hidden",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease",
                 }}
-              />
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 18px rgba(0,0,0,0.15)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                {/* 이미지 */}
+                <img
+                  src={p.poster}
+                  alt={p.title}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setSelectedPrfId(p.id);
+                    setOpen(true);
+                  }}
+                />
 
+                {/* 하단 그라데이션 Overlay */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    bottom: 0,
+                    width: "100%",
+                    height: "40%", // 숫자 가독성
+                    background:
+                      "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0))",
+                  }}
+                />
+
+                {/* 순위 숫자 */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "10px",
+                    bottom: "5px",
+                    color: "#fff",
+                    fontSize: "60px",
+                    fontWeight: "700",
+                    fontStyle: "italic",
+                    textShadow: "0 3px 6px rgba(0,0,0,0.5)",
+                    transform: "scaleX(1.25)",
+                    transformOrigin: "left center",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {p.rank}
+                </div>
+              </div>
+
+              {/* 텍스트 */}
               <div>
                 <h4
                   style={{
@@ -115,13 +153,24 @@ function TopRankList() {
                     fontWeight: "600",
                     color: "#111",
                     marginBottom: "6px",
-                    lineHeight: "1.4",
+                    wordBreak: "keep-all",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
                   }}
                 >
-                  {p.rank}위 : {p.title}
+                  {p.title}
                 </h4>
 
-                <p style={{ fontSize: "13px", color: "#555", margin: "2px 0" }}>
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: "#555",
+                    margin: "2px 0",
+                    wordBreak: "keep-all",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
                   {p.place}
                 </p>
                 <p
@@ -140,7 +189,7 @@ function TopRankList() {
         </div>
       )}
 
-      {/* 공연 상세 모달 */}
+      {/* 모달 */}
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
   );

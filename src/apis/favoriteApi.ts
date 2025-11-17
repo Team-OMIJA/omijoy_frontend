@@ -6,6 +6,9 @@ import axios from "axios";
 export type ScrapRank = {
   prfName: string;
   scrapCount: number;
+  posterImgUrl: string;
+  prfStartDt: string;
+  prfEndDt: string;
 };
 
 export const getTop10Favorites = async (): Promise<ScrapRank[]> => {
@@ -20,6 +23,12 @@ export const getTop10Favorites = async (): Promise<ScrapRank[]> => {
   }
 };
 
+// 배너에서 쓸 스크랩 1위 데이터만
+export const getTop1FavoriteForBanner = async (): Promise<ScrapRank> => {
+  const list = await getTop10Favorites();
+  return list[0];
+};
+
 // 공연 스크랩 토글
 export const toggleFavoriteReq = async (prfId: string) => {
   try {
@@ -30,6 +39,14 @@ export const toggleFavoriteReq = async (prfId: string) => {
     throw error;
   }
 };
+
+// 날짜 포맷
+export function formatDateRange(start: string, end: string): string {
+  if (start === end) {
+    return start; // 날짜 같으면 1번만
+  }
+  return `${start} ~ ${end}`; // 다르면 기존처럼
+}
 
 // 내가 스크랩한 공연 리스트
 export const getFavoritePrfListReq = async () => {
