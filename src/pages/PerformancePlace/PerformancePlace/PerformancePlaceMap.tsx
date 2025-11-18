@@ -52,22 +52,24 @@ function PerformancePlaceMap() {
         (position) => {
           const { latitude, longitude } = position.coords;
           setMapCenter({ lat: latitude, lng: longitude });
-          setMapLevel(LOCAL_LEVEL+1);
+          setMapLevel(LOCAL_LEVEL + 1);
         },
         (error) => {
           console.error("초기 위치 로드 실패:", error.message);
         },
         {
           enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 30000,
         }
       );
     }
   }, [isKakaoMapLoaded]);
 
-  const getLocation = useCallback(() => {
+  const getLocation = () => {
     setIsLoading(true);
     setErrorMessage(null);
-    setPlaces([]); // ⭐️
+    setPlaces([]);
 
     if (!navigator.geolocation) {
       setErrorMessage(
@@ -86,7 +88,9 @@ function PerformancePlaceMap() {
 
         setPlaces(markerList);
         setCurrentLocation({ lat: latitude, lng: longitude });
-        setMapCenter({ lat: latitude, lng: longitude });
+
+        const randomOffset = (Math.random() - 0.5) * 0.0000001;
+        setMapCenter({ lat: latitude + randomOffset, lng: longitude });
         setMapLevel(LOCAL_LEVEL);
         setIsLocationDenied(false);
       } catch (error) {
@@ -107,12 +111,15 @@ function PerformancePlaceMap() {
       }
       setIsLoading(false);
     };
-
-    navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
-  }, []);
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 30000,
+    });
+  };
 
   const handleMarkerClick = useCallback((placeData: PlaceMarker) => {
-    console.log("모달 열기 시도:", placeData.prfPlcName);
+    console.log("모달 열기 시도:", placeData.prfPlcName, placeData.prfPlcId);
     setSelectedPlace(placeData);
     setIsModalOpen(true);
   }, []);
@@ -135,7 +142,10 @@ function PerformancePlaceMap() {
     setCurrentLocation(null);
 
     try {
-      const markerList = await findPlacesByGugun(filterSido, filterGugun);
+      const markerList = await findPlacesByGugun(
+        filterSido as string,
+        filterGugun
+      );
 
       setPlaces(markerList);
 
@@ -224,7 +234,7 @@ function PerformancePlaceMap() {
             isKakaoMapLoaded={isKakaoMapLoaded}
             currentLocation={currentLocation}
             onMarkerClick={handleMarkerClick}
-            onMyLocationClick={getLocation} 
+            onMyLocationClick={getLocation}
           />
         ) : (
           <p

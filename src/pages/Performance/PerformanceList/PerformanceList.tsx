@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { PiMagnifyingGlass, PiXCircle} from "react-icons/pi";
+import { PiMagnifyingGlass, PiXCircle } from "react-icons/pi";
 import { GrClose, GrPowerReset } from "react-icons/gr";
 import useInfiniteScroll from "../../../configs/useInfiniteScroll";
 import { useNavigate } from "react-router-dom";
@@ -23,9 +23,15 @@ function PerformanceList() {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [query, setQuery] = useState(() => sessionStorage.getItem('scroll-performance-query') || '');
-  const [arfilter, setArFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem('scroll-performance-arfilter') || '[]'));
-  const [gefilter, setGeFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem('scroll-performance-gefilter') || '[]'));
+  const [query, setQuery] = useState(
+    () => sessionStorage.getItem("scroll-performance-query") || ""
+  );
+  const [arfilter, setArFilter] = useState<string[]>(() =>
+    JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]")
+  );
+  const [gefilter, setGeFilter] = useState<string[]>(() =>
+    JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]")
+  );
   const getPerformance = useCallback(
     async (searchQuery?: string, append = false, pageToLoad = 0) => {
       setLoading(true);
@@ -41,7 +47,9 @@ function PerformanceList() {
         if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
         if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
 
-        const url = `${baseUrl}${isSearch ? "/search" : ""}?${params.toString()}`;
+        const url = `${baseUrl}${
+          isSearch ? "/search" : ""
+        }?${params.toString()}`;
 
         const response = await fetch(url);
         const json: Performance[] = await response.json();
@@ -61,13 +69,18 @@ function PerformanceList() {
     },
     [sort, arfilter, gefilter]
   );
-  
-  useEffect(() => {
-    sessionStorage.setItem('scroll-performance-query', query);
-    sessionStorage.setItem('scroll-performance-arfilter', JSON.stringify(arfilter));
-    sessionStorage.setItem('scroll-performance-gefilter', JSON.stringify(gefilter));
-  }, [query, arfilter, gefilter]);
 
+  useEffect(() => {
+    sessionStorage.setItem("scroll-performance-query", query);
+    sessionStorage.setItem(
+      "scroll-performance-arfilter",
+      JSON.stringify(arfilter)
+    );
+    sessionStorage.setItem(
+      "scroll-performance-gefilter",
+      JSON.stringify(gefilter)
+    );
+  }, [query, arfilter, gefilter]);
 
   useEffect(() => {
     setPage(0);
@@ -103,10 +116,37 @@ function PerformanceList() {
       setGeFilter(gefilter.filter((item) => item !== value));
     }
   };
-  
-  const AREA_OPTIONS = ["서울", "부산", "인천", "대구", "대전", "광주", "울산", "세종", "경기", "강원", "경북", "경남", "충북", "충남", "전북", "전남", "제주"];
-  const GENRE_OPTIONS = ["대중무용", "대중음악", "무용(서양/한국무용)", "뮤지컬", "복합", "서양음악(클래식)", "서커스/마술", "연극", "한국음악(국악)"];
 
+  const AREA_OPTIONS = [
+    "서울",
+    "부산",
+    "인천",
+    "대구",
+    "대전",
+    "광주",
+    "울산",
+    "세종",
+    "경기",
+    "강원",
+    "경북",
+    "경남",
+    "충북",
+    "충남",
+    "전북",
+    "전남",
+    "제주",
+  ];
+  const GENRE_OPTIONS = [
+    "대중무용",
+    "대중음악",
+    "무용(서양/한국무용)",
+    "뮤지컬",
+    "복합",
+    "서양음악(클래식)",
+    "서커스/마술",
+    "연극",
+    "한국음악(국악)",
+  ];
 
   return (
     <div>
@@ -117,58 +157,70 @@ function PerformanceList() {
           gap: "10px",
         }}
       >
-      <h2>공연 리스트</h2>
-      <select
-        value={sort}
-        onChange={(e) => setSort(e.target.value)}
-        style={{
-          padding: "8px 12px",
-          border: "solid #ccc",
-          outline: "none",
-        }}
-      >
-        <option value="name">이름순</option>
-        <option value="date">날짜순</option>
-      </select>
-      <select
-        value={arfilter}
-        onChange={(e) => handleAreaChange(e.target.value)}
-        style={{
-          padding: "8px 12px",
-          border: "solid #ccc",
-          outline: "none",
-        }}
-      >
-        <option value="" hidden>지역</option>
-        {AREA_OPTIONS.map(area => <option key={area} value={area}>{area}</option>)}
-      </select>
-      <select
-        value={gefilter}
-        onChange={(e) => handleGenreChange(e.target.value)}
-        style={{
-          padding: "8px 12px",
-          border: "solid #ccc",
-          outline: "none",
-        }}
-      >
-        <option value="" hidden>장르</option>
-        {GENRE_OPTIONS.map(genre => <option key={genre} value={genre}>{genre}</option>)}
-      </select>
-      <GrPowerReset 
-        onClick={() => {
-          setArFilter([]);
-          setGeFilter([]);
-          getPerformance(query);
-        }}
-        style={{
-          padding: "6px 12px",
-          borderRadius: 8,
-          border: "1px solid #ccc",
-          background: "#f0f0f0",
-          cursor: "pointer",
-        }}
-      />
-      <div style={{ position: "relative", width: 250, marginLeft: "auto"}}>
+        <h2>공연 리스트</h2>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          style={{
+            padding: "8px 12px",
+            border: "solid #ccc",
+            outline: "none",
+          }}
+        >
+          <option value="name">이름순</option>
+          <option value="date">날짜순</option>
+        </select>
+        <select
+          value={arfilter}
+          onChange={(e) => handleAreaChange(e.target.value)}
+          style={{
+            padding: "8px 12px",
+            border: "solid #ccc",
+            outline: "none",
+          }}
+        >
+          <option value="" hidden>
+            지역
+          </option>
+          {AREA_OPTIONS.map((area) => (
+            <option key={area} value={area}>
+              {area}
+            </option>
+          ))}
+        </select>
+        <select
+          value={gefilter}
+          onChange={(e) => handleGenreChange(e.target.value)}
+          style={{
+            padding: "8px 12px",
+            border: "solid #ccc",
+            outline: "none",
+          }}
+        >
+          <option value="" hidden>
+            장르
+          </option>
+          {GENRE_OPTIONS.map((genre) => (
+            <option key={genre} value={genre}>
+              {genre}
+            </option>
+          ))}
+        </select>
+        <GrPowerReset
+          onClick={() => {
+            setArFilter([]);
+            setGeFilter([]);
+            getPerformance(query);
+          }}
+          style={{
+            padding: "6px 12px",
+            borderRadius: 8,
+            border: "1px solid #ccc",
+            background: "#f0f0f0",
+            cursor: "pointer",
+          }}
+        />
+        <div style={{ position: "relative", width: 250, marginLeft: "auto" }}>
           <input
             type="text"
             placeholder="공연명 검색"
@@ -184,9 +236,9 @@ function PerformanceList() {
               border: "2px solid #ccc",
               outline: "none",
               boxSizing: "border-box",
-              }}
-            />
-          <PiMagnifyingGlass 
+            }}
+          />
+          <PiMagnifyingGlass
             size={18}
             onClick={() => getPerformance(query)}
             style={{
@@ -194,11 +246,11 @@ function PerformanceList() {
               right: 10,
               top: 8,
               color: "grey",
-              cursor: "pointer", 
+              cursor: "pointer",
             }}
           />
           {query && (
-            <GrClose  
+            <GrClose
               size={12}
               onClick={() => {
                 setQuery("");
@@ -213,64 +265,70 @@ function PerformanceList() {
               }}
             />
           )}
-          </div>
+        </div>
       </div>
-      
+
       <div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: 20 }}>
-        {arfilter.map((item) => (
-          <div
-            key={`area-${item}`}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              background: "#e0e0e0",
-              borderRadius: "16px",
-              padding: "4px 8px",
-            }}
-          >
-            <span>{item}</span>
-            <PiXCircle 
-              size={16}
-              style={{ marginLeft: 6, cursor: "pointer" }}
-              onClick={() => removeFilter("area", item)}
-            />
-          </div>
-        ))}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            marginBottom: 20,
+          }}
+        >
+          {arfilter.map((item) => (
+            <div
+              key={`area-${item}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                background: "#e0e0e0",
+                borderRadius: "16px",
+                padding: "4px 8px",
+              }}
+            >
+              <span>{item}</span>
+              <PiXCircle
+                size={16}
+                style={{ marginLeft: 6, cursor: "pointer" }}
+                onClick={() => removeFilter("area", item)}
+              />
+            </div>
+          ))}
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-        {gefilter.map((item) => (
-          <div
-            key={`genre-${item}`}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              background: "#e0e0e0",
-              borderRadius: "16px",
-              padding: "4px 8px",
-            }}
-          >
-            <span>{item}</span>
-            <PiXCircle 
-              size={14}
-              style={{ marginLeft: 6, cursor: "pointer" }}
-              onClick={() => removeFilter("genre", item)}
-            />
-          </div>
-        ))}
+          {gefilter.map((item) => (
+            <div
+              key={`genre-${item}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                background: "#e0e0e0",
+                borderRadius: "16px",
+                padding: "4px 8px",
+              }}
+            >
+              <span>{item}</span>
+              <PiXCircle
+                size={14}
+                style={{ marginLeft: 6, cursor: "pointer" }}
+                onClick={() => removeFilter("genre", item)}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
-      <div 
-        style={{ 
+      <div
+        style={{
           display: "flex",
           justifyContent: "flex-end",
-          alignItems: "center", 
-          marginBottom: 30 
+          alignItems: "center",
+          marginBottom: 30,
         }}
-      >
-      </div>
+      ></div>
 
       {performances.length === 0 && !loading && (
         <div className="detail-error" style={{ marginTop: "20px" }}>
@@ -281,16 +339,35 @@ function PerformanceList() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
-          gap: "16px"
+          gap: "16px",
         }}
       >
         {performances.map((p) => (
-          <div key={p.prfId} style={{ textAlign: "center" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
-              <img src={p.posterImgUrl} alt="poster" width="300" height="300" style={{ width: 200, cursor: "pointer" }} />
-            <div style={{ textDecoration: "none", color: "black", cursor: "pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
+          <div
+            key={p.prfId}
+            style={{ textAlign: "center" }}
+            onClick={() => navigate(`/performance/${p.prfId}`)}
+          >
+            <img
+              src={p.posterImgUrl}
+              alt="poster"
+              width="300"
+              height="300"
+              style={{ width: 200, cursor: "pointer" }}
+            />
+            <div
+              style={{
+                textDecoration: "none",
+                color: "black",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate(`/performance/${p.prfId}`)}
+            >
               <strong>{p.prfNm}</strong>
             </div>
-            <div>({p.prfStartDt} ~ {p.prfEndDt})</div>
+            <div>
+              ({p.prfStartDt} ~ {p.prfEndDt})
+            </div>
             <div>{p.prfPlcNm}</div>
           </div>
         ))}
@@ -299,4 +376,4 @@ function PerformanceList() {
   );
 }
 
-export default PerformanceList
+export default PerformanceList;

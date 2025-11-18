@@ -1,4 +1,4 @@
-import axios from "axios";
+import { instance } from "./instance";
 
 export interface PlaceMarker {
   prfPlcId: string;
@@ -7,40 +7,36 @@ export interface PlaceMarker {
   prfPlcName: string;
   latitude: number;
   longitude: number;
-  address : string | null;
-  tel : string | null;
-  url : string | null;
+  address: string | null;
+  tel: string | null;
+  url: string | null;
 }
 
 export interface PrfPlcModal {
-  prfId : string;
-  posterImgUrl : string | null;
+  prfId: string;
+  posterImgUrl: string | null;
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-export const findByPlaceId = async (prfPlcId: string): Promise<PlaceMarker> => {
+export const findPerformancesByPlaceId = async (
+  prfPlcId: string
+): Promise<PrfPlcModal[]> => {
   try {
-    const res = await axios.get(`${BASE_URL}/prfDetails/${prfPlcId}`);
-    return res.data as PlaceMarker;
+    const res = await instance.get(`/performanceplace/by-place/${prfPlcId}`);
+    return res.data as PrfPlcModal[];
   } catch (err) {
-    console.error("findByPlaceId API 오류:", err);
-    throw err; 
+    console.error("findPerformancesByPlaceId API 오류:", err);
+    throw err;
   }
-}
-
+};
 
 export const findNearbyPlaces = async (
   latitude: number,
   longitude: number,
-  radius: number = 5000 // 5km 설정
+  radius: number = 5000 // 5km
 ): Promise<PlaceMarker[]> => {
   const dataToSend = { latitude, longitude, radius };
   try {
-    const res = await axios.post(
-      `${BASE_URL}/performanceplace/nearby`,
-      dataToSend
-    );
+    const res = await instance.post(`/performanceplace/nearby`, dataToSend);
     return res.data as PlaceMarker[];
   } catch (err) {
     console.error("findNearbyPlaces API 오류:", err);
@@ -53,7 +49,7 @@ export const findPlacesByGugun = async (
   gugun: string
 ): Promise<PlaceMarker[]> => {
   try {
-    const res = await axios.get(`${BASE_URL}/performanceplace/byGugun`, {
+    const res = await instance.get(`/performanceplace/byGugun`, {
       params: { sido, gugun },
     });
     return res.data as PlaceMarker[];
