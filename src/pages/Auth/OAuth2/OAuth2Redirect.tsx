@@ -32,9 +32,9 @@ function OAuth2Redirect() {
       return;
     }
 
-    sessionStorage.setItem('jwt', `Bearer ${token}`);
+    localStorage.setItem('jwt', `Bearer ${token}`);
 
-    const cleanPath = '/login/oauth2/google';
+    const cleanPath = '/login/oauth2';
     window.history.replaceState({}, document.title, cleanPath);
 
     navigate(next, { replace: true });

@@ -1,5 +1,5 @@
-import { queryClient } from "./../configs/queryClient";
-import { create } from "zustand";
+import { queryClient } from './../configs/queryClient';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware'; // ✅ 추가
 
 // 로그인 상태 유지
@@ -20,10 +20,8 @@ interface PrincipalState {
   logout: () => void; // 로그아웃 시
 }
 
-export const usePrincipalState = 
-
-create(
-   persist<PrincipalState>(
+export const usePrincipalState = create(
+  persist<PrincipalState>(
     (set) => ({
       isAuthenticated: false,
       principal: null,
@@ -31,14 +29,14 @@ create(
       login: (userData) => set({ isAuthenticated: true, principal: userData }),
 
       logout: () => {
-        sessionStorage.removeItem("jwt");
+        localStorage.removeItem('jwt');
         queryClient.clear();
         set({ isAuthenticated: false, principal: null });
-        window.location.href = "/login";
+        window.location.href = '/login';
       },
     }),
     {
-      name: "principal-storage", // localStorage에 저장됨 - 이거 있으면 로그아웃 하기 전까지 로그아웃 x
+      name: 'principal-storage', // localStorage에 저장됨 - 이거 있으면 로그아웃 하기 전까지 로그아웃 x
     }
   )
-)
+);
