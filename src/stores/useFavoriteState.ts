@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { instance } from "../apis/instance";
-import { useNavigate } from "react-router-dom";
 
 // 나중에 types로 분리
 type Performance = {
@@ -81,4 +80,28 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
       window.location.href = "/login";
     }
   },
+   // 현재 스크랩 여부 - 공연 상세 페이지 사용
+//  fetchDetailFavoriteState: async (prfId) => {
+//   try {
+//     const res = await instance.get(``)
+//   }
+//  }
+
+ 
+ 
+//  async (prfId) => {
+//     try {
+//       const res = await instance.get(`/commonmodal/${prfId}`);
+//       const favorited = res.data.favorited;
+
+//       set((state) => ({
+//         favorites: { ...state.favorites, [prfId]: favorited },
+//       }));
+
+//       return favorited;
+//     } catch (err) {
+//       console.error("스크랩 상태 조회 실패:", err);
+//       return false;
+//     }
+//   },
 }));

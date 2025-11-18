@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";
-import { toggleFavoriteReq } from "../../../apis/favoriteApi";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { instance } from "../../../apis/instance";
