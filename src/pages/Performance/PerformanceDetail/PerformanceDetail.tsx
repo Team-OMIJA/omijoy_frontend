@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
+import { toggleFavoriteReq, getFavoritePrfListReq } from "../../../apis/favoriteApi";
 
 interface PerformanceDetail {
   prfId: string;
@@ -33,7 +34,7 @@ function PerformanceDetail() {
     const fetchPerformance = async () => {
       try {
         const res = await fetch(`http://localhost:8080/prfDetails/${id}`);
-        const data: PerformanceDetail = await res.json(); 
+        const data: PerformanceDetail = await res.json();
         setPerformance(data);
       } catch (err) {
         console.error("공연 상세 정보 불러오기 실패", err);
@@ -44,8 +45,31 @@ function PerformanceDetail() {
       }
     };
 
-    fetchPerformance();
-  }, [id]);
+    const fetchLikedStatus = async () => {
+      try {
+        const favorites = (await getFavoritePrfListReq()) as { prfId: string }[];
+        if (favorites.some((fav) => fav.prfId === id)) {
+          setLiked(true);
+        }
+      } catch (err) {
+        console.error("좋아요 상태 확인 실패", err);
+      }
+    };
+
+      fetchPerformance();
+      fetchLikedStatus();
+    }, [id]);
+
+    const handleToggleFavorite = async () => {
+      try {
+        if (!id) return;
+        await toggleFavoriteReq(id);
+        setLiked((prev) => !prev);
+      } catch (err) {
+        console.error("좋아요 토글 실패", err);
+        alert("로그인이 필요합니다.");
+      }
+    };
 
   if (loading) return <div>로딩 중...</div>;
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
@@ -81,7 +105,7 @@ function PerformanceDetail() {
             {performance.festival === "Y" && <p>축제</p>}
           </div>
         </div>
-        <HeartIcon style={{position: "absolute", top: "40px", right: "-70px", fontSize: "40px", color: "crimson", cursor: "pointer"}} onClick={() => setLiked(!liked)}/>
+        <HeartIcon style={{position: "absolute", top: "40px", right: "-70px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
         {performance.providerUrl && (
         <button
           onClick={() => {const firstUrl = performance.providerUrl.split(",")[0].trim();
