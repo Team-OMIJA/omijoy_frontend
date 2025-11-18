@@ -5,6 +5,7 @@ import ProfileView from "../ProfileView/ProfileView";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 
 
+
 function Profile() {
   const { principal } = usePrincipalState();
   const [isEditing, setIsEditing] = useState(false);
