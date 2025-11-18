@@ -46,7 +46,7 @@ export const fetchTopRankPerformances = async (): Promise<
       genre: box.getElementsByTagName("cate")[0]?.textContent || "",
     }));
 
-    return result.slice(0, 5);
+    return result.slice(0, 10);
   } catch (err) {
     console.error("Failed to fetch KOPIS API", err);
     return [];

@@ -11,9 +11,9 @@ function Home() {
     <>
       <MantineProvider>
         <CarouselBanner />
+        <TopRankList />
       </MantineProvider>
 
-      <TopRankList />
       <AwardRecommendList />
 
       <MantineProvider>

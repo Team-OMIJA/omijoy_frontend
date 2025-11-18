@@ -62,6 +62,7 @@ function UpcomingList() {
             emblaOptions={{
               align: "start",
               slidesToScroll: 1,
+              dragFree: true,
             }}
             height={430} // 전체 카드 높이
             withControls // 양 옆 화살표 표시
