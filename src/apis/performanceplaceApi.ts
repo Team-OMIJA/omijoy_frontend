@@ -1,8 +1,5 @@
-// src/apis/performanceplaceApi.ts
+import { instance } from "./instance";
 
-import axios from 'axios';
-
-// ⭐️ 1. 백엔드 DTO와 정확히 일치하는 인터페이스 정의
 export interface PlaceMarker {
   prfPlcId: string;
   sido: string;
@@ -10,24 +7,54 @@ export interface PlaceMarker {
   prfPlcName: string;
   latitude: number;
   longitude: number;
+  address: string | null;
+  tel: string | null;
+  url: string | null;
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export interface PrfPlcModal {
+  prfId: string;
+  posterImgUrl: string | null;
+}
 
-// 현재 위치를 백엔드로 전송하고 마커 데이터를 받아옵니다.
-export const sendLocation = async (region1: string, region2: string): Promise<PlaceMarker[]> => {
-  // ⭐️ 반환 타입 수정
-  const dataToSend = {
-    region1,
-    region2,
-  };
+export const findPerformancesByPlaceId = async (
+  prfPlcId: string
+): Promise<PrfPlcModal[]> => {
   try {
-    const res = await axios.post(`${BASE_URL}/performanceplace/currentlocation`, dataToSend);
+    const res = await instance.get(`/performanceplace/by-place/${prfPlcId}`);
+    return res.data as PrfPlcModal[];
+  } catch (err) {
+    console.error("findPerformancesByPlaceId API 오류:", err);
+    throw err;
+  }
+};
 
-    // DTO 리스트를 반환
+export const findNearbyPlaces = async (
+  latitude: number,
+  longitude: number,
+  radius: number = 5000 // 5km
+): Promise<PlaceMarker[]> => {
+  const dataToSend = { latitude, longitude, radius };
+  try {
+    const res = await instance.post(`/performanceplace/nearby`, dataToSend);
     return res.data as PlaceMarker[];
   } catch (err) {
-    console.error('sendLocation API 오류 발생:', err);
+    console.error("findNearbyPlaces API 오류:", err);
+    throw err;
+  }
+};
+
+export const findPlacesByGugun = async (
+  sido: string,
+  gugun: string
+): Promise<PlaceMarker[]> => {
+  try {
+    const res = await instance.get(`/performanceplace/byGugun`, {
+      params: { sido, gugun },
+    });
+    return res.data as PlaceMarker[];
+  } catch (err) {
+    console.error("findPlacesByGugun API 오류:", err);
     throw err;
   }
 };
