@@ -1,8 +1,9 @@
+/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
 export const container = css`
   width: 100%;
-  padding: 50px 80px;
+  padding: 40px 80px;
   box-sizing: border-box;
 `;
 
@@ -13,23 +14,24 @@ export const title = css`
 `;
 
 export const empty = css`
-  font-size: 15px;
-  color: #666;
+  font-size: 16px;
+  color: #777;
+  text-align: center;
+  padding: 40px 0;
 `;
 
 export const list = css`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 30px;
-  list-style: none;
   padding: 0;
   margin: 0;
+  list-style: none;
 `;
 
 export const card = css`
-  text-align: left;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     transform: translateY(-6px);
@@ -46,19 +48,31 @@ export const poster = css`
 `;
 
 export const info = css`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  text-align: left;
 `;
 
 export const name = css`
   font-size: 15px;
   font-weight: 600;
   color: #111;
+  margin-bottom: 6px;
   line-height: 1.4;
 `;
 
 export const place = css`
   font-size: 13px;
   color: #555;
+  margin: 2px 0;
+`;
+
+export const date = css`
+  font-size: 12.5px;
+  color: #777;
+  margin: 1px 0;
+`;
+
+export const genre = css`
+  font-size: 12.5px;
+  color: #999;
+  margin: 3px 0;
 `;
