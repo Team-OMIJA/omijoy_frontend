@@ -30,7 +30,7 @@ function Login() {
       .then((res) => {
         const jwtToken = res.headers.authorization;
         if (jwtToken != null) {
-          sessionStorage.setItem('jwt', jwtToken);
+          localStorage.setItem('jwt', jwtToken);
           setAuth(true);
         }
       })
