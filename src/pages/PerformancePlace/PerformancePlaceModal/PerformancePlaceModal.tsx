@@ -70,15 +70,14 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         <strong>주소:</strong> {place.address || "정보 없음"}
         </p>
         <p className="modal-info-item">
-        <strong>주차장:</strong>
+        <strong>주차장:</strong> {place.parkingLot ==="Y" ? "⭕" : "❌"}
         </p>
         <p className="modal-info-item">
-        <strong>엘리베이터:</strong> {place.eleve || "❌"}
+        <strong>엘리베이터:</strong> {place.eleve === "Y" ? "⭕" : "❌"}
         </p>
         <p className="modal-info-item">
-        <strong>장애인주차장:</strong> {place.parkBarrier || "❌"}
+        <strong>장애인주차장:</strong> {place.parkBarrier === "Y" ? "⭕" : "❌"}
         </p>
-        
         <p className="modal-info-item">
         <strong>전화번호:</strong> {place.tel || "정보 없음"}
         </p>
