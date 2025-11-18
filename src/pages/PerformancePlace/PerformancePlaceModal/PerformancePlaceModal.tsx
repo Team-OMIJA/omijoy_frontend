@@ -64,18 +64,6 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         window.open(url, '_blank', 'noopener,noreferrer');
         console.log(place.prfPlcName, place.latitude, place.longitude)
     };
-    const styles = {
-    // ... (기존 overlay, modalBody, urlButton, closeButton 등) ...
-    directionsButton: {
-        width: '100%', padding: '12px', marginTop: '10px',
-        backgroundColor: '#FFEB00', // 카카오 노란색 (예시)
-        color: '#3C1E1E', 
-        border: 'none',
-        borderRadius: '5px', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold'
-    }
-} as const;
-    
-
     return (
     <div className="modal-overlay" onClick={onClose}>
         <div className="modal-body" onClick={(e) => e.stopPropagation()}>
@@ -104,7 +92,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         {hasValidUrl ? "공연장 방문" : "공연장 정보 없음"}
         </button>
         <button 
-        style={styles.directionsButton} 
+        className="modal-kakao-directions-button" 
         onClick={handleGetDirections}>
             <strong>길찾기</strong>
         </button>
@@ -139,6 +127,5 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     </div>
     </div>
     );
-    
 }
 export default PerformancePlaceModal;

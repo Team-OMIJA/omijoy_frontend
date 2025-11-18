@@ -238,3 +238,15 @@
   color: crimson; 
   cursor: "pointer";
 }
+.modal-kakao-directions-button{
+  width: 100%;
+  padding: 12px; 
+  margin-top: 10px;
+  background-color: #FFEB00; 
+  color: #3C1E1E;
+  border : none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}
