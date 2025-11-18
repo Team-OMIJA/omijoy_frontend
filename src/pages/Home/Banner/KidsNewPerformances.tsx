@@ -3,8 +3,10 @@ import { Box, Typography } from "@mui/material";
 import { fetchKidsPrfsThisMonth } from "../../../apis/performanceApi";
 import { KidsNewPerformancs } from "../../../types/homeTypes";
 import { removeRegionTag } from "../../../apis/performanceApi";
-import { formatDateRange } from "../../../components/FormatDate/FormatDate";
-import { formatDateDot } from "../../../components/FormatDate/FormatDate";
+import {
+  formatDateRange,
+  formatDateDot,
+} from "../../../components/FormatDate/FormatDate";
 
 function KidsNewPerformances() {
   // AwardRecommendList와 동일한 데이터 구조
