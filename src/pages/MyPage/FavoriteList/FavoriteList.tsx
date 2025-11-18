@@ -37,8 +37,8 @@ function FavoriteList() {
     <>
       <div css={s.container}>
         <h2 css={s.title}>❤️My Favorites</h2>
-        <RxShare2 
-          size={30} 
+        <RxShare2
+          size={30}
           onClick={() => {
             if (!principal.id) {
               alert("로그인 후 공유가 가능합니다.");
@@ -46,7 +46,12 @@ function FavoriteList() {
             }
             navigate(`/favorites/list/${principal.id}`);
           }}
-          style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}
+          style={{
+            position: "absolute",
+            left: "320px",
+            bottom: "309px",
+            cursor: "pointer",
+          }}
         />
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
