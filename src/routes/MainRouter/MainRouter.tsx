@@ -7,6 +7,7 @@ import Login from '../../pages/Auth/Login/Login';
 import SignUp from '../../pages/Auth/SignUp/SignUp';
 import MyPage from '../../pages/MyPage/MyPage';
 import OAuth2Redirect from '../../pages/Auth/OAuth2/OAuth2Redirect';
+import FavoriteSharedList from '../../pages/MyPage/FavoriteList/FavoriteSharedList';
 
 function MainRouter() {
   return (
@@ -23,6 +24,8 @@ function MainRouter() {
         <Route path='/mypage' element={<MyPage />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/login/oauth2' element={<OAuth2Redirect />} />
+        {/* 공유 페이지 */}
+        <Route path="/favorites/list/:userId" element={<FavoriteSharedList />} />
       </Route>
     </Routes>
   );
