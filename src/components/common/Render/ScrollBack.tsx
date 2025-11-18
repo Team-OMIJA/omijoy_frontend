@@ -16,4 +16,4 @@ function ScrollBack() {
   return null;
 }
 
-export default ScrollBack
+export default ScrollBack;
