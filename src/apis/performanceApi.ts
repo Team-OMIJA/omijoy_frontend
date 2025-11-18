@@ -3,6 +3,7 @@ import {
   TopRankPerformance,
   AwardPerformance,
   UpcomingPerformance,
+  KidsNewPerformancs,
 } from "../types/homeTypes";
 
 // 날짜 포맷팅 (YYYYMMDD)
@@ -11,6 +12,11 @@ const formatDate = (date: Date) => {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}${month}${day}`;
+};
+
+// [지역] 제거
+export const removeRegionTag = (text: string) => {
+  return text.replace(/\[.*?\]/g, "").trim();
 };
 
 // TopRankList
@@ -37,7 +43,9 @@ export const fetchTopRankPerformances = async (): Promise<
     // XML → JS 객체 변환
     const result = Array.from(boxList).map((box) => ({
       id: box.getElementsByTagName("mt20id")[0]?.textContent || "",
-      title: box.getElementsByTagName("prfnm")[0]?.textContent || "",
+      title: removeRegionTag(
+        box.getElementsByTagName("prfnm")[0]?.textContent || ""
+      ),
       place: box.getElementsByTagName("prfplcnm")[0]?.textContent || "",
       poster: box.getElementsByTagName("poster")[0]?.textContent || "",
       period: box.getElementsByTagName("prfpd")[0]?.textContent || "",
@@ -45,7 +53,6 @@ export const fetchTopRankPerformances = async (): Promise<
       genre: box.getElementsByTagName("cate")[0]?.textContent || "",
     }));
 
-    // 상위 5개만 반환
     return result.slice(0, 5);
   } catch (err) {
     console.error("Failed to fetch KOPIS API", err);
@@ -76,7 +83,9 @@ export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
     ).map((item) => ({
       id: item.getElementsByTagName("mt20id")[0]?.textContent || "",
       poster: item.getElementsByTagName("poster")[0]?.textContent || "",
-      title: item.getElementsByTagName("prfnm")[0]?.textContent || "",
+      title: removeRegionTag(
+        item.getElementsByTagName("prfnm")[0]?.textContent || ""
+      ),
       place: item.getElementsByTagName("fcltynm")[0]?.textContent || "",
       stDate: item.getElementsByTagName("prfpdfrom")[0]?.textContent || "",
       edDate: item.getElementsByTagName("prfpdto")[0]?.textContent || "",
@@ -111,9 +120,29 @@ export const fetchUpcomingPerformances = async (): Promise<
 
   try {
     const response = await axios.get(`${BASE_URL}/performances/upcoming`);
-    return response.data as UpcomingPerformance[];
+
+    return (response.data as UpcomingPerformance[]).map((p) => ({
+      ...p,
+      prfNm: removeRegionTag(p.prfNm),
+      prfPlcNm: p.prfPlcNm,
+    }));
   } catch (err) {
     console.error("Failed to fetch upcoming data from server", err);
+    return [];
+  }
+};
+
+// KidPrfs for Banner
+export const fetchKidsPrfsThisMonth = async (): Promise<
+  KidsNewPerformancs[]
+> => {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  try {
+    const res = await axios.get(`${BASE_URL}/performances/kids`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch kidsNewPerformances data from server", err);
     return [];
   }
 };

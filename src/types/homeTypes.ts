@@ -27,3 +27,11 @@ export interface UpcomingPerformance {
   prfEndDt: string;
   genreNm: string;
 }
+
+// KidPrfs for Banner
+export interface KidsNewPerformancs {
+  prfNm: string;
+  posterImgUrl: string;
+  prfStartDt: string;
+  prfEndDt: string;
+}

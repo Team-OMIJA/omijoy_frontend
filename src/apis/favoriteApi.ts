@@ -6,6 +6,9 @@ import axios from "axios";
 export type ScrapRank = {
   prfName: string;
   scrapCount: number;
+  posterImgUrl: string;
+  prfStartDt: string;
+  prfEndDt: string;
 };
 
 export const getTop10Favorites = async (): Promise<ScrapRank[]> => {
@@ -18,6 +21,12 @@ export const getTop10Favorites = async (): Promise<ScrapRank[]> => {
     console.error("Failed to get top10 favorites", error);
     throw error;
   }
+};
+
+// 배너에서 쓸 스크랩 1위 데이터만
+export const getTop1FavoriteForBanner = async (): Promise<ScrapRank> => {
+  const list = await getTop10Favorites();
+  return list[0];
 };
 
 // 공연 스크랩 토글
