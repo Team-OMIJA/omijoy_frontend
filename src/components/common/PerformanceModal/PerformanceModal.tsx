@@ -7,6 +7,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { instance } from "../../../apis/instance";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
+import { useNavigate } from "react-router-dom";
 
 type PerformanceDetail = {
   prfId: string;
@@ -29,9 +30,12 @@ type CommonModalProps = {
   open: boolean;
   setOpen: (value: boolean) => void;
   prfId: string | null;
+  // 메인 - 마이페이지 스크랩이 다르게 작동해서 마이페이지에서 열린 상태를 추가적으로 넘겨줌. 일종의 tag 
+  source?: "mypage" | "other";  
 };
 
-function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
+// other = 기본값 set
+function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProps) {
   const [data, setData] = useState<PerformanceDetail | null>(null);
   // zustand로 관리
   const {
@@ -41,6 +45,7 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
     removeFromFavoriteList,
   } = useFavoriteState();
   const isLiked = prfId ? favorites[prfId] ?? false : false;
+  const navigate = useNavigate();
 
   // [지역] 제거
   const removeRegionTag = (text: string) => {
@@ -67,10 +72,6 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
       }
     };
 
-    // axios
-    //   .get(`${BASE_URL}/commonmodal/${prfId}`)
-    //   .then((res) => setData(res.data))
-    //   .catch((err) => console.error("모달 데이터 요청 실패:", err));
     fetchData();
   }, [open, prfId]);
 
@@ -79,11 +80,6 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
   const handleClose = async () => {
     setOpen(false);
   };
-
-  // 유저가 아이콘 클릭으로 상태만 토글
-  // const handleToggleLocalFavorite = () => {
-  //   setIsLiked((prev) => !prev);
-  // };
 
   const handleToggleLocalFavorite = async () => {
     if (!prfId) return;
@@ -95,9 +91,15 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
     // 좋아요 취소일 때만 리스트에서 제거
     if (!newState) {
       removeFromFavoriteList(prfId);
-      // 취소 시 모달 닫힘
-      setOpen(false);
+      // 마이페이지에서 스크랩 취소 시 모달 닫힘
+      if(source === "mypage") {
+        setOpen(false);
+      }
     }
+  };
+
+  const goDetailHandler = () => {
+    navigate(`/performance/${prfId}`);
   };
 
   return (
@@ -164,7 +166,8 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
               >
                 {removeRegionTag(data.prfNm)}
               </Typography>
-
+              {/* 공연 지역 */}
+              <Typography sx={{ color: "#ccc" }}>{data.area}</Typography>
               {/* 공연 장소 */}
               <Typography sx={{ color: "#ccc" }}>{data.prfPlcNm}</Typography>
 
@@ -274,6 +277,7 @@ function CommonModal({ open, setOpen, prfId }: CommonModalProps) {
               {/* 버튼 */}
               <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <Button
+                  onClick={goDetailHandler}
                   variant="contained"
                   sx={{
                     backgroundColor: "#444",

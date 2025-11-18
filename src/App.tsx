@@ -34,6 +34,9 @@ function App() {
   //     role: "USER",
   //   });
   // }, [login]);
+  // if ('scrollRestoration' in history) {
+  //   history.scrollRestoration = 'manual';
+  // }
 
   return (
     <>

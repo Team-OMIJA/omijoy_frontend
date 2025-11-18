@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
+import "./PerformancePlaceStyles.css";
 
 declare global {
   interface Window {
@@ -11,7 +12,11 @@ interface KakaoMapProps {
   latitude: number;
   longitude: number;
   places: PlaceMarker[];
-  isKakaoMapLoaded: boolean; // isKakaoMapLoaded prop 추가
+  isKakaoMapLoaded: boolean;
+  level: number;
+  currentLocation: { lat: number; lng: number } | null;
+  onMarkerClick: (place: PlaceMarker) => void;
+  onMyLocationClick: () => void;
 }
 
 function KaKaoMap({
@@ -19,134 +24,179 @@ function KaKaoMap({
   longitude,
   places,
   isKakaoMapLoaded,
+  level,
+  currentLocation,
+  onMarkerClick,
+  onMyLocationClick,
 }: KakaoMapProps) {
   const mapContainer = useRef(null);
-  // 💡 지도와 마커 관련 객체를 컴포넌트 전역에서 관리하기 위해 ref를 사용합니다.a
   const mapRef = useRef<kakao.maps.Map | null>(null);
-  const markersRef = useRef<kakao.maps.Marker[]>([]);
-  const infowindowRef = useRef<kakao.maps.InfoWindow | null>(null);
   const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
+  const infowindowRef = useRef<kakao.maps.InfoWindow | null>(null);
+  const myLocationMarkerRef = useRef<kakao.maps.Marker | null>(null);
+  const onMyLocationClickRef = useRef(onMyLocationClick);
 
-  // 💡 지도 생성 및 마커/클러스터 업데이트를 위한 useEffect
   useEffect(() => {
-    // 카카오 SDK 스크립트가 로드되지 않았거나, 지도를 담을 div가 없으면 중단
-    if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) {
-      // isKakaoMapLoaded 조건 추가
-      return;
-    }
+    onMyLocationClickRef.current = onMyLocationClick;
+  }, [onMyLocationClick]);
 
-    // 1. 지도 객체가 아직 생성되지 않았다면 최초 1회 생성
+  useEffect(() => {
+    if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
+
     if (!mapRef.current) {
       const mapOption = {
-        center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: 6,
+        center: new window.kakao.maps.LatLng(36.5, 127.5),
+        level: 12,
       };
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
-      newMap.setMaxLevel(7);
+      newMap.setMaxLevel(12);
 
-      // --- 💡 START: 클러스터러 생성 ---
-      const newClusterer = new window.kakao.maps.MarkerClusterer({
+      clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
-        gridSize: 300, // 💡 클러스터링 격자 크기를 늘려 하나의 클러스터로 합쳐질 확률을 높입니다.
-        minLevel: 7,
-        minClusterSize: 1, // 💡 최소 클러스터링 단위를 1로 변경
-        styles: [
-          {
-            width: "100px",
-            height: "30px",
-            background: "rgba(255, 255, 255, 0.9)",
-            borderRadius: "15px",
-            border: "1px solid #333",
-            color: "#000",
-            textAlign: "center",
-            lineHeight: "30px",
-            fontWeight: "bold",
-          },
-        ],
+        minLevel: 4,
+        gridSize: 100,
+        minClusterSize: 1,
       });
-      clustererRef.current = newClusterer;
-
-      // --- 💡 START: 클러스터 클릭 시 확대 레벨 조절 ---
-      window.kakao.maps.event.addListener(
-        newClusterer,
-        "clusterclick",
-        function (cluster: any) {
-          // 클러스터를 클릭했을 때, 지도의 레벨을 6으로 설정하고 클러스터의 중심으로 이동합니다.
-          newMap.setLevel(6, { anchor: cluster.getCenter() });
-        }
-      );
       infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
 
-      // --- 💡 START: 레벨 컨트롤러 UI 생성 ---
       const controlContainer = document.createElement("div");
-      controlContainer.style.cssText = `
-          position: absolute; top: 15px; right: 15px; padding: 5px 10px;
-          background: white; border: 1px solid #ccc; border-radius: 5px;
-          font-size: 12px; z-index: 2; display: flex; align-items: center;
-          flex-direction: column; gap: 10px;
-        `;
+      controlContainer.className = "map-zoom-control-container";
 
       const levelLabel = document.createElement("span");
-      levelLabel.style.fontWeight = "bold";
+      levelLabel.className = "map-level-label";
 
       const levelSlider = document.createElement("input");
       levelSlider.type = "range";
       const minMapLevel = 1;
-      const maxMapLevel = 7;
+      const maxMapLevel = 12;
       levelSlider.min = String(minMapLevel);
       levelSlider.max = String(maxMapLevel);
       levelSlider.className = "custom-v-slider";
-      levelSlider.style.cssText = `
-          -webkit-appearance: slider-vertical; writing-mode: bt-lr;
-          width: 8px; height: 100px; cursor: pointer; padding: 0 5px;
-        `;
+
       levelSlider.oninput = () => {
         const sliderValue = parseInt(levelSlider.value, 10);
         const newLevel = maxMapLevel - sliderValue + minMapLevel;
         newMap.setLevel(newLevel);
       };
-
       controlContainer.appendChild(levelLabel);
       controlContainer.appendChild(levelSlider);
       newMap.getNode().appendChild(controlContainer);
 
-      const toggleMarkers = () => {
+      const myLocationBtn = document.createElement("div");
+      myLocationBtn.className = "my-location-btn";
+
+      myLocationBtn.onclick = () => {
+        onMyLocationClickRef.current();
+      };
+
+      const btnIcon = document.createElement("img");
+      btnIcon.src = "/my_location.svg";
+      btnIcon.className = "my-location-btn-icon";
+      btnIcon.alt = "내 위치";
+
+      myLocationBtn.appendChild(btnIcon);
+      newMap.getNode().appendChild(myLocationBtn);
+
+      const mapTypeContainer = document.createElement("div");
+      mapTypeContainer.className = "map-type-container";
+
+      const roadmapBtn = document.createElement("button");
+      roadmapBtn.innerHTML = "지도";
+      roadmapBtn.className = "map-type-btn";
+
+      const hybridBtn = document.createElement("button");
+      hybridBtn.innerHTML = "스카이뷰";
+      hybridBtn.className = "map-type-btn";
+
+      const setActiveButton = (
+        activeBtn: HTMLButtonElement,
+        inactiveBtn: HTMLButtonElement
+      ) => {
+        activeBtn.classList.add("active");
+        activeBtn.classList.remove("inactive");
+        inactiveBtn.classList.add("inactive");
+        inactiveBtn.classList.remove("active");
+      };
+
+      setActiveButton(roadmapBtn, hybridBtn);
+
+      roadmapBtn.onclick = () => {
+        newMap.setMapTypeId(window.kakao.maps.MapTypeId.ROADMAP);
+        setActiveButton(roadmapBtn, hybridBtn);
+      };
+
+      hybridBtn.onclick = () => {
+        newMap.setMapTypeId(window.kakao.maps.MapTypeId.HYBRID);
+        setActiveButton(hybridBtn, roadmapBtn);
+      };
+
+      mapTypeContainer.appendChild(roadmapBtn);
+      mapTypeContainer.appendChild(hybridBtn);
+      newMap.getNode().appendChild(mapTypeContainer);
+
+      const updateZoomUI = () => {
         const currentLevel = newMap.getLevel();
         levelLabel.innerHTML = `레벨: ${currentLevel}`;
         levelSlider.value = String(maxMapLevel - currentLevel + minMapLevel);
       };
-
-      window.kakao.maps.event.addListener(
-        newMap,
-        "zoom_changed",
-        toggleMarkers
-      );
-      toggleMarkers();
+      window.kakao.maps.event.addListener(newMap, "zoom_changed", updateZoomUI);
+      updateZoomUI();
     }
+  }, [isKakaoMapLoaded]);
 
-    // 2. 지도 객체가 생성된 이후, 마커/클러스터 업데이트 로직
+  useEffect(() => {
     const map = mapRef.current;
-    const infowindow = infowindowRef.current;
-    const clusterer = clustererRef.current;
+    if (!map || !window.kakao) return;
 
-    if (!map || !infowindow || !clusterer) return;
-
-    // 💡 위도, 경도가 변경되면 지도의 중심을 부드럽게 이동
     const newCenter = new window.kakao.maps.LatLng(latitude, longitude);
-    map.panTo(newCenter);
+    map.setLevel(level);
+    map.setCenter(newCenter);
+    clustererRef.current?.redraw();
+  }, [latitude, longitude, level]);
 
-    // 기존 마커와 클러스터 내용 초기화
-    clusterer.clear();
-    markersRef.current = [];
+  useEffect(() => {
+    if (!isKakaoMapLoaded || !window.kakao) return;
+    const map = mapRef.current;
 
-    const gugunName = places.length > 0 ? places[0].gugun : "";
+    if (currentLocation && map) {
+      const currentPosition = new window.kakao.maps.LatLng(
+        currentLocation.lat,
+        currentLocation.lng
+      );
+      if (myLocationMarkerRef.current) {
+        myLocationMarkerRef.current.setPosition(currentPosition);
+      } else {
+        const myPinIconUrl = "/my_pin.svg";
+        const myPinImageSize = new window.kakao.maps.Size(50, 62);
+        const myPinImageOption = {
+          offset: new window.kakao.maps.Point(15, 42),
+        };
+        const myLocationMarkerImage = new window.kakao.maps.MarkerImage(
+          myPinIconUrl,
+          myPinImageSize,
+          myPinImageOption
+        );
 
-    // `places` 데이터가 없으면 마커를 생성하지 않고 여기서 종료
-    if (!places || places.length === 0) {
-      return;
+        myLocationMarkerRef.current = new window.kakao.maps.Marker({
+          position: currentPosition,
+          map: map,
+          title: "내 위치",
+          image: myLocationMarkerImage,
+        });
+      }
+    } else if (!currentLocation && myLocationMarkerRef.current) {
+      myLocationMarkerRef.current.setMap(null);
+      myLocationMarkerRef.current = null;
     }
+  }, [currentLocation, isKakaoMapLoaded]);
+
+  useEffect(() => {
+    const clusterer = clustererRef.current;
+    if (!clusterer || !window.kakao) return;
+
+    clusterer.clear();
 
     const newMarkers = places.map((place) => {
       const markerPosition = new window.kakao.maps.LatLng(
@@ -157,29 +207,18 @@ function KaKaoMap({
         position: markerPosition,
         title: place.prfPlcName,
       });
-
       window.kakao.maps.event.addListener(marker, "click", function () {
-        infowindow.setContent(
-          `<div style="padding:5px;font-size:12px; font-weight: bold;">${place.prfPlcName}</div>`
-        );
-        infowindow.open(map, marker);
+        onMarkerClick(place);
       });
-
       return marker;
     });
 
-    clusterer.setTexts(() => gugunName);
     clusterer.addMarkers(newMarkers);
-    markersRef.current = newMarkers;
-  }, [latitude, longitude, places, isKakaoMapLoaded]); // 의존성 배열에 isKakaoMapLoaded 추가
+  }, [places, onMarkerClick]);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "500px" }}>
-      <div
-        id="map"
-        ref={mapContainer}
-        style={{ width: "100%", height: "500px" }}
-      ></div>
+    <div className="kakao-map-container">
+      <div id="map" ref={mapContainer} className="kakao-map"></div>
     </div>
   );
 }
