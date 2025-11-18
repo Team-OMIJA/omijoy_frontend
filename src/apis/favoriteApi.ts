@@ -42,10 +42,10 @@ export const getFavoritePrfListReq = async () => {
   }
 };
 
-// 공유 스크랩 리스트
-export const getSharedFavoriteListReq = async (sharedId: string) => {
+// 공유 리스트
+export const getSharedFavoritePrfListReq = async (userId: string) => {
   try {
-    const response = await instance.get(`/favorite/list/${sharedId}`);
+    const response = await instance.get(`/favorite/list/${userId}`);
     return response.data;
   } catch (error) {
     console.error("공유 스크랩 리스트 불러오기 실패 : ", error);

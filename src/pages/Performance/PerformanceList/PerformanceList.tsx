@@ -15,7 +15,6 @@ interface Performance {
   posterImgUrl: string;
   area: string;
   genreNm: string;
-  visit: string;
 }
 
 function PerformanceList() {
@@ -201,7 +200,6 @@ function PerformanceList() {
               ({p.prfStartDt} ~ {p.prfEndDt})
             </div>
             <div>{p.prfPlcNm}</div>
-            <div>{p.visit}</div>
           </div>
         ))}
       </div>

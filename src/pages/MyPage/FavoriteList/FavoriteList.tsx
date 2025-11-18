@@ -7,13 +7,13 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { RxShare2 } from "react-icons/rx";
 
-
 function FavoriteList() {
   // const [favorites, setFavorites] = useState<Performance[]>([]);
   const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -36,7 +36,17 @@ function FavoriteList() {
     <>
       <div css={s.container}>
         <h2 css={s.title}>❤️My Favorites</h2>
-        <RxShare2 size={30} onClick={() => navigate("/favorite/list/${id}")} style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}/>
+        <RxShare2 
+          size={30} 
+          onClick={() => {
+            if (!userId) {
+              alert("로그인 후 공유가 가능합니다.");
+              return;
+            }
+            navigate(`/favorites/list/${userId}`);
+          }}
+          style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}
+        />
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
         ) : (
