@@ -30,7 +30,7 @@ export const EditLabel = styled.label`
   position: absolute;
   bottom: 6px;
   right: 6px;
-  background: #1976d2;
+  background: #1e1e1eff;
   color: #fff;
   border-radius: 50%;
   width: 26px;
@@ -42,7 +42,7 @@ export const EditLabel = styled.label`
   transition: background 0.2s;
 
   &:hover {
-    background: #125aaa;
+    background: #4e4e4eff;
   }
 `;
 
@@ -53,8 +53,7 @@ export const UserInfo = styled.div`
   justify-content: center;
 `;
 
-
 export const BtnContainer = styled.div`
-display: flex;
-margin-top: 8px;
-`
+  display: flex;
+  margin-top: 8px;
+`;

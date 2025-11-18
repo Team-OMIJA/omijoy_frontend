@@ -6,11 +6,9 @@ import { getFavoritePrfListReq } from "../../../apis/favoriteApi";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 
-
-
 function FavoriteList() {
   // const [favorites, setFavorites] = useState<Performance[]>([]);
-  const {favoriteList, setFavoriteList} = useFavoriteState();
+  const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
 
@@ -30,34 +28,43 @@ function FavoriteList() {
   const openModalHandler = (prfId: string) => {
     setSelectedPrfId(prfId);
     setOpen(true);
-
-  }
+  };
   return (
     <>
-    <div css={s.container}>
-      <h2 css={s.title}>❤️My Favorites</h2>
-      {favoriteList.length === 0 ? (
-        <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
-      ) : (
-        <ul css={s.list}>
-          {favoriteList.map((item) => (
-            <li 
-            key={item.prfId} 
-            css={s.card} 
-            onClick={() => openModalHandler(item.prfId)}>
-              <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
+      <div css={s.container}>
+        <h2 css={s.title}>❤️My Favorites</h2>
+        {favoriteList.length === 0 ? (
+          <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
+        ) : (
+          <ul css={s.list}>
+            {favoriteList.map((item) => (
+              <li
+                key={item.prfId}
+                css={s.card}
+                onClick={() => openModalHandler(item.prfId)}
+              >
+                <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
 
-              <div css={s.info}>
-                <div css={s.name}>{item.prfNm}</div>
-                <div css={s.place}>{item.prfPlcNm}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId}/>
-  </>
+                <div css={s.info}>
+                  <div css={s.name}>{item.prfNm}</div>
+                  <div css={s.place}>{item.prfPlcNm}</div>
+                  <div css={s.date}>
+                    {item.prfStartDt} ~ {item.prfEndDt}
+                  </div>
+                  <div css={s.genre}>{item.genreNm}</div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <PerformanceModal
+        open={open}
+        setOpen={setOpen}
+        prfId={selectedPrfId}
+        source="mypage"
+      />
+    </>
   );
 }
 
