@@ -6,6 +6,7 @@ import { getFavoritePrfListReq } from "../../../apis/favoriteApi";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { RxShare2 } from "react-icons/rx";
+import { IoArrowForward } from "react-icons/io5";
 
 function FavoriteList() {
   // const [favorites, setFavorites] = useState<Performance[]>([]);
@@ -37,7 +38,7 @@ function FavoriteList() {
     <>
       <div css={s.container}>
         <h2 css={s.title}>❤️My Favorites</h2>
-        <RxShare2 
+        <IoArrowForward 
           size={30} 
           onClick={() => {
             if (!principal.id) {
@@ -46,7 +47,26 @@ function FavoriteList() {
             }
             navigate(`/favorites/list/${principal.id}`);
           }}
-          style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}
+          style={{position: "absolute", left: "360px", bottom: "309px",cursor: "pointer"}}
+        />
+        <RxShare2
+          size={30}
+          onClick={() => {
+            const stored = localStorage.getItem("principal-storage");
+            const principal = stored ? JSON.parse(stored)?.state?.principal : null;
+
+            if (!principal?.id) {
+              alert("로그인 후 공유가 가능합니다.");
+              return;
+            }
+
+            const shareUrl = `${window.location.origin}/favorites/list/${principal.id}`;
+
+            navigator.clipboard.writeText(shareUrl)
+              .then(() => alert("URL이 클립보드에 복사되었습니다!"))
+              .catch(() => alert("URL 복사에 실패했습니다."));
+          }}
+          style={{ position: "absolute", left: "320px", bottom: "309px", cursor: "pointer" }}
         />
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
