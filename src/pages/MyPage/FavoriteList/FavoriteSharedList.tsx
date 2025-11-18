@@ -1,19 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import * as s from "./styles";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getFavoritePrfListReq } from "../../../apis/favoriteApi";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { RxShare2 } from "react-icons/rx";
 
 
-function FavoriteList() {
-  // const [favorites, setFavorites] = useState<Performance[]>([]);
+function FavoriteSharedList() {
   const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -25,7 +22,6 @@ function FavoriteList() {
       }
     };
     fetchFavorites();
-    // 의존성 배열 추가 - favoriteList 상태를 바로 반영
   }, [setFavoriteList]);
 
   const openModalHandler = (prfId: string) => {
@@ -36,7 +32,7 @@ function FavoriteList() {
     <>
       <div css={s.container}>
         <h2 css={s.title}>❤️My Favorites</h2>
-        <RxShare2 size={30} onClick={() => navigate("/favorite/list/${id}")} style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}/>
+        <RxShare2 size={30} style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}/>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
         ) : (
@@ -72,4 +68,4 @@ function FavoriteList() {
   );
 }
 
-export default FavoriteList;
+export default FavoriteSharedList;
