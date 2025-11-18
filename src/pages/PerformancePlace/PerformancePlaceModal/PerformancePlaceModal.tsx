@@ -16,7 +16,7 @@ interface PerformancePlaceModalProps {
 
 function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     const hasValidUrl = place.url && place.url.trim() !== "";
-    // 2. 💡 navigate 함수 선언
+    // 2. navigate 함수 선언
     // const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
@@ -57,7 +57,9 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     const url = `/performance/${prfId}`;
     window.open(url, "_blank", "noopener,noreferrer");
     // navigate(`/performance/${prfId}`); 
-};
+};  
+    
+
 
     return (
     <div className="modal-overlay" onClick={onClose}>
@@ -67,6 +69,16 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         <p className="modal-info-item">
         <strong>주소:</strong> {place.address || "정보 없음"}
         </p>
+        <p className="modal-info-item">
+        <strong>주차장:</strong>
+        </p>
+        <p className="modal-info-item">
+        <strong>엘리베이터:</strong> {place.eleve || "❌"}
+        </p>
+        <p className="modal-info-item">
+        <strong>장애인주차장:</strong> {place.parkBarrier || "❌"}
+        </p>
+        
         <p className="modal-info-item">
         <strong>전화번호:</strong> {place.tel || "정보 없음"}
         </p>

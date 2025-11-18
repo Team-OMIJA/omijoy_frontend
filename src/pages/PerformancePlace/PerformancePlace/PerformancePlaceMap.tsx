@@ -59,8 +59,7 @@ function PerformancePlaceMap() {
         },
         {
           enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 30000,
+          maximumAge: 10000
         }
       );
     }
@@ -113,8 +112,7 @@ function PerformancePlaceMap() {
     };
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
       enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 30000,
+      maximumAge: 10000
     });
   };
 
