@@ -3,23 +3,17 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { UpcomingPerformance } from "../../../types/homeTypes";
 import { fetchUpcomingPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
-import { formatDateRange } from "../../../components/FormatDate/FormatDate";
+import {
+  formatDateRange,
+  formatUIDate,
+} from "../../../components/FormatDate/FormatDate";
+import { Carousel } from "@mantine/carousel";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // UI 용 날짜 포맷 함수 (Date 객체로 yyyy.mm.dd 변환)
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}.${m}.${d}`;
-  };
 
   useEffect(() => {
     (async () => {
@@ -139,8 +133,8 @@ function UpcomingList() {
                   }}
                 >
                   {formatDateRange(
-                    formatDate(p.prfStartDt),
-                    formatDate(p.prfEndDt)
+                    formatUIDate(p.prfStartDt),
+                    formatUIDate(p.prfEndDt)
                   )}
                 </p>
 
@@ -158,7 +152,6 @@ function UpcomingList() {
           ))}
         </div>
       )}
-
       {/* 공연 상세 모달 */}
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
     </div>
