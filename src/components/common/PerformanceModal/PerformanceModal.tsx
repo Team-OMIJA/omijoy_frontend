@@ -45,6 +45,11 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
   const isLiked = prfId ? favorites[prfId] ?? false : false;
   const navigate = useNavigate();
 
+  // [지역] 제거
+  const removeRegionTag = (text: string) => {
+    return text.replace(/\[.*?\]/g, "").trim();
+  };
+
   // 모달이 열릴 때 공연 정보 + 좋아요 상태 불러옴
   useEffect(() => {
     if (!open || !prfId) return;
@@ -157,7 +162,7 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
                   gap: 1,
                 }}
               >
-                {data.prfNm}
+                {removeRegionTag(data.prfNm)}
               </Typography>
               {/* 공연 지역 */}
               <Typography sx={{ color: "#ccc" }}>{data.area}</Typography>
