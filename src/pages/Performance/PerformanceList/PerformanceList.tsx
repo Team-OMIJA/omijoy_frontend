@@ -53,7 +53,9 @@ function PerformanceList() {
         if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
         if (vtFilter) params.append("vtFilter", "Y");
 
-        const url = `${baseUrl}${isSearch ? "/search" : ""}?${params.toString()}`;
+        const url = `${baseUrl}${
+          isSearch ? "/search" : ""
+        }?${params.toString()}`;
 
         const response = await fetch(url);
         const json: Performance[] = await response.json();
@@ -195,7 +197,9 @@ function PerformanceList() {
             <div style={{ textDecoration:"none", color:"black", cursor:"pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
               <strong>{p.prfNm}</strong>
             </div>
-            <div>({p.prfStartDt} ~ {p.prfEndDt})</div>
+            <div>
+              ({p.prfStartDt} ~ {p.prfEndDt})
+            </div>
             <div>{p.prfPlcNm}</div>
             <div>{p.visit}</div>
           </div>
