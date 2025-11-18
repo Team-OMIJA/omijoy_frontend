@@ -26,6 +26,7 @@ function CarouselBanner() {
 
   return (
     <Carousel
+      withControls={false}
       slideSize="100%"
       plugins={[autoplay.current]}
       emblaOptions={{ align: "start", slidesToScroll: 1 }}
