@@ -13,7 +13,8 @@ function FavoriteList() {
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
+  const stored = localStorage.getItem("principal-storage");
+  const principal = stored ? JSON.parse(stored)?.state?.principal : null;
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -39,11 +40,11 @@ function FavoriteList() {
         <RxShare2 
           size={30} 
           onClick={() => {
-            if (!userId) {
+            if (!principal.id) {
               alert("로그인 후 공유가 가능합니다.");
               return;
             }
-            navigate(`/favorites/list/${userId}`);
+            navigate(`/favorites/list/${principal.id}`);
           }}
           style={{position: "absolute", left: "320px", bottom: "309px",cursor: "pointer"}}
         />
