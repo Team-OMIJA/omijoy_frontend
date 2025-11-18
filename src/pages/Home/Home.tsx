@@ -5,20 +5,21 @@ import TopRankList from "./TopRankList/TopRankList";
 import UpcomingList from "./UpcomingList/UpcomingList";
 import CarouselBanner from "./Banner/CarouselBanner";
 import { MantineProvider } from "@mantine/core";
-import Top1Favorite from "./Banner/Top1Favorite";
-import KidsNewPerformances from "./Banner/KidsNewPerformances";
 
 function Home() {
   return (
     <>
       <MantineProvider>
         <CarouselBanner />
+        <TopRankList />
       </MantineProvider>
-      {/* <Top1Favorite />
-      <KidsNewPerformances /> */}
-      <TopRankList />
+
       <AwardRecommendList />
-      <UpcomingList />
+
+      <MantineProvider>
+        <UpcomingList />
+      </MantineProvider>
+
       <ScrapTop10List />
       <MonthlyNewSignUps />
     </>

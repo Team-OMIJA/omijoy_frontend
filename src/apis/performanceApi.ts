@@ -5,14 +5,7 @@ import {
   UpcomingPerformance,
   KidsNewPerformancs,
 } from "../types/homeTypes";
-
-// 날짜 포맷팅 (YYYYMMDD)
-const formatDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}${month}${day}`;
-};
+import { formatNewDate } from "../components/FormatDate/FormatDate";
 
 // [지역] 제거
 export const removeRegionTag = (text: string) => {
@@ -29,8 +22,8 @@ export const fetchTopRankPerformances = async (): Promise<
   const pastDate = new Date();
   pastDate.setDate(pastDate.getDate() - 30);
 
-  const stDate = formatDate(pastDate);
-  const edDate = formatDate(today);
+  const stDate = formatNewDate(pastDate);
+  const edDate = formatNewDate(today);
 
   const url = `http://localhost:4000/kopis/boxoffice?service=${API_KEY}&stdate=${stDate}&eddate=${edDate}&catecode=&area=`;
 
@@ -53,7 +46,7 @@ export const fetchTopRankPerformances = async (): Promise<
       genre: box.getElementsByTagName("cate")[0]?.textContent || "",
     }));
 
-    return result.slice(0, 5);
+    return result.slice(0, 10);
   } catch (err) {
     console.error("Failed to fetch KOPIS API", err);
     return [];
@@ -69,8 +62,8 @@ export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
     const futureDate = new Date();
     futureDate.setMonth(futureDate.getMonth() + 6);
 
-    const stDate = formatDate(today);
-    const edDate = formatDate(futureDate);
+    const stDate = formatNewDate(today);
+    const edDate = formatNewDate(futureDate);
 
     const url = `http://localhost:4000/kopis/awards?service=${API_KEY}&stdate=${stDate}&eddate=${edDate}&cpage=1&rows=100`;
 

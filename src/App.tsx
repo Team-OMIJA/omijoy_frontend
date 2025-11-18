@@ -18,6 +18,7 @@ import MainRouter from "./routes/MainRouter/MainRouter";
 import { useEffect } from "react";
 import { usePrincipalState } from "./stores/usePrincipalState";
 import ScrollBack from "./components/common/Render/ScrollBack";
+import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 
 function App() {

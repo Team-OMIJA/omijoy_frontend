@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { getTop1FavoriteForBanner } from "../../../apis/favoriteApi";
+import { getTop1FavoriteForBanner, ScrapRank } from "../../../apis/favoriteApi";
 import { formatDateRange } from "../../../components/FormatDate/FormatDate";
 import { formatDateDot } from "../../../components/FormatDate/FormatDate";
 
 function Top1Favorite() {
-  const [data, setData] = useState<any | null>(null);
+  const [data, setData] = useState<ScrapRank | null>(null);
 
   useEffect(() => {
     (async () => {
