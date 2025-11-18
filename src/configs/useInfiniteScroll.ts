@@ -42,7 +42,7 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
       sessionStorage.setItem(storageKey, String(scrollLocate));
 
       const { scrollHeight, clientHeight } = document.documentElement;
-      if (scrollHeight - scrollLocate <= clientHeight + 5) {
+      if (scrollHeight - scrollLocate <= clientHeight + 1) {
         const now = Date.now();
         if (now - lastCalled.current >= 1) {
           lastCalled.current = now;

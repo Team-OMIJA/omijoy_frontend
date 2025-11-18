@@ -4,6 +4,9 @@ import { GrClose, GrPowerReset } from "react-icons/gr";
 import useInfiniteScroll from "../../../configs/useInfiniteScroll";
 import { useNavigate, useNavigationType } from "react-router-dom";
 import ScrollTop from "../../../components/common/Button/ScrollTopButton";
+import { formatDateDot,formatDateRange } from "../../../components/FormatDate/FormatDate";
+import { removeRegionTag } from "../../../apis/performanceApi";
+import PrfList10Skeleton from "../../../components/skeleton/PrfList10Skeleton";
 
 interface Performance {
   prfId: string;
@@ -119,7 +122,7 @@ function PerformanceList() {
   const GENRE_OPTIONS = ["대중무용","대중음악","무용(서양/한국무용)","뮤지컬","복합","서양음악(클래식)","서커스/마술","연극","한국음악(국악)"];
 
   return (
-    <div>
+    <div style={{width: "100%", padding: "40px 60px", boxSizing: "border-box"}}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <h2>공연 리스트</h2>
         <ScrollTop />
@@ -170,7 +173,7 @@ function PerformanceList() {
           )}
         </div>
       </div>
-
+      
       <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom:20 }}>
         {arfilter.map((item) => (
           <div key={`area-${item}`} style={{ display:"flex", alignItems:"center", background:"#e0e0e0", borderRadius:"16px", padding:"4px 8px" }}>
@@ -187,22 +190,92 @@ function PerformanceList() {
           </div>
         ))}
       </div>
-
+      
       {performances.length === 0 && !loading && <div className="detail-error" style={{ marginTop:"20px" }}>공연 정보를 찾을 수 없습니다.</div>}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(5, 1fr)", gap:"16px", marginTop: "30px" }}>
-        {performances.map((p) => (
-          <div key={p.prfId} style={{ textAlign:"center", width:"300", height:"300"}} onClick={() => navigate(`/performance/${p.prfId}`)}>
-            <img src={p.posterImgUrl} alt="poster" width="300" height="300" style={{ width:200, height:300, cursor:"pointer" }} loading="eager" />
-            <div style={{ textDecoration:"none", color:"black", cursor:"pointer" }} onClick={() => navigate(`/performance/${p.prfId}`)}>
-              <strong>{p.prfNm}</strong>
-            </div>
-            <div>
-              ({p.prfStartDt} ~ {p.prfEndDt})
-            </div>
-            <div>{p.prfPlcNm}</div>
-          </div>
-        ))}
-      </div>
+      {loading && page === 0 ? (
+        <PrfList10Skeleton />
+      ) : (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: "30px",
+          marginTop: "30px",
+        }}
+      >
+      {performances.map((p) => (
+        <div
+          key={p.prfId}
+          style={{
+            textAlign: "left",
+            padding: "5px",
+            borderRadius: "14px",
+          }}
+        >
+          {/* ───────────── 포스터 ───────────── */}
+          <img
+            src={p.posterImgUrl}
+            alt={p.prfNm}
+            onClick={() => navigate(`/performance/${p.prfId}`)}
+            style={{
+              width: "100%",
+              height: "260px",
+              objectFit: "cover",
+              borderRadius: "10px",
+              marginBottom: "10px",
+              cursor: "pointer",
+            }}
+          />
+
+          {/* ───────────── 공연명 ───────────── */}
+          <h4
+            style={{
+              fontSize: "15px",
+              fontWeight: "600",
+              color: "#111",
+              marginBottom: "4px",
+              lineHeight: "1.4",
+              wordBreak: "keep-all",
+              overflowWrap: "break-word",
+              whiteSpace: "normal",
+              cursor: "pointer",
+            }}
+            onClick={() => navigate(`/performance/${p.prfId}`)}
+          >
+            {removeRegionTag(p.prfNm)}
+          </h4>
+
+          {/* ───────────── 날짜 ───────────── */}
+          <p
+            style={{
+              fontSize: "12.5px",
+              color: "#777",
+              margin: "2px 0",
+            }}
+          >
+            {formatDateRange(
+              formatDateDot(p.prfStartDt),
+              formatDateDot(p.prfEndDt)
+            )}
+          </p>
+
+          {/* ───────────── 공연장명 ───────────── */}
+          <p
+            style={{
+              fontSize: "13px",
+              color: "#555",
+              margin: "2px 0",
+              wordBreak: "keep-all",
+              overflowWrap: "break-word",
+              whiteSpace: "normal",
+            }}
+          >
+            {p.prfPlcNm}
+          </p>
+        </div>
+      ))}
+    </div>
+      )}
     </div>
   );
 }
