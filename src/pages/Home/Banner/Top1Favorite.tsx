@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { getTop1FavoriteForBanner } from "../../../apis/favoriteApi";
-import { formatDateRange } from "../../../apis/favoriteApi";
+import { formatDateRange } from "../../../components/FormatDate/FormatDate";
+import { formatDateDot } from "../../../components/FormatDate/FormatDate";
 
 function Top1Favorite() {
   const [data, setData] = useState<any | null>(null);
@@ -101,7 +102,10 @@ function Top1Favorite() {
                 color: "#ddd",
               }}
             >
-              {formatDateRange(data.prfStartDt, data.prfEndDt)}
+              {formatDateRange(
+                formatDateDot(data.prfStartDt),
+                formatDateDot(data.prfEndDt)
+              )}
             </Typography>
           </Box>
         )}

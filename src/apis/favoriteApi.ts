@@ -40,14 +40,6 @@ export const toggleFavoriteReq = async (prfId: string) => {
   }
 };
 
-// 날짜 포맷
-export function formatDateRange(start: string, end: string): string {
-  if (start === end) {
-    return start; // 날짜 같으면 1번만
-  }
-  return `${start} ~ ${end}`; // 다르면 기존처럼
-}
-
 // 내가 스크랩한 공연 리스트
 export const getFavoritePrfListReq = async () => {
   try {

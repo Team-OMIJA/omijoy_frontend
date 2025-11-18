@@ -3,7 +3,7 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { UpcomingPerformance } from "../../../types/homeTypes";
 import { fetchUpcomingPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
-import { formatDateRange } from "../../../apis/favoriteApi";
+import { formatDateRange } from "../../../components/FormatDate/FormatDate";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
