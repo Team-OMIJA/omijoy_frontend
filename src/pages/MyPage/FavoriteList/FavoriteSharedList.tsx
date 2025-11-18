@@ -33,7 +33,7 @@ function FavoriteSharedList() {
   return (
     <>
       <div css={s.container}>
-        <h2 css={s.title}>❤️Favorites of User {userId}</h2>
+        <h2 css={s.title}>❤️Favorites of User</h2>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>공유된 스크랩 리스트가 없습니다.</p>
         ) : (
