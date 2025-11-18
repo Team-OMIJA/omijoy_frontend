@@ -9,7 +9,6 @@ import ImageCropModal from "./ImageCropModal/ImageCropModal";
 import { instance } from "../../../apis/instance";
 import { IoMdSettings } from "react-icons/io";
 
-
 function EditProfile({
   onCancel,
   onSave,
@@ -167,7 +166,9 @@ function EditProfile({
           src={previewImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG}
           sx={{ width: 100, height: 100 }}
         />
-        <s.EditLabel htmlFor="profile-upload"><IoMdSettings /></s.EditLabel>
+        <s.EditLabel htmlFor="profile-upload">
+          <IoMdSettings />
+        </s.EditLabel>
         <input
           ref={inputRef}
           id="profile-upload"
@@ -182,7 +183,6 @@ function EditProfile({
         <TextField
           variant="outlined"
           value={username}
-          // onChange={(e) => setUsername(e.target.value)}
           placeholder={principal?.username}
           // helperText에 조건 걺
           helperText={!isUsernameValid ? usernameError : ""}

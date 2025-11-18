@@ -36,8 +36,11 @@ export const EditLabel = styled.label`
   border-radius: 50%;
   width: 26px;
   height: 26px;
-  text-align: center;
-  line-height: 26px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.2s;
