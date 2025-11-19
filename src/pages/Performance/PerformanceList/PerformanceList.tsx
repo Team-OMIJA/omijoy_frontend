@@ -30,7 +30,7 @@ function PerformanceList() {
   });
 
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState("name");
+  const [sort, setSort] = useState(() => sessionStorage.getItem("scroll-performance-sort") || "name");
   const navigate = useNavigate();
   const [page, setPage] = useState(() => Number(sessionStorage.getItem("scroll-performance-page") || 0));
   const [hasMore, setHasMore] = useState(true);
@@ -78,6 +78,7 @@ function PerformanceList() {
   );
 
   useEffect(() => {
+    sessionStorage.setItem("scroll-performance-sort", sort);
     sessionStorage.setItem("scroll-performance-query", query);
     sessionStorage.setItem("scroll-performance-stfilter", JSON.stringify(stFilter));
     sessionStorage.setItem("scroll-performance-arfilter", JSON.stringify(arfilter));
@@ -85,7 +86,7 @@ function PerformanceList() {
     sessionStorage.setItem("scroll-performance-page", String(page));
     sessionStorage.setItem("scroll-performance-data", JSON.stringify(performances));
     sessionStorage.setItem("scroll-performance-vtfilter", JSON.stringify(vtFilter));
-  }, [query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
+  }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -156,11 +157,14 @@ function PerformanceList() {
         </div>
         <GrPowerReset
           onClick={() => { 
+            setSort("name");
             setArFilter([]); 
             setGeFilter([]); 
+            setStFilter([]);
+            setVtFilter(false);
             setPage(0); setQuery(""); 
             setPage(0); getPerformance("", false, 0);
-            getPerformance(query, false, 0); }}
+            getPerformance(query, false, 0); }} 
           style={{ 
             padding:"6px 12px", 
             borderRadius:8, 
