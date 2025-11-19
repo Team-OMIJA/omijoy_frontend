@@ -7,6 +7,7 @@ import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Carousel } from "@mantine/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import * as s from "../PerformanceStyles";
 
 function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
@@ -32,333 +33,59 @@ function TopRankList() {
   }, []);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: "40px 60px",
-        boxSizing: "border-box",
-      }}
-    >
-      {/* 제목 + 이동 버튼 */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "25px",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "22px",
-            fontWeight: "700",
-            margin: 0,
-          }}
-        >
-          전체 공연 순위 TOP 10
-        </h2>
+    <s.SectionContainer>
+      <s.SectionHeader>
+        <s.SectionTitle>전체 공연 순위 TOP 10</s.SectionTitle>
 
-        <button
-          onClick={() => navigate("/performance")}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: "22px",
-            fontWeight: "700",
-            cursor: "pointer",
-            color: "#444",
-            transition: "color 0.2s ease",
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
-          onMouseOut={(e) => (e.currentTarget.style.color = "#444")}
-        >
+        <s.MoreButton onClick={() => navigate("/performance")}>
           <ArrowForwardIosIcon style={{ fontSize: "22px" }} />
-        </button>
-      </div>
+        </s.MoreButton>
+      </s.SectionHeader>
 
-      {/* 로딩 */}
       {loading ? (
         <PrfListSkeleton />
       ) : (
         <div style={{ width: "100%" }}>
           <Carousel
-            slideSize="20%" // 5개씩 보여줌
+            slideSize="20%"
             slideGap="30px"
             height={430}
-            withControls={false} // 버튼 없음
+            withControls={false}
             plugins={[autoplay.current]}
             emblaOptions={{
               align: "start",
-              slidesToScroll: 1, // 1개씩 자동 넘김
+              slidesToScroll: 1,
               dragFree: true,
             }}
           >
             {performances.map((p, i) => (
               <Carousel.Slide key={i}>
-                <div
-                  style={{
-                    textAlign: "left",
-                    padding: "5px",
-                    borderRadius: "14px",
-                  }}
-                >
-                  {/* 이미지 + 순위 + 그라데이션 */}
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "100%",
-                      height: "250px",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      transition: "transform 0.25s ease, box-shadow 0.25s ease",
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = "translateY(-6px)";
-                      e.currentTarget.style.boxShadow =
-                        "0 6px 18px rgba(0,0,0,0.15)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = "none";
-                      e.currentTarget.style.boxShadow = "none";
+                <s.PerformanceCard>
+                  <s.RankCard
+                    onClick={() => {
+                      setSelectedPrfId(p.id);
+                      setOpen(true);
                     }}
                   >
-                    <img
-                      src={p.poster}
-                      alt={p.title}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        setSelectedPrfId(p.id);
-                        setOpen(true);
-                      }}
-                    />
+                    <s.RankImage src={p.poster} alt={p.title} />
+                    <s.RankOverlay />
+                    <s.RankNumber>{p.rank}</s.RankNumber>
+                  </s.RankCard>
 
-                    {/* 하단 오버레이 */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        left: 0,
-                        bottom: 0,
-                        width: "100%",
-                        height: "40%",
-                        background:
-                          "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0))",
-                      }}
-                    />
-
-                    {/* 순위 */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        left: "10px",
-                        bottom: "5px",
-                        color: "#fff",
-                        fontSize: "60px",
-                        fontWeight: "700",
-                        fontStyle: "italic",
-                        textShadow: "0 3px 6px rgba(0,0,0,0.5)",
-                        transform: "scaleX(1.25)",
-                        transformOrigin: "left center",
-                        pointerEvents: "none",
-                      }}
-                    >
-                      {p.rank}
-                    </div>
-                  </div>
-
-                  {/* 텍스트 */}
-                  <h4
-                    style={{
-                      fontSize: "15px",
-                      fontWeight: "600",
-                      color: "#111",
-                      marginBottom: "6px",
-                      wordBreak: "keep-all",
-                      overflowWrap: "break-word",
-                    }}
-                  >
-                    {p.title}
-                  </h4>
-
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "#555",
-                      margin: "2px 0",
-                      wordBreak: "keep-all",
-                    }}
-                  >
-                    {p.place}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "12.5px",
-                      color: "#777",
-                      margin: "1px 0",
-                    }}
-                  >
-                    {p.period}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "12.5px",
-                      color: "#999",
-                      margin: "3px 0",
-                    }}
-                  >
-                    {p.genre}
-                  </p>
-                </div>
+                  <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                  <s.PerformancePlace>{p.place}</s.PerformancePlace>
+                  <s.PerformancePeriod>{p.period}</s.PerformancePeriod>
+                  <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
+                </s.PerformanceCard>
               </Carousel.Slide>
             ))}
           </Carousel>
         </div>
       )}
 
-      {/* 모달 */}
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
-    </div>
+    </s.SectionContainer>
   );
 }
 
 export default TopRankList;
-//         <div
-//           style={{
-//             display: "grid",
-//             gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-//             gap: "30px",
-//           }}
-//         >
-//           {performances.map((p, i) => (
-//             <div
-//               key={i}
-//               style={{
-//                 textAlign: "left",
-//                 padding: "5px",
-//                 borderRadius: "14px",
-//               }}
-//             >
-//               {/* 포스터 + 순위 + 그라데이션 레이어 */}
-//               <div
-//                 style={{
-//                   position: "relative",
-//                   width: "100%",
-//                   height: "250px",
-//                   borderRadius: "10px",
-//                   overflow: "hidden",
-//                   transition: "transform 0.25s ease, box-shadow 0.25s ease",
-//                 }}
-//                 onMouseOver={(e) => {
-//                   e.currentTarget.style.transform = "translateY(-6px)";
-//                   e.currentTarget.style.boxShadow =
-//                     "0 6px 18px rgba(0,0,0,0.15)";
-//                 }}
-//                 onMouseOut={(e) => {
-//                   e.currentTarget.style.transform = "none";
-//                   e.currentTarget.style.boxShadow = "none";
-//                 }}
-//               >
-//                 {/* 이미지 */}
-//                 <img
-//                   src={p.poster}
-//                   alt={p.title}
-//                   style={{
-//                     width: "100%",
-//                     height: "100%",
-//                     objectFit: "cover",
-//                     cursor: "pointer",
-//                   }}
-//                   onClick={() => {
-//                     setSelectedPrfId(p.id);
-//                     setOpen(true);
-//                   }}
-//                 />
-
-//                 {/* 하단 그라데이션 Overlay */}
-//                 <div
-//                   style={{
-//                     position: "absolute",
-//                     left: 0,
-//                     bottom: 0,
-//                     width: "100%",
-//                     height: "40%", // 숫자 가독성
-//                     background:
-//                       "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0))",
-//                   }}
-//                 />
-
-//                 {/* 순위 숫자 */}
-//                 <div
-//                   style={{
-//                     position: "absolute",
-//                     left: "10px",
-//                     bottom: "5px",
-//                     color: "#fff",
-//                     fontSize: "60px",
-//                     fontWeight: "700",
-//                     fontStyle: "italic",
-//                     textShadow: "0 3px 6px rgba(0,0,0,0.5)",
-//                     transform: "scaleX(1.25)",
-//                     transformOrigin: "left center",
-//                     pointerEvents: "none",
-//                   }}
-//                 >
-//                   {p.rank}
-//                 </div>
-//               </div>
-
-//               {/* 텍스트 */}
-//               <div>
-//                 <h4
-//                   style={{
-//                     fontSize: "15px",
-//                     fontWeight: "600",
-//                     color: "#111",
-//                     marginBottom: "6px",
-//                     wordBreak: "keep-all",
-//                     overflowWrap: "break-word",
-//                     whiteSpace: "normal",
-//                   }}
-//                 >
-//                   {p.title}
-//                 </h4>
-
-//                 <p
-//                   style={{
-//                     fontSize: "13px",
-//                     color: "#555",
-//                     margin: "2px 0",
-//                     wordBreak: "keep-all",
-//                     overflowWrap: "break-word",
-//                     whiteSpace: "normal",
-//                   }}
-//                 >
-//                   {p.place}
-//                 </p>
-//                 <p
-//                   style={{ fontSize: "12.5px", color: "#777", margin: "1px 0" }}
-//                 >
-//                   {p.period}
-//                 </p>
-//                 <p
-//                   style={{ fontSize: "12.5px", color: "#999", margin: "3px 0" }}
-//                 >
-//                   {p.genre}
-//                 </p>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {/* 모달 */}
-//       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
-//     </div>
-//   );
-// }
-
-// export default TopRankList;

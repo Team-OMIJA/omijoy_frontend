@@ -10,10 +10,9 @@ function AdminDashboard() {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start", // 🔥 세로 정렬 위로 맞추기!
-          gap: "10px",
+          gap: "20px",
           width: "100%",
-          marginTop: "40px",
+          marginTop: "20px",
         }}
       >
         <WeeklySiteViews />
