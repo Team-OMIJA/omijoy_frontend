@@ -21,7 +21,7 @@ function ScrapTop10List() {
       style={{
         width: "45%",
         backgroundColor: "white",
-        borderRadius: "16px",
+        borderRadius: "10px",
         marginTop: "40px",
         padding: "20px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",

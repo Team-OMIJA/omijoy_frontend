@@ -143,11 +143,11 @@ export const MoreButton = styled.button`
   font-size: 22px;
   font-weight: 700;
   cursor: pointer;
-  color: #444;
+  color: #9e9e9e;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #000;
+    color: #e0e0e0;
   }
 `;
 
@@ -158,10 +158,10 @@ export const RefreshButton = styled.button`
   font-size: 20px;
   font-weight: 600;
   cursor: pointer;
-  color: #555;
+  color: #9e9e9e;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #000;
+    color: #e0e0e0;
   }
 `;

@@ -42,7 +42,7 @@ function WeeklySiteViews() {
         width: "50%",
         backgroundColor: "white",
         marginTop: "40px",
-        borderRadius: "16px",
+        borderRadius: "10px",
         padding: "20px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
       }}
