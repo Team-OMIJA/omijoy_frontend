@@ -18,8 +18,8 @@ import { css } from "@emotion/react";
 export const navStyle = css`
   position: sticky;
   top: 0;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eaeaeaff;
+  background-color: #0c0c0c;
+  /* border-bottom: 1px solid #eaeaeaff; */
   height: 75px;
   display: flex;
   align-items: center;
@@ -33,6 +33,7 @@ export const logo = css`
   font-size: 1.2em;
   margin-left: 100px;
   cursor: pointer;
+  color: crimson;
 `;
 
 export const navListStyle = css`
@@ -47,7 +48,7 @@ export const navListStyle = css`
 
 export const linkStyle = (active: boolean) => css`
   text-decoration: none;
-  color: ${active ? "#0f0f0fff" : "#4f4f4fff"};
+  color: ${active ? "#ddddddff" : "#cfcfcfff"};
   font-weight: ${active ? "bold" : "normal"};
   transition: color 0.2s ease;
   &:hover {

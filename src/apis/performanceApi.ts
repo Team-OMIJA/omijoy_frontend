@@ -6,6 +6,7 @@ import {
   KidsNewPerformancs,
 } from "../types/homeTypes";
 import { formatNewDate } from "../components/FormatDate/FormatDate";
+import { formatPeriod } from "../components/FormatDate/FormatDate";
 
 // [지역] 제거
 export const removeRegionTag = (text: string) => {
@@ -41,7 +42,9 @@ export const fetchTopRankPerformances = async (): Promise<
       ),
       place: box.getElementsByTagName("prfplcnm")[0]?.textContent || "",
       poster: box.getElementsByTagName("poster")[0]?.textContent || "",
-      period: box.getElementsByTagName("prfpd")[0]?.textContent || "",
+      period: formatPeriod(
+        box.getElementsByTagName("prfpd")[0]?.textContent || ""
+      ),
       rank: box.getElementsByTagName("rnum")[0]?.textContent || "",
       genre: box.getElementsByTagName("cate")[0]?.textContent || "",
     }));

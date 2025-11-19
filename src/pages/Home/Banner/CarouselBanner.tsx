@@ -3,8 +3,8 @@ import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 import { Box } from "@mui/material";
 
-import Top1Favorite from "./Top1Favorite";
-import KidsNewPerformances from "./KidsNewPerformances";
+import Top1Favorite from "./Top1Favorite/Top1Favorite";
+import KidsNewPerformances from "./KidsNewPerformances/KidsNewPerformances";
 
 function CarouselBanner() {
   const autoplay = useRef(
