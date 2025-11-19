@@ -10,6 +10,9 @@ export interface PlaceMarker {
   address: string | null;
   tel: string | null;
   url: string | null;
+  parkBarrier: string | null;
+  eleve : string | null;
+  parkingLot : string | null;
 }
 
 export interface PrfPlcModal {
@@ -36,7 +39,7 @@ export const findNearbyPlaces = async (
 ): Promise<PlaceMarker[]> => {
   const dataToSend = { latitude, longitude, radius };
   try {
-    const res = await instance.post(`/performanceplace/nearby`, dataToSend);
+    const res = await instance.post(`/performanceplace/nearby`,dataToSend);
     return res.data as PlaceMarker[];
   } catch (err) {
     console.error("findNearbyPlaces API 오류:", err);
