@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { getTop1FavoriteForBanner, ScrapRank } from "../../../apis/favoriteApi";
 import { formatDateRange } from "../../../components/FormatDate/FormatDate";
 import { formatDateDot } from "../../../components/FormatDate/FormatDate";
+import { removeRegionTag } from "../../../apis/performanceApi";
 
 function Top1Favorite() {
   const [data, setData] = useState<ScrapRank | null>(null);
@@ -93,7 +94,7 @@ function Top1Favorite() {
                 whiteSpace: "normal", // 89, 90, 91 단어 단위로 줄바꿈
               }}
             >
-              {data.prfName}
+              {removeRegionTag(data.prfName)}
             </Typography>
 
             <Typography
