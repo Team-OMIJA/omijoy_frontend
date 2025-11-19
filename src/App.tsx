@@ -16,6 +16,7 @@
 import { BrowserRouter } from "react-router-dom";
 import MainRouter from "./routes/MainRouter/MainRouter";
 import { useEffect } from "react";
+import { increaseSiteViews } from "./apis/weeklySiteViewsApi";
 import { usePrincipalState } from "./stores/usePrincipalState";
 import ScrollBack from "./components/common/Render/ScrollBack";
 import "@mantine/core/styles.css";
@@ -38,6 +39,16 @@ function App() {
   // if ('scrollRestoration' in history) {
   //   history.scrollRestoration = 'manual';
   // }
+
+  // Site view 증가
+  useEffect(() => {
+    const visited = sessionStorage.getItem("visited");
+
+    if (!visited) {
+      increaseSiteViews();
+      sessionStorage.setItem("visited", "true");
+    }
+  }, []);
 
   return (
     <>
