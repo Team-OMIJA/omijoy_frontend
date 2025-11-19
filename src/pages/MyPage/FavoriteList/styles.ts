@@ -23,7 +23,6 @@ export const shareButtonWrapper = css`
 
 export const empty = css`
   font-size: 16px;
-  color: #777;
   text-align: center;
   padding: 40px 0;
 `;

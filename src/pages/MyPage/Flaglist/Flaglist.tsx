@@ -1,39 +1,48 @@
-import { useEffect } from "react";
-import { getFlagListReq } from "../../../apis/flagApi";
+/** @jsxImportSource @emotion/react */
+import * as s from "./styles";
 import { useQuery } from "@tanstack/react-query";
+import { getFlagListReq } from "../../../apis/flagApi";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { PiFlagBannerBold } from "react-icons/pi";
 
 function Flaglist() {
   const { principal } = usePrincipalState();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["flags", principal?.id],
     queryFn: () => getFlagListReq(),
-    // 로그인 전 호출되지 않음
     enabled: !!principal?.id,
   });
 
-  if (isLoading) {
-    return <div>로딩중...</div>;
-  }
-
-  if (isError) {
-    return <div>에러 발생</div>;
-  }
+  if (isLoading) return <div css={s.loading}>로딩중...</div>;
+  if (isError) return <div css={s.error}>에러 발생</div>;
 
   const flagList = data ?? [];
 
   return (
-    <div>
+    <div css={s.container}>
+      {/* Header */}
+      <div css={s.header}>
+        <PiFlagBannerBold size={30} />
+        <h2 css={s.title}>Flag</h2>
+      </div>
+
+      {/* List */}
       {flagList.length > 0 ? (
-        flagList.map((flag) => (
-          <div key={flag.flagId}>
-            {flag.prfPlcId?.prfPlcName}
-            {flag.prfPlcId?.address}
-            {flag.prfPlcId?.prfPlcId}
-          </div>
-        ))
+        <ul css={s.list}>
+          {flagList.map((flag) => (
+            // <li key={flag.flagId} css={s.item}>
+            //   <div css={s.placeName}>{flag.prfPlcId?.prfPlcName}</div>
+            //   <div css={s.address}>{flag.prfPlcId?.address}</div>
+            // </li>
+                    <li key={flag.flagId} css={s.card}>
+              <div css={s.placeName}>{flag.prfPlcId?.prfPlcName}</div>
+              <div css={s.address}>{flag.prfPlcId?.address}</div>
+            </li>
+          ))}
+        </ul>
       ) : (
-        <div>플래그 없음</div>
+        <p css={s.empty}>플래그한 공연장이 없습니다.</p>
       )}
     </div>
   );
