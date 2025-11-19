@@ -11,9 +11,9 @@ import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModa
 type SidoKey = keyof typeof KOREA_REGIONS;
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
-const KOREA_LEVEL = 12;
+const KOREA_LEVEL = 9;
 const LOCAL_LEVEL = 3;
-const GU_LEVEL = 10;
+const GU_LEVEL = 7;
 
 function PerformancePlaceMap() {
   const [mapCenter, setMapCenter] = useState({
@@ -21,16 +21,14 @@ function PerformancePlaceMap() {
     lng: KOREA_CENTER.lng,
   });
   const [mapLevel, setMapLevel] = useState(KOREA_LEVEL);
-
   const [isLoading, setIsLoading] = useState(false);
   const [places, setPlaces] = useState<PlaceMarker[]>([]);
   const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
-
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [filterSido, setFilterSido] = useState<SidoKey | "">("");
   const [filterGugun, setFilterGugun] = useState<string>("");
+
   const [currentLocation, setCurrentLocation] = useState<{
     lat: number;
     lng: number;
@@ -61,8 +59,10 @@ function PerformancePlaceMap() {
           enableHighAccuracy: true,
           maximumAge: 10000
         }
+        
       );
     }
+    
   }, [isKakaoMapLoaded]);
 
   const getLocation = () => {
@@ -248,9 +248,11 @@ function PerformancePlaceMap() {
           </p>
         )}
       </div>
-
-      {isModalOpen && selectedPlace ? (
-        <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
+      {isModalOpen && selectedPlace? (
+        <PerformancePlaceModal 
+        place={selectedPlace} 
+        onClose={closeModal} 
+        />
       ) : null}
     </div>
   );

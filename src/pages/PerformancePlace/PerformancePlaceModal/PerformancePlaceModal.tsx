@@ -1,5 +1,5 @@
 // import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect ,} from "react";
 import "../PerformancePlace/PerformancePlaceStyles.css";
 import {
     PlaceMarker,
@@ -8,20 +8,22 @@ import {
 } from "../../../apis/performanceplaceApi";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 interface PerformancePlaceModalProps {
     place: PlaceMarker;
     onClose: () => void;
 }
 
-function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
+function PerformancePlaceModal({ place, onClose}: PerformancePlaceModalProps) {
     const hasValidUrl = place.url && place.url.trim() !== "";
-    // 2. navigate 함수 선언
-    // const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [heart,setHeart] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     const HeartIcon = heart ? ImHeart : SlHeart;
 
@@ -54,16 +56,37 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         }
     };
     const handlePosterClick = (prfId: string) => {
+
+    if (isDragging) return;
+    
     const url = `/performance/${prfId}`;
     window.open(url, "_blank", "noopener,noreferrer");
-    // navigate(`/performance/${prfId}`); 
-};  
+    };
+
     const handleGetDirections = () => { 
-        // const {prfPlcName, latitude, longitude} = place;
-        const url = `https://map.kakao.com/link/to?name=${encodeURIComponent(place.prfPlcName)}&lat=${place.latitude}&lng=${place.longitude}`;
+        const url = `https://map.kakao.com/link/to/${place.prfPlcName},${place.latitude},${place.longitude}`; 
         window.open(url, '_blank', 'noopener,noreferrer');
         console.log(place.prfPlcName, place.latitude, place.longitude)
     };
+    const settings = {
+    dots: true,
+    infinite: performances.length > 4, // 데이터가 4개보다 많을 때만 무한반복
+    speed: 500,
+    slidesToShow: 5,   // 한 화면에 4개
+    slidesToScroll: 5, // 한 번에 4개씩 넘김
+    arrows: true,      // 화살표 표시
+    beforeChange: () => setIsDragging(true),
+    afterChange: () => setIsDragging(false),
+    responsive: [      // 반응형 처리
+    {
+        breakpoint: 600,
+        settings: {
+    slidesToShow: 2,
+    slidesToScroll: 2
+        }
+    }
+    ]
+};
     return (
     <div className="modal-overlay" onClick={onClose}>
         <div className="modal-body" onClick={(e) => e.stopPropagation()}>
@@ -104,17 +127,22 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         ) : error ? (
             <p style={{ color: "red" }}>{error}</p>
         ) : performances.length > 0 ? (
-            <div className="modal-performance-list">
-            {performances.map((perf) => (
-                <div key={perf.prfId} className="modal-performance-item"
-                onClick={() => handlePosterClick(perf.prfId)}>
-                <img
-                    src={perf.posterImgUrl || "/default_poster.png"}
-                    alt="공연 포스터"
-                    className="modal-poster-image"
-                />
-                </div>
-            ))}
+            <div className="slider-container">
+                <Slider {...settings}>
+                {performances.map((perf) => (
+                    <div
+                    key={perf.prfId}
+                    className="modal-performance-item"
+                    onClick={() => handlePosterClick(perf.prfId)}
+                    >
+                    <img
+                        src={perf.posterImgUrl || "/default_poster.png"}
+                        alt="공연 포스터"
+                        className="modal-poster-image"
+                    />
+                    </div>
+                ))}
+                </Slider>
             </div>
         ) : (
             <p>현재 진행중인 공연이 없습니다.</p>
