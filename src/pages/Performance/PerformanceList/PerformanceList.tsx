@@ -36,8 +36,8 @@ function PerformanceList() {
   const [hasMore, setHasMore] = useState(true);
   const [query, setQuery] = useState(() => sessionStorage.getItem("scroll-performance-query") || "");
   const [stFilter, setStFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-stfilter") || "[]"));
-  const [arfilter, setArFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]"));
-  const [gefilter, setGeFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]"));
+  const [arfilter, setArFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]"));
+  const [gefilter, setGeFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]"));
   const [vtFilter, setVtFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false"));
 
   const getPerformance = useCallback(
@@ -196,7 +196,7 @@ function PerformanceList() {
           </div>
         ))}
       </div>
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom: "30px" }}>
         {gefilter.map((item) => (
           <div key={`genre-${item}`} style={{ display:"flex", alignItems:"center", background:"#e0e0e0", borderRadius:"16px", padding:"4px 8px" }}>
             <span>{item}</span>
