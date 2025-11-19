@@ -32,3 +32,14 @@ export function formatUIDate(dateString: string) {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}.${m}.${d}`;
 }
+
+// MM/DD
+export function formatMonthDay(dateStr?: string | null): string {
+  if (!dateStr) return "";
+
+  const date = new Date(dateStr);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${month}/${day}`;
+}
