@@ -46,11 +46,11 @@ function KaKaoMap({
     if (!mapRef.current) {
       const mapOption = {
         center: new window.kakao.maps.LatLng(36.5, 127.5),
-        level: 12,
+        level: 9,
       };
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
-      newMap.setMaxLevel(12);
+      newMap.setMaxLevel(9);
 
       clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
@@ -70,7 +70,7 @@ function KaKaoMap({
       const levelSlider = document.createElement("input");
       levelSlider.type = "range";
       const minMapLevel = 1;
-      const maxMapLevel = 12;
+      const maxMapLevel = 9;
       levelSlider.min = String(minMapLevel);
       levelSlider.max = String(maxMapLevel);
       levelSlider.className = "custom-v-slider";
