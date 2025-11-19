@@ -11,11 +11,11 @@ function ScrollTop() {
   return (
     <PiArrowCircleUp 
       onClick={handleTop}
-      size={50}
+      size={55}
       style={{
         position: "fixed",
         bottom: "60px",
-        right: "20px",
+        right: "30px",
         color: "grey",
         cursor: "pointer",
         zIndex: 1000,   
