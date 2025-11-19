@@ -4,7 +4,7 @@ import { AwardPerformance } from "../../../types/homeTypes";
 import { fetchAwardPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import CachedIcon from "@mui/icons-material/Cached";
-import "../PerforamnceStyles.css";
+import * as s from "../PerformanceStyles";
 
 function AwardRecommendList() {
   const [allPerformances, setAllPerformances] = useState<AwardPerformance[]>(
@@ -36,60 +36,43 @@ function AwardRecommendList() {
   }, []);
 
   return (
-    <div
-      style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}
-    >
-      <div className="performance-section-header">
-        <h2 className="performance-section-title">수상작 추천 5</h2>
+    <s.SectionContainer>
+      <s.SectionHeader>
+        <s.SectionTitle>수상작 추천 5</s.SectionTitle>
 
-        {/* 다른 추천 보기 버튼 */}
-        <button
-          onClick={handleNext}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: "20px",
-            fontWeight: "600",
-            cursor: "pointer",
-            color: "#555",
-            transition: "color 0.2s ease",
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
-          onMouseOut={(e) => (e.currentTarget.style.color = "#444")}
-        >
+        <s.RefreshButton onClick={handleNext}>
           <CachedIcon style={{ fontSize: "25px" }} />
-        </button>
-      </div>
+        </s.RefreshButton>
+      </s.SectionHeader>
 
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div className="performance-grid">
+        <s.PerformanceGrid>
           {visiblePerformances.map((p, i) => (
-            <div key={i} className="performance-card">
-              <img
+            <s.PerformanceCard key={i}>
+              <s.Poster
                 src={p.poster}
                 alt={p.title}
-                className="performance-poster"
                 onClick={() => {
                   setSelectedPrfId(p.id);
                   setOpen(true);
                 }}
               />
 
-              <h4 className="performance-title">{p.title}</h4>
-              <p className="performance-place">{p.place}</p>
-              <p className="performance-period">
-                {p.stDate} ~ {p.edDate}
-              </p>
-              <p className="performance-genre">{p.genre}</p>
-            </div>
+              <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+              <s.PerformancePlace>{p.place}</s.PerformancePlace>
+              <s.PerformancePeriod>
+                {p.stDate} - {p.edDate}
+              </s.PerformancePeriod>
+              <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
+            </s.PerformanceCard>
           ))}
-        </div>
+        </s.PerformanceGrid>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
-    </div>
+    </s.SectionContainer>
   );
 }
 

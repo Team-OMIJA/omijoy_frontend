@@ -6,7 +6,7 @@ export function formatDateRange(
   const s = start ?? "";
   const e = end ?? "";
   if (s === e) return s;
-  return `${s} ~ ${e}`;
+  return `${s} - ${e}`;
 }
 
 // - to .
@@ -42,4 +42,16 @@ export function formatMonthDay(dateStr?: string | null): string {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${month}/${day}`;
+}
+
+// "YYYYMMDD ~ YYYYMMDD" -> "YYYY.MM.DD - YYYY.MM.DD"
+export function formatPeriod(period: string): string {
+  if (!period) return "";
+
+  const trimmed = period.replace(/\s+/g, "");
+  const [start, end] = trimmed.split("~");
+
+  if (!start || !end) return period;
+
+  return `${start} - ${end}`;
 }

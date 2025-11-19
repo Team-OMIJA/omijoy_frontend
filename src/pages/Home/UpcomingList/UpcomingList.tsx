@@ -8,6 +8,7 @@ import {
   formatUIDate,
 } from "../../../components/FormatDate/FormatDate";
 import { Carousel } from "@mantine/carousel";
+import * as s from "../PerformanceStyles";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
@@ -24,93 +25,57 @@ function UpcomingList() {
   }, []);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: "40px 60px",
-        boxSizing: "border-box",
-      }}
-    >
-      {/* 제목 */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "25px",
-        }}
-      >
-        <h2 className="performance-section-title">
-          전체 공연 예정 (가까운 날짜순)
-        </h2>
-      </div>
+    <s.SectionContainer>
+      <s.SectionHeader>
+        <s.SectionTitle>전체 공연 예정 (가까운 날짜순)</s.SectionTitle>
+      </s.SectionHeader>
 
-      {/* 로딩일 때: skeleton */}
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div style={{ width: "100%" }}>
-          <Carousel
-            slideSize="20%" // 한 화면에 5개
-            slideGap="30px"
-            emblaOptions={{
-              align: "start",
-              slidesToScroll: 1,
-              dragFree: true,
-            }}
-            height={430} // 전체 카드 높이
-            withControls // 양 옆 화살표 표시
-            controlSize={40} // 버튼 크기
-            controlsOffset="sm" // 버튼 위치 조금 조절
-          >
-            {performances.map((p, i) => (
-              <Carousel.Slide key={i}>
-                <div
-                  style={{
-                    textAlign: "left",
-                    padding: "5px",
-                    borderRadius: "14px",
+        <Carousel
+          slideSize="20%"
+          slideGap="30px"
+          height={430}
+          emblaOptions={{
+            align: "start",
+            slidesToScroll: 1,
+            dragFree: true,
+          }}
+          withControls
+          controlSize={40}
+          controlsOffset="sm"
+        >
+          {performances.map((p) => (
+            <Carousel.Slide key={p.prfId}>
+              <s.PerformanceCard>
+                <s.Poster
+                  src={p.posterImgUrl}
+                  alt={p.prfNm}
+                  onClick={() => {
+                    setSelectedPrfId(p.prfId);
+                    setOpen(true);
                   }}
-                >
-                  {/* 포스터 */}
-                  <img
-                    src={p.posterImgUrl}
-                    alt={p.prfNm}
-                    onClick={() => {
-                      setSelectedPrfId(p.prfId);
-                      setOpen(true);
-                    }}
-                    className="performance-poster"
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = "translateY(-6px)";
-                      e.currentTarget.style.boxShadow =
-                        "0 6px 18px rgba(0,0,0,0.15)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = "none";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                  />
+                />
+                <s.PerformanceTitle>{p.prfNm}</s.PerformanceTitle>
+                <s.PerformancePlace>{p.prfPlcNm}</s.PerformancePlace>
 
-                  <h4 className="performance-title">{p.prfNm}</h4>
-                  <p className="performance-place">{p.prfPlcNm}</p>
-                  <p className="performance-period">
-                    {formatDateRange(
-                      formatUIDate(p.prfStartDt),
-                      formatUIDate(p.prfEndDt)
-                    )}
-                  </p>
+                <s.PerformancePeriod>
+                  {formatDateRange(
+                    formatUIDate(p.prfStartDt),
+                    formatUIDate(p.prfEndDt)
+                  )}
+                </s.PerformancePeriod>
 
-                  <p className="performance-genre">{p.genreNm}</p>
-                </div>
-              </Carousel.Slide>
-            ))}
-          </Carousel>
-        </div>
+                <s.PerformanceGenre>{p.genreNm}</s.PerformanceGenre>
+              </s.PerformanceCard>
+            </Carousel.Slide>
+          ))}
+        </Carousel>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
-    </div>
+    </s.SectionContainer>
   );
 }
 
