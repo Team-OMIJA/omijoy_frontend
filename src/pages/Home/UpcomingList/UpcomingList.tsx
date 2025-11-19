@@ -40,13 +40,7 @@ function UpcomingList() {
           marginBottom: "25px",
         }}
       >
-        <h2
-          style={{
-            fontSize: "22px",
-            fontWeight: "700",
-            margin: 0,
-          }}
-        >
+        <h2 className="performance-section-title">
           전체 공연 예정 (가까운 날짜순)
         </h2>
       </div>
@@ -86,15 +80,7 @@ function UpcomingList() {
                       setSelectedPrfId(p.prfId);
                       setOpen(true);
                     }}
-                    style={{
-                      width: "100%",
-                      height: "260px",
-                      objectFit: "cover",
-                      borderRadius: "10px",
-                      marginBottom: "10px",
-                      cursor: "pointer",
-                      transition: "transform 0.25s ease, box-shadow 0.25s ease",
-                    }}
+                    className="performance-poster"
                     onMouseOver={(e) => {
                       e.currentTarget.style.transform = "translateY(-6px)";
                       e.currentTarget.style.boxShadow =
@@ -106,60 +92,16 @@ function UpcomingList() {
                     }}
                   />
 
-                  {/* 공연 제목 */}
-                  <h4
-                    style={{
-                      fontSize: "15px",
-                      fontWeight: "600",
-                      color: "#111",
-                      marginBottom: "6px",
-                      lineHeight: "1.4",
-                      wordBreak: "keep-all",
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    {p.prfNm}
-                  </h4>
-
-                  {/* 장소 */}
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "#555",
-                      margin: "2px 0",
-                      wordBreak: "keep-all",
-                      overflowWrap: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    {p.prfPlcNm}
-                  </p>
-
-                  {/* 기간 */}
-                  <p
-                    style={{
-                      fontSize: "12.5px",
-                      color: "#777",
-                      margin: "1px 0",
-                    }}
-                  >
+                  <h4 className="performance-title">{p.prfNm}</h4>
+                  <p className="performance-place">{p.prfPlcNm}</p>
+                  <p className="performance-period">
                     {formatDateRange(
                       formatUIDate(p.prfStartDt),
                       formatUIDate(p.prfEndDt)
                     )}
                   </p>
 
-                  {/* 장르 */}
-                  <p
-                    style={{
-                      fontSize: "12.5px",
-                      color: "#999",
-                      margin: "3px 0",
-                    }}
-                  >
-                    {p.genreNm}
-                  </p>
+                  <p className="performance-genre">{p.genreNm}</p>
                 </div>
               </Carousel.Slide>
             ))}
