@@ -30,24 +30,17 @@ function PerformanceList() {
   });
 
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState("name");
+  const [sort, setSort] = useState(() => sessionStorage.getItem("scroll-performance-sort") || "name");
   const navigate = useNavigate();
   const [page, setPage] = useState(() =>
     Number(sessionStorage.getItem("scroll-performance-page") || 0)
   );
   const [hasMore, setHasMore] = useState(true);
-  const [query, setQuery] = useState(
-    () => sessionStorage.getItem("scroll-performance-query") || ""
-  );
-  const [arfilter, setArFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]")
-  );
-  const [gefilter, setGeFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]")
-  );
-  const [vtFilter, setVtFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false")
-  );
+  const [query, setQuery] = useState(() => sessionStorage.getItem("scroll-performance-query") || "");
+  const [stFilter, setStFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-stfilter") || "[]"));
+  const [arfilter, setArFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]"));
+  const [gefilter, setGeFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]"));
+  const [vtFilter, setVtFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false"));
 
   const getPerformance = useCallback(
     async (searchQuery: string, append = false, pageToLoad = 0) => {
@@ -61,6 +54,7 @@ function PerformanceList() {
         params.append("sort", sort);
         params.append("page", String(pageToLoad));
         params.append("size", "30");
+        if (stFilter) params.append("stFilter", stFilter);
         if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
         if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
         if (vtFilter) params.append("vtFilter", "Y");
@@ -82,29 +76,19 @@ function PerformanceList() {
         setLoading(false);
       }
     },
-    [sort, arfilter, gefilter, vtFilter]
+    [sort, stFilter, arfilter, gefilter, vtFilter]
   );
 
   useEffect(() => {
+    sessionStorage.setItem("scroll-performance-sort", sort);
     sessionStorage.setItem("scroll-performance-query", query);
-    sessionStorage.setItem(
-      "scroll-performance-arfilter",
-      JSON.stringify(arfilter)
-    );
-    sessionStorage.setItem(
-      "scroll-performance-gefilter",
-      JSON.stringify(gefilter)
-    );
+    sessionStorage.setItem("scroll-performance-stfilter", JSON.stringify(stFilter));
+    sessionStorage.setItem("scroll-performance-arfilter", JSON.stringify(arfilter));
+    sessionStorage.setItem("scroll-performance-gefilter", JSON.stringify(gefilter));
     sessionStorage.setItem("scroll-performance-page", String(page));
-    sessionStorage.setItem(
-      "scroll-performance-data",
-      JSON.stringify(performances)
-    );
-    sessionStorage.setItem(
-      "scroll-performance-vtfilter",
-      JSON.stringify(vtFilter)
-    );
-  }, [query, arfilter, gefilter, page, performances, vtFilter]);
+    sessionStorage.setItem("scroll-performance-data", JSON.stringify(performances));
+    sessionStorage.setItem("scroll-performance-vtfilter", JSON.stringify(vtFilter));
+  }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -117,16 +101,11 @@ function PerformanceList() {
     }
     setPage(0);
     getPerformance(query, false, 0);
-  }, [
-    sort,
-    arfilter,
-    gefilter,
-    vtFilter,
-    query,
-    getPerformance,
-    navigationType,
-  ]);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
 
+  const handleStatusChange = (value: string) => {
+    setStFilter(value);
+  };
   const handleAreaChange = (value: string) => {
     if (value && !arfilter.includes(value)) setArFilter([...arfilter, value]);
   };
@@ -182,15 +161,15 @@ function PerformanceList() {
   return (
     <div style={{width: "100%", padding: "40px 60px", boxSizing: "border-box"}}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <h2>공연 리스트</h2>
         <ScrollTop />
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          style={{ padding: "8px 12px", border: "solid #ccc", outline: "none" }}
-        >
+        <h2>공연 리스트</h2>
+        <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
           <option value="name">이름순</option>
-          <option value="date">날짜순</option>
+          <option value="date">최신순</option>
+        </select>
+        <select value={stFilter} onChange={(e) => handleStatusChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
+          <option value="공연중">공연중</option>
+          <option value="공연예정">공연예정</option>
         </select>
         {/*
         select = 한개의 값만 보여줌
@@ -242,22 +221,21 @@ function PerformanceList() {
           </label>
         </div>
         <GrPowerReset
-          onClick={() => {
-            setArFilter([]);
-            setGeFilter([]);
-            setPage(0);
-            setQuery("");
-            setPage(0);
-            getPerformance("", false, 0);
-            getPerformance(query, false, 0);
-          }}
-          style={{
-            padding: "6px 12px",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            background: "#f0f0f0",
-            cursor: "pointer",
-          }}
+          onClick={() => { 
+            setSort("name");
+            setArFilter([]); 
+            setGeFilter([]); 
+            setStFilter([]);
+            setVtFilter(false);
+            setPage(0); setQuery(""); 
+            setPage(0); getPerformance("", false, 0);
+            getPerformance(query, false, 0); }} 
+          style={{ 
+            padding:"6px 12px", 
+            borderRadius:8, 
+            border:"1px solid #ccc", 
+            background:"#f0f0f0", 
+            cursor:"pointer" }}
         />
         <div style={{ position: "relative", width: 250, marginLeft: "auto" }}>
           <input
@@ -277,35 +255,12 @@ function PerformanceList() {
               boxSizing: "border-box",
             }}
           />
-          <PiMagnifyingGlass
-            size={18}
-            onClick={() => {
-              setPage(0);
-              getPerformance(query, false, 0);
-            }}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: 8,
-              color: "grey",
-              cursor: "pointer",
-            }}
+          <PiMagnifyingGlass size={18} onClick={() => { setPage(0); getPerformance(query,false,0); }}
+            style={{ position:"absolute", right:10, top:13, color:"grey", cursor:"pointer" }}
           />
           {query && (
-            <GrClose
-              size={12}
-              onClick={() => {
-                setQuery("");
-                setPage(0);
-                getPerformance("", false, 0);
-              }}
-              style={{
-                position: "absolute",
-                right: 36,
-                top: 11,
-                color: "grey",
-                cursor: "pointer",
-              }}
+            <GrClose size={12} onClick={() => { setQuery(""); setPage(0); getPerformance("", false, 0); }}
+              style={{ position:"absolute", right:40, top:16, color:"grey", cursor:"pointer" }}
             />
           )}
         </div>

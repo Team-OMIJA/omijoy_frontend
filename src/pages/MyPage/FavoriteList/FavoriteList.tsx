@@ -36,19 +36,9 @@ function FavoriteList() {
   };
   return (
     <>
-      <div css={s.container}>
+      <div css={s.container} >
+        <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
         <h2 css={s.title}>❤️My Favorites</h2>
-        <IoArrowForward 
-          size={30} 
-          onClick={() => {
-            if (!principal.id) {
-              alert("로그인 후 공유가 가능합니다.");
-              return;
-            }
-            navigate(`/favorites/list/${principal.id}`);
-          }}
-          style={{position: "absolute", left: "360px", bottom: "309px",cursor: "pointer"}}
-        />
         <RxShare2
           size={30}
           onClick={() => {
@@ -66,8 +56,20 @@ function FavoriteList() {
               .then(() => alert("URL이 클립보드에 복사되었습니다!"))
               .catch(() => alert("URL 복사에 실패했습니다."));
           }}
-          style={{ position: "absolute", left: "320px", bottom: "309px", cursor: "pointer" }}
+          style={{ cursor: "pointer" }}
         />
+        <IoArrowForward 
+          size={30} 
+          onClick={() => {
+            if (!principal.id) {
+              alert("로그인 후 공유가 가능합니다.");
+              return;
+            }
+            navigate(`/favorites/list/${principal.id}`);
+          }}
+          style={{ cursor: "pointer"}}
+        />
+        </div>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
         ) : (

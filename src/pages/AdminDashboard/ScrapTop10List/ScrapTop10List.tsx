@@ -19,10 +19,10 @@ function ScrapTop10List() {
   return (
     <div
       style={{
-        width: "100%",
-        maxWidth: "770px", // 그래프와 동일한 카드 느낌
+        width: "45%",
         backgroundColor: "white",
         borderRadius: "16px",
+        marginTop: "40px",
         padding: "20px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
       }}

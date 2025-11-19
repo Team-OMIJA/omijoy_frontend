@@ -28,12 +28,17 @@ type CommonModalProps = {
   open: boolean;
   setOpen: (value: boolean) => void;
   prfId: string | null;
-  // 메인 - 마이페이지 스크랩이 다르게 작동해서 마이페이지에서 열린 상태를 추가적으로 넘겨줌. 일종의 tag 
-  source?: "mypage" | "other";  
+  // 메인 - 마이페이지 스크랩이 다르게 작동해서 마이페이지에서 열린 상태를 추가적으로 넘겨줌. 일종의 tag
+  source?: "mypage" | "other";
 };
 
 // other = 기본값 set
-function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProps) {
+function CommonModal({
+  open,
+  setOpen,
+  prfId,
+  source = "other",
+}: CommonModalProps) {
   const [data, setData] = useState<PerformanceDetail | null>(null);
   // zustand로 관리
   const {
@@ -90,7 +95,7 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
     if (!newState) {
       removeFromFavoriteList(prfId);
       // 마이페이지에서 스크랩 취소 시 모달 닫힘
-      if(source === "mypage") {
+      if (source === "mypage") {
         setOpen(false);
       }
     }
@@ -101,22 +106,30 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      sx={{
+        backdropFilter: "blur(3px)", // 배경 블러 (선택)
+        backgroundColor: "rgba(0,0,0,0.25)", // 오버레이: 연한 회색 느낌
+      }}
+    >
       <Box
         sx={{
           position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          bgcolor: "#111",
-          color: "#fff",
+          bgcolor: "#FBFBFB", // 크림톤 화이트
+          color: "#222",
+          border: "1px solid rgba(0,0,0,0.08)",
+          boxShadow: "0 8px 28px rgba(0,0,0,0.12)",
           borderRadius: "16px",
           p: 4,
           width: 700,
           height: 450,
           display: "flex",
           gap: 4,
-          boxShadow: 24,
           overflowY: "auto",
         }}
       >
@@ -143,7 +156,10 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
                   position: "absolute",
                   top: 0,
                   right: 0,
-                  color: "#fff",
+                  color: "#666", // 기본 색 진하게
+                  "&:hover": {
+                    color: "#333", // hover 시 더 진하게
+                  },
                 }}
               >
                 <CloseIcon />
@@ -160,26 +176,29 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
                   display: "flex",
                   alignItems: "center",
                   gap: 1,
+                  wordBreak: "keep-all",
+                  overflowWrap: "break-word",
+                  whiteSpace: "normal",
                 }}
               >
                 {removeRegionTag(data.prfNm)}
               </Typography>
               {/* 공연 지역 */}
-              <Typography sx={{ color: "#ccc" }}>{data.area}</Typography>
+              <Typography sx={{ color: "#222" }}>{data.area}</Typography>
               {/* 공연 장소 */}
-              <Typography sx={{ color: "#ccc" }}>{data.prfPlcNm}</Typography>
+              <Typography sx={{ color: "#222" }}>{data.prfPlcNm}</Typography>
 
               <Box sx={{ height: 8 }} />
 
               {/* 기간 */}
-              <Typography sx={{ color: "#ccc", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#222", fontSize: "0.9rem" }}>
                 {data.prfStartDt} ~ {data.prfEndDt}
               </Typography>
 
               {/* 공연 시간 - 모두 시작시간이므로 , 로 구분*/}
               <Typography
                 sx={{
-                  color: "#aaa",
+                  color: "#333",
                   fontSize: "0.8rem",
                   whiteSpace: "pre-line",
                   mt: 0.5,
@@ -194,13 +213,13 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
               </Typography>
 
               {/* 기타 정보 */}
-              <Typography sx={{ color: "#bbb", mt: 1, fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#333", mt: 1, fontSize: "0.9rem" }}>
                 ⏱ {data.runtime}
               </Typography>
-              <Typography sx={{ color: "#bbb", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#333", fontSize: "0.9rem" }}>
                 🎭 {data.genreNm}
               </Typography>
-              <Typography sx={{ color: "#bbb", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#333", fontSize: "0.9rem" }}>
                 👶 {data.prfAge}
               </Typography>
 
@@ -209,7 +228,7 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
               {/* 가격 줄바꿈 (콤마는 숫자 안에서는 유지, 항목 사이에서만 줄바꿈)*/}
               <Typography
                 sx={{
-                  color: "#bbb",
+                  color: "#333",
                   whiteSpace: "pre-line",
                   fontSize: "0.8rem",
                 }}
@@ -278,9 +297,10 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
                   onClick={goDetailHandler}
                   variant="contained"
                   sx={{
-                    backgroundColor: "#444",
-                    "&:hover": { backgroundColor: "#555" },
+                    backgroundColor: "#3A3A3A",
+                    "&:hover": { backgroundColor: "#2C2C2C" },
                     textTransform: "none",
+                    color: "#fff",
                   }}
                 >
                   상세 페이지
@@ -289,9 +309,9 @@ function CommonModal({ open, setOpen, prfId, source = "other" }: CommonModalProp
                 <Button
                   variant="outlined"
                   sx={{
-                    color: "#fff",
-                    borderColor: "#666",
-                    "&:hover": { borderColor: "#999" },
+                    color: "#222",
+                    borderColor: "#aaa",
+                    "&:hover": { borderColor: "#888", color: "#111" },
                     textTransform: "none",
                   }}
                   onClick={() => {
