@@ -133,7 +133,7 @@ function PerformanceList() {
     <div style={{width: "100%", padding: "40px 60px", boxSizing: "border-box"}}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "-10px"}}>
         <ScrollTop />
-        <s.SectionTitle><h2>공연 리스트</h2></s.SectionTitle>
+        <s.SectionTitle><div>공연 리스트</div></s.SectionTitle>
         <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
           <option value="name">이름순</option>
           <option value="date">최신순</option>
@@ -142,11 +142,11 @@ function PerformanceList() {
           <option value="공연중">공연중</option>
           <option value="공연예정">공연예정</option>
         </select>
-        <select value={arfilter} onChange={(e) => handleAreaChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
+        <select value={arfilter[0] || ""} onChange={(e) => handleAreaChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
           <option value="" hidden>지역</option>
           {AREA_OPTIONS.map(area => <option key={area} value={area}>{area}</option>)}
         </select>
-        <select value={gefilter} onChange={(e) => handleGenreChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
+        <select value={gefilter[0] || ""} onChange={(e) => handleGenreChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
           <option value="" hidden>장르</option>
           {GENRE_OPTIONS.map(genre => <option key={genre} value={genre}>{genre}</option>)}
         </select>
@@ -198,7 +198,7 @@ function PerformanceList() {
         </div>
       </div>
       
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom: "20px" }}>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginTop: "30px",marginBottom: "20px" }}>
         {arfilter.map((item) => (
           <div key={`area-${item}`} style={{ display:"flex", alignItems:"center", background:"#e0e0e0", borderRadius:"16px", padding:"4px 8px" }}>
             <span>{item}</span>
