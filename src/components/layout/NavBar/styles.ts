@@ -88,6 +88,6 @@ export const profileStyle = (hasImg) => css`
   cursor: pointer;
   transition: all 0.2s ease;
   &:hover {
-    transform: secale(1.05);
+    transform: scale(1.05);
   }
 `;
