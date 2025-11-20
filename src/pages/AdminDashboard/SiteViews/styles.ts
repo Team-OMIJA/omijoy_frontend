@@ -18,3 +18,8 @@ export const Title = styled.h2`
   margin-bottom: 10px;
   color: #e0e0e0;
 `;
+
+export const ChartWrapper = styled.div`
+  width: 100%;
+  height: 85%;
+`;

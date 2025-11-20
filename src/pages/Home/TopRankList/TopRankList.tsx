@@ -8,28 +8,31 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Carousel } from "@mantine/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import * as s from "../PerformanceStyles";
+import * as ts from "./styles";
 
 function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
-  const [open, setOpen] = useState(false); // 모달 상태
+  const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
-  const navigate = useNavigate(); // 더보기
-  const [loading, setLoading] = useState(true); // skeleton ui
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const autoplay = useRef(
     Autoplay({
-      delay: 5000, // 5초 자동 넘김
+      delay: 5000,
       stopOnInteraction: false,
-      stopOnMouseEnter: true, // 마우스 올리면 멈춤
+      stopOnMouseEnter: true, // 마우스 오버 시 멈춤
     })
   );
 
   useEffect(() => {
-    (async () => {
+    const loadData = async () => {
       const data = await fetchTopRankPerformances();
       setPerformances(data);
       setLoading(false);
-    })(); // useEffect안에서 async 바로 사용 불가기 때문 비동기 함수 정의하고 마지막 () 통해 즉시 실행
+    };
+
+    loadData();
   }, []);
 
   return (
@@ -37,9 +40,9 @@ function TopRankList() {
       <s.SectionHeader>
         <s.SectionTitle>전체 공연 순위 TOP 10</s.SectionTitle>
 
-        <s.MoreButton onClick={() => navigate("/performance")}>
+        <ts.MoreButton onClick={() => navigate("/performance")}>
           <ArrowForwardIosIcon style={{ fontSize: "22px" }} />
-        </s.MoreButton>
+        </ts.MoreButton>
       </s.SectionHeader>
 
       {loading ? (
@@ -61,16 +64,16 @@ function TopRankList() {
             {performances.map((p, i) => (
               <Carousel.Slide key={i}>
                 <s.PerformanceCard>
-                  <s.RankCard
+                  <ts.RankCard
                     onClick={() => {
                       setSelectedPrfId(p.id);
                       setOpen(true);
                     }}
                   >
-                    <s.RankImage src={p.poster} alt={p.title} />
-                    <s.RankOverlay />
-                    <s.RankNumber>{p.rank}</s.RankNumber>
-                  </s.RankCard>
+                    <ts.RankImage src={p.poster} alt={p.title} />
+                    <ts.RankOverlay />
+                    <ts.RankNumber>{p.rank}</ts.RankNumber>
+                  </ts.RankCard>
 
                   <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
                   <s.PerformancePlace>{p.place}</s.PerformancePlace>

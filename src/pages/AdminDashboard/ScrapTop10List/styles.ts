@@ -53,3 +53,9 @@ export const Tbody = styled.tbody`
     font-size: 14px;
   }
 `;
+
+export const LoadingText = styled.p`
+  color: #94a3b8;
+  text-align: center;
+  padding: 12px 0;
+`;

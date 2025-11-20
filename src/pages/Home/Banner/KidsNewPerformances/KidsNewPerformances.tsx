@@ -11,26 +11,28 @@ import * as s from "./styles";
 function KidsNewPerformances() {
   const [allData, setAllData] = useState<KidsNewPerformancs[]>([]);
   const [visibleData, setVisibleData] = useState<KidsNewPerformancs[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // 랜덤 3개 선택 (수상작의 pickRandomFive와 동일한 방식)
   const pickRandomThree = (arr: KidsNewPerformancs[]) => {
     return [...arr].sort(() => Math.random() - 0.5).slice(0, 3);
   };
 
-  // 첫 로딩 시 한 번만 랜덤 3개 선택
   useEffect(() => {
-    (async () => {
+    const loadData = async () => {
       const data = await fetchKidsPrfsThisMonth();
 
       if (data && data.length > 0) {
-        setAllData(data); // 전체 저장
-        setVisibleData(pickRandomThree(data)); // 랜덤 3개 뽑기
+        setAllData(data);
+        setVisibleData(pickRandomThree(data));
       }
-    })();
+      setLoading(false);
+    };
+
+    loadData();
   }, []);
 
-  // 데이터 준비 전에 렌더링 방지
-  if (visibleData.length < 3) return null;
+  // --- 로딩 중이면 아무것도 안 보여줌 ---
+  if (loading || visibleData.length < 3) return null;
 
   const backgroundPoster = visibleData[0].posterImgUrl;
 
@@ -45,20 +47,21 @@ function KidsNewPerformances() {
         </s.HeaderText>
 
         <s.CardContainer>
-          {visibleData.map((item, i) => (
-            <s.Card key={i}>
-              <s.Poster src={item.posterImgUrl} alt={item.prfNm} />
+          {visibleData.map((item, i) => {
+            const title = removeRegionTag(item.prfNm);
+            const dateRange = formatDateRange(
+              formatDateDot(item.prfStartDt),
+              formatDateDot(item.prfEndDt)
+            );
 
-              <s.Title>{removeRegionTag(item.prfNm)}</s.Title>
-
-              <s.DateText>
-                {formatDateRange(
-                  formatDateDot(item.prfStartDt),
-                  formatDateDot(item.prfEndDt)
-                )}
-              </s.DateText>
-            </s.Card>
-          ))}
+            return (
+              <s.Card key={i}>
+                <s.Poster src={item.posterImgUrl} alt={item.prfNm} />
+                <s.Title>{title}</s.Title>
+                <s.DateText>{dateRange}</s.DateText>
+              </s.Card>
+            );
+          })}
         </s.CardContainer>
       </s.BackgroundWrapper>
     </s.Container>
