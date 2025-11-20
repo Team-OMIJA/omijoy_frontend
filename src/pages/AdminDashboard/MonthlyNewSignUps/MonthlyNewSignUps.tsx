@@ -8,8 +8,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Area,
 } from "recharts";
+import * as s from "./styles";
 
 function MonthlyNewSignUps() {
   const [data, setData] = useState<{ name: string; value: number }[]>([]);
@@ -44,60 +44,81 @@ function MonthlyNewSignUps() {
     loadData();
   }, []);
 
+  // Custom Tooltip
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active: boolean;
+    payload: any[];
+    label: string;
+  }) => {
+    if (active && payload && payload.length > 0) {
+      const value = payload[0].value;
+      return (
+        <div
+          style={{
+            backgroundColor: "rgba(51, 65, 85, 0.9)",
+            backdropFilter: "blur(6px)",
+            padding: "12px 16px",
+            borderRadius: "3px",
+            border: "1px solid rgba(255,255,255,0.15)",
+            color: "#e2e8f0",
+            fontSize: "14px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+          }}
+        >
+          <div style={{ marginBottom: "6px", color: "#93c5fd" }}>{label}</div>
+          <div style={{ fontWeight: 500 }}>가입자 수 : {value}명</div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "400px",
-        backgroundColor: "white",
-        marginTop: "40px",
-        borderRadius: "16px",
-        padding: "20px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-      }}
-    >
-      <h2
-        style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}
-      >
-        📈 {month}월 신규 가입자 수
-      </h2>
+    <s.Card>
+      <s.Title>📈 {month}월 신규 가입자 수</s.Title>
 
-      <ResponsiveContainer width="100%" height="90%">
+      <ResponsiveContainer width="100%" height="85%">
         <LineChart data={data}>
-          {/* 그라데이션 정의 */}
-          <defs>
-            <linearGradient id="colorBlue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6EC6FF" stopOpacity={0.6} />
-              <stop offset="100%" stopColor="#6EC6FF" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-          <YAxis allowDecimals={false} domain={[0, "dataMax + 1"]} />
-          <Tooltip formatter={(v: number) => [`${v}명`, "가입자 수"]} />
-
-          {/* 아래 그라데이션 영역 */}
-          <Area
-            type="linear"
-            dataKey="value"
-            stroke="#5CC2FF"
-            fill="url(#colorBlue)"
-            strokeWidth={3}
-            activeDot={{ r: 6 }}
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(148,163,184,0.15)"
           />
 
-          {/* 위 꺾은선 */}
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 12, fill: "#94a3b8" }}
+            axisLine={false}
+            tickLine={false}
+          />
+
+          <YAxis
+            allowDecimals={false}
+            domain={[0, "dataMax + 1"]}
+            tick={{ fill: "#94a3b8" }}
+            axisLine={false}
+            tickLine={false}
+          />
+
+          <Tooltip content={<CustomTooltip />} />
+
           <Line
-            type="linear"
+            type="monotone"
             dataKey="value"
-            stroke="#1697F6"
-            strokeWidth={2.5}
-            dot={false}
+            stroke="#60a5fa"
+            strokeWidth={3}
+            dot={{
+              r: 3,
+              fill: "#0ea5e9",
+            }}
+            activeDot={{ r: 5, stroke: "#bae6fd", strokeWidth: 1.5 }}
           />
         </LineChart>
       </ResponsiveContainer>
-    </div>
+    </s.Card>
   );
 }
 
