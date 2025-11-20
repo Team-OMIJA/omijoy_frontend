@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { getSharedFavoritePrfListReq } from "../../../apis/favoriteApi";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
+import * as ps from "../../Home/PerformanceStyles";
 
 function FavoriteSharedList() {
   const { userId } = useParams<{ userId: string }>();
@@ -33,9 +34,11 @@ function FavoriteSharedList() {
   return (
     <>
       <div css={s.container}>
-        <h2 css={s.title}>❤️Favorites of User</h2>
+        <ps.PerformanceTitle>
+        <h2 css={s.title}>❤️My Favorites</h2>
+        </ps.PerformanceTitle>
         {favoriteList.length === 0 ? (
-          <p css={s.empty}>공유된 스크랩 리스트가 없습니다.</p>
+          <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
         ) : (
           <ul css={s.list}>
             {favoriteList.map((item) => (
@@ -46,12 +49,20 @@ function FavoriteSharedList() {
               >
                 <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
                 <div css={s.info}>
-                  <div css={s.name}>{item.prfNm}</div>
-                  <div css={s.place}>{item.prfPlcNm}</div>
-                  <div css={s.date}>
+                  <ps.PerformanceTitle>
+                  <div>{item.prfNm}</div>
+                  </ps.PerformanceTitle>
+                  <ps.PerformancePlace>
+                  <div>{item.prfPlcNm}</div>
+                  </ps.PerformancePlace>
+                  <ps.PerformancePeriod>
+                  <div>
                     {item.prfStartDt} ~ {item.prfEndDt}
                   </div>
-                  <div css={s.genre}>{item.genreNm}</div>
+                  </ps.PerformancePeriod>
+                  <ps.PerformanceGenre>
+                  <div>{item.genreNm}</div>
+                  </ps.PerformanceGenre>
                 </div>
               </li>
             ))}
