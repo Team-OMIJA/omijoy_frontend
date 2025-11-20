@@ -86,14 +86,40 @@ function NavBar() {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={menuCloseHandler}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          slotProps={{
+            paper: {
+              sx: {
+                backgroundColor: "#0f0f0f",
+                color: "#e0e0e0",
+                border: "2px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
+                mt: "5px",
+                borderRadius: "5px",
+              },
+            },
+          }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
         >
           {principal ? (
             <>
-              <MenuItem onClick={() => menuOnClickHandler("/mypage")}>
+              <MenuItem
+                onClick={() =>
+                  menuOnClickHandler(
+                    principal?.role === "ADMIN" ? "/adminpage" : "/mypage"
+                  )
+                }
+              >
                 마이페이지
               </MenuItem>
+              {/* 구분선 추가 */}
+              <div
+                style={{
+                  height: "2px",
+                  background: "rgba(255,255,255,0.15)",
+                  margin: "4px 10px",
+                }}
+              />
               <MenuItem onClick={() => menuOnClickHandler("logout")}>
                 로그아웃
               </MenuItem>
