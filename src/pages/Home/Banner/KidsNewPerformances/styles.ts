@@ -11,8 +11,8 @@ export const Container = styled.div`
 /* 메인 배경 + 블러 + 카드 포함 */
 export const BackgroundWrapper = styled.div`
   width: 100%;
-  max-width: 1200px;
-  height: 370px;
+  max-width: 1400px;
+  height: 380px;
   border-radius: 15px;
   position: relative;
   overflow: hidden;
@@ -39,7 +39,7 @@ export const DarkOverlay = styled.div`
 /* 상단 제목 */
 export const HeaderText = styled.div`
   position: absolute;
-  top: 16px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
