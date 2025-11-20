@@ -11,8 +11,8 @@ export const Container = styled.div`
 /* 배너 전체 영역 */
 export const BannerWrapper = styled.div`
   width: 100%;
-  max-width: 1200px;
-  height: 370px;
+  max-width: 1400px;
+  height: 380px;
   border-radius: 15px;
   position: relative;
   overflow: hidden;
