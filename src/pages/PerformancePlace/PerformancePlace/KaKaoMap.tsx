@@ -55,7 +55,7 @@ function KaKaoMap({
       clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
-        minLevel: 4,
+        minLevel: 5,
         gridSize: 100,
         minClusterSize: 1,
       });
