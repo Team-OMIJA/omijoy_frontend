@@ -87,6 +87,27 @@ export const PerformanceGenre = styled.div`
   margin: 3px 0;
 `;
 
+/* 상세1 */
+export const PerformanceDetail1 = styled.div`
+  color: #dbdbdb;
+  font-size: 15px;
+  margin: 3px 0;
+`;
+
+/* 상세2 */
+export const PerformanceDetail2 = styled.div`
+  color: #a3a3a3;
+  font-size: 15px;
+  margin: 3px 0;
+`;
+
+/* 상세3 */
+export const PerformanceDetail3 = styled.div`
+  color: #dbdbdb;
+  font-size: 15px;
+  margin: 3px 0;
+`;
+
 /* 순위 오버레이 카드 */
 export const RankCard = styled.div`
   position: relative;

@@ -7,6 +7,7 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { RxShare2 } from "react-icons/rx";
 import { IoArrowForward } from "react-icons/io5";
+import * as ps from "../../Home/PerformanceStyles";
 
 function FavoriteList() {
   // const [favorites, setFavorites] = useState<Performance[]>([]);
@@ -36,19 +37,11 @@ function FavoriteList() {
   };
   return (
     <>
-      <div css={s.container}>
+      <div css={s.container} >
+        <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
+        <ps.PerformanceTitle>
         <h2 css={s.title}>❤️My Favorites</h2>
-        <IoArrowForward 
-          size={30} 
-          onClick={() => {
-            if (!principal.id) {
-              alert("로그인 후 공유가 가능합니다.");
-              return;
-            }
-            navigate(`/favorites/list/${principal.id}`);
-          }}
-          style={{position: "absolute", left: "360px", bottom: "309px",cursor: "pointer"}}
-        />
+        </ps.PerformanceTitle>
         <RxShare2
           size={30}
           onClick={() => {
@@ -66,8 +59,20 @@ function FavoriteList() {
               .then(() => alert("URL이 클립보드에 복사되었습니다!"))
               .catch(() => alert("URL 복사에 실패했습니다."));
           }}
-          style={{ position: "absolute", left: "320px", bottom: "309px", cursor: "pointer" }}
+          style={{ color: "white", cursor: "pointer" }}
         />
+        <IoArrowForward 
+          size={30} 
+          onClick={() => {
+            if (!principal.id) {
+              alert("로그인 후 공유가 가능합니다.");
+              return;
+            }
+            navigate(`/favorites/list/${principal.id}`);
+          }}
+          style={{ color: "white", cursor: "pointer"}}
+        />
+        </div>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
         ) : (
@@ -79,14 +84,21 @@ function FavoriteList() {
                 onClick={() => openModalHandler(item.prfId)}
               >
                 <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
-
                 <div css={s.info}>
-                  <div css={s.name}>{item.prfNm}</div>
-                  <div css={s.place}>{item.prfPlcNm}</div>
-                  <div css={s.date}>
+                  <ps.PerformanceTitle>
+                  <div>{item.prfNm}</div>
+                  </ps.PerformanceTitle>
+                  <ps.PerformancePlace>
+                  <div>{item.prfPlcNm}</div>
+                  </ps.PerformancePlace>
+                  <ps.PerformancePeriod>
+                  <div>
                     {item.prfStartDt} ~ {item.prfEndDt}
                   </div>
-                  <div css={s.genre}>{item.genreNm}</div>
+                  </ps.PerformancePeriod>
+                  <ps.PerformanceGenre>
+                  <div>{item.genreNm}</div>
+                  </ps.PerformanceGenre>
                 </div>
               </li>
             ))}
