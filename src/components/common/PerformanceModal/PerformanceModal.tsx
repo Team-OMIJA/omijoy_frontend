@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";
-import { toggleFavoriteReq } from "../../../apis/favoriteApi";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { instance } from "../../../apis/instance";
@@ -112,8 +110,8 @@ function CommonModal({
       open={open}
       onClose={handleClose}
       sx={{
-        backdropFilter: "blur(3px)", // 배경 블러 (선택)
-        backgroundColor: "rgba(0,0,0,0.25)", // 오버레이: 연한 회색 느낌
+        backdropFilter: "blur(3px)",
+        backgroundColor: "rgba(0,0,0,0.25)",
       }}
     >
       <Box
@@ -122,14 +120,11 @@ function CommonModal({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          bgcolor: "#FBFBFB", // 크림톤 화이트
-          color: "#222",
-          border: "1px solid rgba(0,0,0,0.08)",
-          boxShadow: "0 8px 28px rgba(0,0,0,0.12)",
-          borderRadius: "16px",
+          bgcolor: "#0f0f0f",
+          color: "#e0e0e0",
+          borderRadius: "10px",
           p: 4,
-          width: 700,
-          height: 450,
+          width: 750,
           display: "flex",
           gap: 4,
           overflowY: "auto",
@@ -151,21 +146,40 @@ function CommonModal({
 
             {/* 오른쪽 정보 */}
             <Box sx={{ flex: 1, position: "relative" }}>
-              {/* 닫기 버튼 */}
-              <IconButton
-                onClick={handleClose}
+              {/* 상단 버튼(좋아요 + 닫기) */}
+              <Box
                 sx={{
                   position: "absolute",
                   top: 0,
                   right: 0,
-                  color: "#666", // 기본 색 진하게
-                  "&:hover": {
-                    color: "#333", // hover 시 더 진하게
-                  },
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
                 }}
               >
-                <CloseIcon />
-              </IconButton>
+                <IconButton
+                  onClick={handleToggleLocalFavorite}
+                  sx={{
+                    color: isLiked ? "red" : "#888",
+                    "&:hover": {
+                      color: "red",
+                      transform: "scale(1.1)",
+                    },
+                  }}
+                >
+                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+
+                <IconButton
+                  onClick={handleClose}
+                  sx={{
+                    color: "#777",
+                    "&:hover": { color: "#aaa" },
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
 
               {/* 제목 */}
               <Typography
@@ -174,40 +188,38 @@ function CommonModal({
                 sx={{
                   mb: 1,
                   mt: 1,
-                  fontSize: "1.3rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  wordBreak: "keep-all",
-                  overflowWrap: "break-word",
-                  whiteSpace: "normal",
+                  fontSize: "1.5rem",
+                  pr: 6, // 버튼 영역과 겹치지 않도록 패딩
                 }}
               >
                 {removeRegionTag(data.prfNm)}
               </Typography>
-              {/* 공연 지역 */}
-              <Typography sx={{ color: "#222" }}>{data.area}</Typography>
-              {/* 공연 장소 */}
-              <Typography sx={{ color: "#222" }}>{data.prfPlcNm}</Typography>
+
+              {/* 장소 */}
+              <Typography sx={{ color: "#dbdbdb" }}>{data.prfPlcNm}</Typography>
+
+              {/* 지역 */}
+              <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
+                {data.area}
+              </Typography>
 
               <Box sx={{ height: 8 }} />
 
               {/* 기간 */}
-              <Typography sx={{ color: "#222", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
                 {data.prfStartDt} ~ {data.prfEndDt}
               </Typography>
 
-              {/* 공연 시간 - 모두 시작시간이므로 , 로 구분*/}
+              {/* 공연 시간 */}
               <Typography
                 sx={{
-                  color: "#333",
+                  color: "#a3a3a3",
                   fontSize: "0.8rem",
                   whiteSpace: "pre-line",
                   mt: 0.5,
                 }}
               >
                 {data.dtGuidance
-                  // 콤마 뒤에 줄바꿈 추가
                   .replace(/, /g, ", ")
                   .split(", ")
                   .map((part) => part.trim())
@@ -215,85 +227,57 @@ function CommonModal({
               </Typography>
 
               {/* 기타 정보 */}
-              <Typography sx={{ color: "#333", mt: 1, fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#a3a3a3", mt: 1, fontSize: "0.9rem" }}>
                 ⏱ {data.runtime}
               </Typography>
-              <Typography sx={{ color: "#333", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
                 🎭 {data.genreNm}
               </Typography>
-              <Typography sx={{ color: "#333", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
                 👶 {data.prfAge}
               </Typography>
 
               <Box sx={{ height: 8 }} />
 
-              {/* 가격 줄바꿈 (콤마는 숫자 안에서는 유지, 항목 사이에서만 줄바꿈)*/}
+              {/* 가격 줄바꿈 처리 */}
               <Typography
                 sx={{
-                  color: "#333",
+                  color: "#a3a3a3",
                   whiteSpace: "pre-line",
                   fontSize: "0.8rem",
                 }}
               >
                 {(() => {
-                  // 쉼표 기준으로 각 항목 분리
                   const priceArray = data.ticketPrice
                     .split(",")
                     .map((p) => p.trim())
                     .filter((p) => p !== "");
-                  // "석" 이 포함된 부분만 남기고 불필요한 숫자 조각 제거
+
                   const grouped = [];
                   for (let i = 0; i < priceArray.length; i++) {
                     if (
                       priceArray[i + 1] &&
-                      // 다음 항목이 "000원"으로 끝나면 합쳐줌
                       /^[0-9]+원$/.test(priceArray[i + 1])
                     ) {
                       grouped.push(`${priceArray[i]},${priceArray[i + 1]}`);
                       i++;
-                      // 다음 항목 건너뛰기
                     } else {
                       grouped.push(priceArray[i]);
                     }
                   }
 
-                  // 두 개씩 묶어서 한 줄로 표시
                   const lines = [];
                   for (let i = 0; i < grouped.length; i += 2) {
-                    if (grouped[i + 1]) {
+                    if (grouped[i + 1])
                       lines.push(`${grouped[i]}  ${grouped[i + 1]}`);
-                    } else {
-                      lines.push(grouped[i]);
-                    }
+                    else lines.push(grouped[i]);
                   }
-                  // 줄바꿈 적용
+
                   return lines.join("\n");
                 })()}
               </Typography>
 
-              {/* ❤️ 좋아요 버튼 */}
-              <Box
-                sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <IconButton
-                  onClick={handleToggleLocalFavorite}
-                  sx={{
-                    color: isLiked ? "red" : "#777",
-                    transition: "color 0.2s ease",
-                    "&:hover": {
-                      color: "red", // 마우스 올렸을 때 빨갛게
-                      transform: "scale(1.1)", // 살짝 커지는 애니메이션 (선택)
-                    },
-                  }}
-                >
-                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                </IconButton>
-                <Typography sx={{ fontSize: "0.9rem" }}>
-                  {isLiked ? "스크랩됨" : "스크랩"}
-                </Typography>
-              </Box>
-
-              {/* 버튼 */}
+              {/* 아래 버튼들 */}
               <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <Button
                   onClick={goDetailHandler}
@@ -301,28 +285,24 @@ function CommonModal({
                   sx={{
                     backgroundColor: "#3A3A3A",
                     "&:hover": { backgroundColor: "#2C2C2C" },
+                    color: "#dbdbdb",
                     textTransform: "none",
-                    color: "#fff",
+                    borderRadius: "5px",
                   }}
                 >
                   상세 페이지
                 </Button>
 
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   sx={{
-                    color: "#222",
-                    borderColor: "#aaa",
-                    "&:hover": { borderColor: "#888", color: "#111" },
+                    backgroundColor: "#eab308",
+                    color: "#1a1a1a",
+                    px: 3,
+                    "&:hover": { backgroundColor: "#facc15" },
+                    fontWeight: 600,
                     textTransform: "none",
-                  }}
-                  onClick={() => {
-                    if (data.providerUrl) {
-                      window.open(data.providerUrl, "_blank");
-                      // 새 탭에서 열기
-                    } else {
-                      alert("예매 링크가 없습니다.");
-                    }
+                    borderRadius: "5px",
                   }}
                 >
                   예매 바로가기 →

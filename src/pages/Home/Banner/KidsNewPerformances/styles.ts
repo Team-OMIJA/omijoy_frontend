@@ -81,7 +81,7 @@ export const Card = styled.div`
 /* 포스터 이미지 */
 export const Poster = styled.img`
   height: 180px;
-  width: 125px;
+  width: 150px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 12px;

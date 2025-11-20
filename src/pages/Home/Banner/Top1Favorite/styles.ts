@@ -80,7 +80,7 @@ export const PosterImage = styled.img`
   right: 40px;
   top: 50%;
   transform: translateY(-50%);
-  width: 180px;
+  width: 200px;
   height: 260px;
   object-fit: cover;
   border-radius: 10px;
