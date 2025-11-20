@@ -7,6 +7,7 @@ import ScrollTop from "../../../components/common/Button/ScrollTopButton";
 import { formatDateDot,formatDateRange } from "../../../components/FormatDate/FormatDate";
 import { removeRegionTag } from "../../../apis/performanceApi";
 import PrfList10Skeleton from "../../../components/skeleton/PrfList10Skeleton";
+import * as s from "../../Home/PerformanceStyles";
 
 interface Performance {
   prfId: string;
@@ -35,7 +36,7 @@ function PerformanceList() {
   const [page, setPage] = useState(() => Number(sessionStorage.getItem("scroll-performance-page") || 0));
   const [hasMore, setHasMore] = useState(true);
   const [query, setQuery] = useState(() => sessionStorage.getItem("scroll-performance-query") || "");
-  const [stFilter, setStFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-stfilter") || "[]"));
+  const [stFilter, setStFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-stfilter") || '"공연중"'));
   const [arfilter, setArFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]"));
   const [gefilter, setGeFilter] = useState<string[]>(() => JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]"));
   const [vtFilter, setVtFilter] = useState(() => JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false"));
@@ -130,9 +131,9 @@ function PerformanceList() {
 
   return (
     <div style={{width: "100%", padding: "40px 60px", boxSizing: "border-box"}}>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "-10px"}}>
         <ScrollTop />
-        <h2>공연 리스트</h2>
+        <s.SectionTitle><h2>공연 리스트</h2></s.SectionTitle>
         <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
           <option value="name">이름순</option>
           <option value="date">최신순</option>
@@ -149,29 +150,38 @@ function PerformanceList() {
           <option value="" hidden>장르</option>
           {GENRE_OPTIONS.map(genre => <option key={genre} value={genre}>{genre}</option>)}
         </select>
+        <s.PerformancePlace>
         <div style={{ marginLeft: 10 }}>
           <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <input type="checkbox" checked={vtFilter} onChange={(e) => setVtFilter(e.target.checked)} />
             내한 공연
           </label>
         </div>
-        <GrPowerReset
+        </s.PerformancePlace>
+        <div
           onClick={() => { 
             setSort("name");
             setArFilter([]); 
             setGeFilter([]); 
-            setStFilter([]);
+            setStFilter("공연중");
             setVtFilter(false);
-            setPage(0); setQuery(""); 
-            setPage(0); getPerformance("", false, 0);
-            getPerformance(query, false, 0); }} 
-          style={{ 
-            padding:"6px 12px", 
-            borderRadius:8, 
-            border:"1px solid #ccc", 
-            background:"#f0f0f0", 
-            cursor:"pointer" }}
-        />
+            setQuery(""); 
+            setPage(0);
+            getPerformance("", false, 0);
+          }}
+          style={{
+            padding:"6px 12px",
+            borderRadius:8,
+            border:"1px solid #ccc",
+            background:"#f0f0f0",
+            cursor:"pointer",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+          }}
+        >
+          <GrPowerReset size={12} color="#333" />
+        </div>
         <div style={{ position:"relative", width:250, marginLeft:"auto" }}>
           <input type="text" placeholder="공연명 검색" value={query} onChange={(e)=>setQuery(e.target.value)}
             onKeyDown={(e)=>{ if(e.key==="Enter") getPerformance(query); }}
@@ -188,7 +198,7 @@ function PerformanceList() {
         </div>
       </div>
       
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom:20 }}>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom: "20px" }}>
         {arfilter.map((item) => (
           <div key={`area-${item}`} style={{ display:"flex", alignItems:"center", background:"#e0e0e0", borderRadius:"16px", padding:"4px 8px" }}>
             <span>{item}</span>
@@ -196,7 +206,7 @@ function PerformanceList() {
           </div>
         ))}
       </div>
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom: "30px" }}>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom: "20px" }}>
         {gefilter.map((item) => (
           <div key={`genre-${item}`} style={{ display:"flex", alignItems:"center", background:"#e0e0e0", borderRadius:"16px", padding:"4px 8px" }}>
             <span>{item}</span>
@@ -205,7 +215,7 @@ function PerformanceList() {
         ))}
       </div>
       
-      {performances.length === 0 && !loading && <div className="detail-error" style={{ marginTop:"20px" }}>공연 정보를 찾을 수 없습니다.</div>}
+      {performances.length === 0 && !loading && <div className="detail-error" style={{ color: "white", marginTop:"20px" }}>공연 정보를 찾을 수 없습니다.</div>}
       {loading && page === 0 ? (
         <PrfList10Skeleton />
       ) : (
@@ -217,7 +227,9 @@ function PerformanceList() {
           marginTop: "30px",
         }}
       >
-      {performances.map((p) => (
+      {performances
+      .filter(p => new Date(p.prfEndDt) >= new Date())
+      .map((p) => (
         <div
           key={p.prfId}
           style={{
@@ -226,58 +238,46 @@ function PerformanceList() {
             borderRadius: "14px",
           }}
         >
+          <div onClick={() => navigate(`/performance/${p.prfId}`)} style={{cursor: "pointer"}}>
           {/* ───────────── 포스터 ───────────── */}
           <img
             src={p.posterImgUrl}
             alt={p.prfNm}
-            onClick={() => navigate(`/performance/${p.prfId}`)}
+            // onClick={() => navigate(`/performance/${p.prfId}`)}
             style={{
               width: "100%",
               height: "260px",
               objectFit: "cover",
               borderRadius: "10px",
-              marginBottom: "10px",
-              cursor: "pointer",
+              marginBottom: "0px",
+              // cursor: "pointer",
             }}
           />
 
           {/* ───────────── 공연명 ───────────── */}
+          <s.PerformanceDetail1>
           <h4
             style={{
               fontSize: "15px",
               fontWeight: "600",
-              color: "#111",
               marginBottom: "4px",
               lineHeight: "1.4",
               wordBreak: "keep-all",
               overflowWrap: "break-word",
               whiteSpace: "normal",
-              cursor: "pointer",
+              // cursor: "pointer",
             }}
-            onClick={() => navigate(`/performance/${p.prfId}`)}
+            // onClick={() => navigate(`/performance/${p.prfId}`)}
           >
             {removeRegionTag(p.prfNm)}
           </h4>
-
-          {/* ───────────── 날짜 ───────────── */}
-          <p
-            style={{
-              fontSize: "12.5px",
-              color: "#777",
-              margin: "2px 0",
-            }}
-          >
-            {formatDateRange(
-              formatDateDot(p.prfStartDt),
-              formatDateDot(p.prfEndDt)
-            )}
-          </p>
+          </s.PerformanceDetail1>
 
           {/* ───────────── 공연장명 ───────────── */}
+          <s.PerformancePlace>
           <p
             style={{
               fontSize: "13px",
-              color: "#555",
               margin: "2px 0",
               wordBreak: "keep-all",
               overflowWrap: "break-word",
@@ -286,6 +286,23 @@ function PerformanceList() {
           >
             {p.prfPlcNm}
           </p>
+          </s.PerformancePlace>
+
+          {/* ───────────── 날짜 ───────────── */}
+          <s.PerformancePeriod>
+          <p
+            style={{
+              fontSize: "12.5px",
+              margin: "2px 0",
+            }}
+          >
+            {formatDateRange(
+              formatDateDot(p.prfStartDt),
+              formatDateDot(p.prfEndDt)
+            )}
+          </p>
+          </s.PerformancePeriod>
+        </div>
         </div>
       ))}
     </div>
