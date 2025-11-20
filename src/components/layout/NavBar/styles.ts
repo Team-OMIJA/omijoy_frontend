@@ -1,18 +1,3 @@
-// 나중에 emotion css 사용 시 고려
-// import { css } from "@emotion/react";
-
-// export const container = css`
-//   position: sticky;
-//   top: 0;
-//   z-index: 100; /* 다른 콘텐츠 위에 보이게 */
-//   background-color: white; /* 배경 없으면 스크롤 시 투명해짐 */
-//   border-bottom: 1px solid #eee;
-//   height: 60px;
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding: 0 16px;
-// `;
 import { css } from "@emotion/react";
 
 export const navStyle = css`

@@ -109,7 +109,7 @@ export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
 };
 
 // UpcomingList
-export const fetchUpcomingPerformances = async (): Promise<
+export const getUpcomingPerformances = async (): Promise<
   UpcomingPerformance[]
 > => {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -120,10 +120,9 @@ export const fetchUpcomingPerformances = async (): Promise<
     return (response.data as UpcomingPerformance[]).map((p) => ({
       ...p,
       prfNm: removeRegionTag(p.prfNm),
-      prfPlcNm: p.prfPlcNm,
     }));
   } catch (err) {
-    console.error("Failed to fetch upcoming data from server", err);
+    console.error("Failed to get upcoming data from server", err);
     return [];
   }
 };
