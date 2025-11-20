@@ -8,23 +8,25 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
   CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
 } from "recharts";
 import { formatMonthDay } from "../../../components/FormatDate/FormatDate";
+import * as s from "../SiteViews/styles";
+import CustomTooltip from "./CustomTooltip";
 
 function WeeklySiteViews() {
   const [views, setViews] = useState<WeeklyView[]>([]);
 
   useEffect(() => {
-    const getViews = async () => {
+    const loadViews = async () => {
       try {
         const data = await getWeeklySiteViews();
 
-        const formatted = data.map((date) => ({
-          ...date,
-          date: formatMonthDay(date.createDt),
+        const formatted = data.map((item) => ({
+          ...item,
+          date: formatMonthDay(item.createDt),
         }));
 
         setViews(formatted);
@@ -33,51 +35,47 @@ function WeeklySiteViews() {
       }
     };
 
-    getViews();
+    loadViews();
   }, []);
 
   return (
-    <div
-      style={{
-        width: "50%",
-        backgroundColor: "white",
-        marginTop: "40px",
-        borderRadius: "16px",
-        padding: "20px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-      }}
-    >
-      <h2
-        style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}
-      >
-        📊 최근 7일 사이트 조회수
-      </h2>
+    <s.Card>
+      <s.Title>📊 최근 7일 사이트 조회수</s.Title>
 
-      <ResponsiveContainer width="100%" height={600}>
-        <BarChart data={views}>
-          {/* 배경 그리드 */}
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+      <div style={{ width: "100%", height: "80%" }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={views}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(148,163,184,0.15)"
+            />
 
-          {/* X축 날짜 */}
-          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 12, fill: "#94a3b8" }}
+              axisLine={false}
+              tickLine={false}
+            />
 
-          {/* Y축 (정수만 표시) */}
-          <YAxis allowDecimals={false} />
+            <YAxis
+              allowDecimals={false}
+              tick={{ fill: "#94a3b8" }}
+              axisLine={false}
+              tickLine={false}
+            />
 
-          {/* 툴팁 */}
-          <Tooltip formatter={(v: number) => [`${v}회`, "조회수"]} />
+            <Tooltip content={<CustomTooltip />} />
 
-          {/* 막대 그래프 */}
-          <Bar
-            dataKey="views"
-            fill="#4AA7FF"
-            stroke="#1697F6"
-            strokeWidth={2}
-            barSize={40}
-          />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+            <Bar
+              dataKey="views"
+              fill="#0ea5e9"
+              barSize={35}
+              radius={[1, 1, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </s.Card>
   );
 }
 

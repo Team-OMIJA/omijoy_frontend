@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 import { UpcomingPerformance } from "../../../types/homeTypes";
-import { fetchUpcomingPerformances } from "../../../apis/performanceApi";
+import { getUpcomingPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import {
   formatDateRange,
@@ -9,6 +9,7 @@ import {
 } from "../../../components/FormatDate/FormatDate";
 import { Carousel } from "@mantine/carousel";
 import * as s from "../PerformanceStyles";
+import { StyledCarousel } from "./styles";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
@@ -17,11 +18,12 @@ function UpcomingList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
-      const data = await fetchUpcomingPerformances();
+    const getData = async () => {
+      const data = await getUpcomingPerformances();
       setPerformances(data);
       setLoading(false);
-    })();
+    };
+    getData();
   }, []);
 
   return (
@@ -33,7 +35,7 @@ function UpcomingList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <Carousel
+        <StyledCarousel
           slideSize="20%"
           slideGap="30px"
           height={430}
@@ -43,7 +45,7 @@ function UpcomingList() {
             dragFree: true,
           }}
           withControls
-          controlSize={40}
+          controlSize={50}
           controlsOffset="sm"
         >
           {performances.map((p) => (
@@ -71,7 +73,7 @@ function UpcomingList() {
               </s.PerformanceCard>
             </Carousel.Slide>
           ))}
-        </Carousel>
+        </StyledCarousel>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />

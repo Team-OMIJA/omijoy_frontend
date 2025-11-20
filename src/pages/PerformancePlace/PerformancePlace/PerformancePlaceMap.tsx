@@ -7,14 +7,12 @@ import {
 } from "../../../apis/performanceplaceApi";
 import { KOREA_REGIONS } from "../../../utils/regions";
 import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
-import axios from "axios";
-import { usePrincipalState } from "../../../stores/usePrincipalState";
-import { instance } from "../../../apis/instance";
+import RegionFilterSidebar from "../PerformancePlaceModal/RegionFilterSidebarModal";
 
 type SidoKey = keyof typeof KOREA_REGIONS;
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
-const KOREA_LEVEL = 9;
+const KOREA_LEVEL = 12;
 const LOCAL_LEVEL = 3;
 const GU_LEVEL = 7;
 
@@ -29,15 +27,21 @@ function PerformancePlaceMap() {
   const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [filterSido, setFilterSido] = useState<SidoKey | "">("");
-  const [filterGugun, setFilterGugun] = useState<string>("");
-
+  const [tempSido, setTempSido] = useState<SidoKey | "">("");
+  const [tempGugun, setTempGugun] = useState<string>("");
   const [currentLocation, setCurrentLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<PlaceMarker | null>(null);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   useEffect(() => {
     if (!isKakaoMapLoaded && window.kakao && window.kakao.maps) {
@@ -58,10 +62,7 @@ function PerformancePlaceMap() {
         (error) => {
           console.error("초기 위치 로드 실패:", error.message);
         },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 10000,
-        }
+        { enableHighAccuracy: true, maximumAge: 10000 }
       );
     }
   }, [isKakaoMapLoaded]);
@@ -72,9 +73,7 @@ function PerformancePlaceMap() {
     setPlaces([]);
 
     if (!navigator.geolocation) {
-      setErrorMessage(
-        "Geolocation이 지원되지 않습니다. '지역 필터'를 이용해 주세요."
-      );
+      setErrorMessage("Geolocation이 지원되지 않습니다.");
       setIsLocationDenied(true);
       setIsLoading(false);
       return;
@@ -82,10 +81,8 @@ function PerformancePlaceMap() {
 
     const handleSuccess = async (position: GeolocationPosition) => {
       const { latitude, longitude } = position.coords;
-
       try {
         const markerList = await findNearbyPlaces(latitude, longitude, 5000);
-
         setPlaces(markerList);
         setCurrentLocation({ lat: latitude, lng: longitude });
 
@@ -117,26 +114,8 @@ function PerformancePlaceMap() {
     });
   };
 
-  const handleMarkerClick = useCallback(async (placeData: PlaceMarker) => {
-    console.log("모달 열기 시도:", placeData.prfPlcName, placeData.prfPlcId);
-    const { principal } = usePrincipalState.getState();
-
-    // 기본 flagged = false 상태
-    let flagged = false;
-
-    // 로그인한 사용자 = 서버에 flagged 여부 요청
-    if (principal) {
-      const response = await instance.get(`/flag/check`, {
-        // backend에서 기대하는 param값들
-        params: {
-          prfId: placeData.prfPlcId,
-          userId: principal.id,
-        },
-      });
-      flagged = response.data.flagged;
-    }
-
-    setSelectedPlace({...placeData});
+  const handleMarkerClick = useCallback((placeData: PlaceMarker) => {
+    setSelectedPlace(placeData);
     setIsModalOpen(true);
   }, []);
 
@@ -145,8 +124,8 @@ function PerformancePlaceMap() {
     setSelectedPlace(null);
   }, []);
 
-  const handleFilterSearch = useCallback(async () => {
-    if (!filterSido) {
+  const handleFilterApply = async () => {
+    if (!tempSido) {
       alert("시/도를 선택해주세요.");
       return;
     }
@@ -154,15 +133,10 @@ function PerformancePlaceMap() {
     setIsLoading(true);
     setErrorMessage(null);
     setPlaces([]);
-
     setCurrentLocation(null);
 
     try {
-      const markerList = await findPlacesByGugun(
-        filterSido as string,
-        filterGugun
-      );
-
+      const markerList = await findPlacesByGugun(tempSido, tempGugun);
       setPlaces(markerList);
 
       if (markerList.length > 0) {
@@ -170,7 +144,7 @@ function PerformancePlaceMap() {
           lat: markerList[0].latitude,
           lng: markerList[0].longitude,
         });
-        setMapLevel(filterGugun ? GU_LEVEL : 10);
+        setMapLevel(tempGugun ? GU_LEVEL : 10);
       } else {
         setErrorMessage("해당 지역에 공연장이 없습니다.");
       }
@@ -178,69 +152,56 @@ function PerformancePlaceMap() {
       setErrorMessage("지역 필터 검색에 실패했습니다.");
     }
     setIsLoading(false);
-  }, [filterSido, filterGugun]);
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div
+      style={{
+        height: "100vh",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        touchAction: "none",
+        padding: 0,
+        margin: 0,
+        position: "relative",
+      }}
+    >
       <div
-        style={{
-          marginBottom: "10px",
-          background: "#f4f4f4",
-          padding: "10px",
-          borderRadius: "8px",
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-        }}
+        style={{ flex: 1, position: "relative", width: "100%", height: "100%" }}
       >
-        <strong>지역으로 찾기:</strong>
-        <select
-          value={filterSido}
-          onChange={(e) => {
-            const newSido = e.target.value as SidoKey | "";
-            setFilterSido(newSido);
-            setFilterGugun("");
-          }}
-        >
-          <option value="">-- 시/도 선택 --</option>
-          {Object.keys(KOREA_REGIONS).map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-        <select
-          value={filterGugun}
-          onChange={(e) => setFilterGugun(e.target.value)}
-          disabled={!filterSido}
-        >
-          <option value="">-- 시/군/구 (전체) --</option>
-          {filterSido &&
-            KOREA_REGIONS[filterSido as SidoKey]?.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-        </select>
-        <button onClick={handleFilterSearch} disabled={isLoading}>
-          찾기
-        </button>
-      </div>
+        <RegionFilterSidebar
+          selectedSido={tempSido}
+          selectedGugun={tempGugun}
+          onSidoChange={setTempSido}
+          onGugunChange={setTempGugun}
+          onApply={handleFilterApply}
+        />
 
-      <p>표시된 공연장: {places.length}개</p>
-      {errorMessage && (
-        <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>
-      )}
-
-      <div
-        style={{
-          width: "100%",
-          height: "500px",
-          position: "relative",
-          background: "#f8f8f8",
-          contain: "layout paint size",
-        }}
-      >
+        {errorMessage && (
+          <div
+            style={{
+              position: "absolute",
+              top: "20px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 20,
+              background: "rgba(255, 255, 255, 0.95)",
+              padding: "8px 16px",
+              borderRadius: "20px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+              fontSize: "14px",
+              fontWeight: "bold",
+              color: "red",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span>{errorMessage}</span>
+          </div>
+        )}
         {isKakaoMapLoaded ? (
           <KaKaoMap
             latitude={mapCenter.lat}
@@ -253,22 +214,24 @@ function PerformancePlaceMap() {
             onMyLocationClick={getLocation}
           />
         ) : (
-          <p
+          <div
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              color: "#666",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              background: "#f0f0f0",
             }}
           >
-            지도 로딩 중...
-          </p>
+            지도를 불러오는 중입니다...
+          </div>
         )}
       </div>
-      {isModalOpen && selectedPlace ? (
+
+      {isModalOpen && selectedPlace && (
         <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
-      ) : null}
+      )}
     </div>
   );
 }

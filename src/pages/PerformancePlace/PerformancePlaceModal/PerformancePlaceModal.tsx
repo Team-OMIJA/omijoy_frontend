@@ -111,23 +111,24 @@ const handleToggleFlag = async () => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleGetDirections = () => {
-    const url = `https://map.kakao.com/link/to/${place.prfPlcName},${place.latitude},${place.longitude}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-    console.log(place.prfPlcName, place.latitude, place.longitude);
-  };
-  const settings = {
+    const handleGetDirections = () => { 
+        const toName = encodeURIComponent(place.prfPlcName);
+        const url = `https://map.kakao.com/link/to/${toName},${place.latitude},${place.longitude}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        console.log(place.prfPlcName, place.latitude, place.longitude)
+        console.log(url)
+    };
+    const settings = {
     dots: true,
-    infinite: performances.length > 4, // 데이터가 4개보다 많을 때만 무한반복
+    infinite: performances.length > 5, 
     speed: 500,
-    slidesToShow: 5, // 한 화면에 4개
-    slidesToScroll: 5, // 한 번에 4개씩 넘김
-    arrows: true, // 화살표 표시
+    slidesToShow: 5,   
+    slidesToScroll: 5, 
+    arrows: true,      
     beforeChange: () => setIsDragging(true),
     afterChange: () => setIsDragging(false),
-    responsive: [
-      // 반응형 처리
-      {
+    responsive: [     
+    {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,

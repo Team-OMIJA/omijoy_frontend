@@ -5,7 +5,7 @@ export default function PrfCardSkeleton() {
   return (
     <div style={{ width: "100%" }}>
       <Skeleton
-        height={245}
+        height={290}
         borderRadius={8}
         baseColor="#2A2A2A"
         highlightColor="#3A3A3A"
@@ -18,7 +18,7 @@ export default function PrfCardSkeleton() {
         highlightColor="#3A3A3A"
       />
       <Skeleton
-        height={60} // 공연장 + 기간 + 장르
+        height={60}
         style={{ marginTop: 10 }}
         borderRadius={8}
         baseColor="#2A2A2A"

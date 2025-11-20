@@ -11,8 +11,8 @@ export const Container = styled.div`
 /* 메인 배경 + 블러 + 카드 포함 */
 export const BackgroundWrapper = styled.div`
   width: 100%;
-  max-width: 1200px;
-  height: 370px;
+  max-width: 1400px;
+  height: 380px;
   border-radius: 15px;
   position: relative;
   overflow: hidden;
@@ -39,7 +39,7 @@ export const DarkOverlay = styled.div`
 /* 상단 제목 */
 export const HeaderText = styled.div`
   position: absolute;
-  top: 16px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
@@ -48,7 +48,7 @@ export const HeaderText = styled.div`
   z-index: 5;
   text-align: center;
   white-space: nowrap;
-  color: #e0e0e0;
+  color: #dbdbdb;
 `;
 
 /* 카드 wrapper */
@@ -98,10 +98,12 @@ export const Title = styled.div`
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
+  color: #e0e0e0;
 `;
 
 /* 날짜 */
 export const DateText = styled.div`
   font-size: 14px;
   opacity: 0.9;
+  color: #dbdbdb;
 `;
