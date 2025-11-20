@@ -20,7 +20,7 @@ function Login() {
 
   const [isAuthenticate, setAuth] = useState(false);
   const [open, setOpen] = useState(false);
-  const [errMsg, setErrMsg] = useState<string>('login failed'); // ✅ 타입 명시
+  const [errMsg, setErrMsg] = useState<string>('login failed');
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -36,17 +36,12 @@ function Login() {
           setAuth(true);
         }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.log(err);
 
-        // ✅ 에러를 문자열로 변환해서 넣기
         if (axios.isAxiosError(err)) {
           const backendMessage =
-            // 백엔드에서 { message: '...' } 형태로 내려줄 수도 있어서
-            (err.response?.data as any)?.message ||
-            (err.response?.data as any)?.error ||
-            err.message ||
-            '로그인에 실패했습니다.';
+            err.response?.data?.message || err.response?.data?.error || err.message || '로그인에 실패했습니다.';
           setErrMsg(backendMessage);
         } else {
           setErrMsg('알 수 없는 오류가 발생했습니다.');
@@ -73,8 +68,8 @@ function Login() {
           </Typography>
 
           <Stack spacing={2} className='login-form'>
-            <TextField fullWidth label='Email' name='email' onChange={changeHandler} />
-            <TextField fullWidth type='password' label='Password' name='password' onChange={changeHandler} />
+            <TextField fullWidth label='이메일' name='email' onChange={changeHandler} />
+            <TextField fullWidth type='password' label='패스워드' name='password' onChange={changeHandler} />
             <Button className='login-submit-button' fullWidth variant='outlined' color='primary' onClick={loginHandler}>
               로그인
             </Button>
@@ -130,7 +125,6 @@ function Login() {
         </div>
       </div>
 
-      {/* ✅ Snackbar 하나만 사용 + Alert children에는 항상 문자열 */}
       <Snackbar
         open={open}
         autoHideDuration={2000}
