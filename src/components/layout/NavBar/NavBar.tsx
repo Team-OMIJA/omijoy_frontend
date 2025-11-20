@@ -91,7 +91,13 @@ function NavBar() {
         >
           {principal ? (
             <>
-              <MenuItem onClick={() => menuOnClickHandler("/mypage")}>
+              <MenuItem
+                onClick={() =>
+                  menuOnClickHandler(
+                    principal?.role === "ADMIN" ? "/adminpage" : "/mypage"
+                  )
+                }
+              >
                 마이페이지
               </MenuItem>
               <MenuItem onClick={() => menuOnClickHandler("logout")}>

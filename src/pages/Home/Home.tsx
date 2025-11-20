@@ -3,7 +3,6 @@ import TopRankList from "./TopRankList/TopRankList";
 import UpcomingList from "./UpcomingList/UpcomingList";
 import CarouselBanner from "./Banner/CarouselBanner";
 import { MantineProvider } from "@mantine/core";
-import AdminDashboard from "../AdminDashboard/AdminDashboard";
 
 function Home() {
   return (
@@ -18,8 +17,6 @@ function Home() {
       <MantineProvider>
         <UpcomingList />
       </MantineProvider>
-
-      <AdminDashboard />
     </>
   );
 }
