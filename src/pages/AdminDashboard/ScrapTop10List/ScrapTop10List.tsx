@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useState, useEffect } from "react";
 import { getTop10Favorites, ScrapRank } from "../../../apis/favoriteApi";
 import * as s from "./styles";
@@ -15,8 +14,17 @@ function ScrapTop10List() {
         console.error("Failed to load favorite data");
       }
     };
+
     getTop10();
   }, []);
+
+  // 순위 색상
+  const getRankColor = (index: number) => {
+    if (index === 0) return "#facc15";
+    if (index === 1) return "#a1a1aa";
+    if (index === 2) return "#d97706";
+    return "#e2e8f0";
+  };
 
   return (
     <s.Card>
@@ -37,22 +45,15 @@ function ScrapTop10List() {
           </s.Thead>
 
           <s.Tbody>
-            {ranks.map((item, idx) => (
-              <tr key={idx}>
+            {ranks.map((item, i) => (
+              <tr key={i}>
                 <td
                   style={{
                     fontWeight: 700,
-                    color:
-                      idx === 0
-                        ? "#facc15" // gold
-                        : idx === 1
-                        ? "#a1a1aa" // silver
-                        : idx === 2
-                        ? "#d97706" // bronze
-                        : "#e2e8f0",
+                    color: getRankColor(i),
                   }}
                 >
-                  {idx + 1}
+                  {i + 1}
                 </td>
 
                 <td>{item.prfName}</td>

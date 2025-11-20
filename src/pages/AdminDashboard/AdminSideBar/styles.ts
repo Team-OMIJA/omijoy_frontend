@@ -60,3 +60,11 @@ export const Content = styled.div`
   padding: 50px;
   color: white;
 `;
+
+/* 구분선 */
+export const Divider = styled.div`
+  height: 2px;
+  background: #2a2f3a;
+  margin: 4px 10px;
+  margin-bottom: -20px;
+`;
