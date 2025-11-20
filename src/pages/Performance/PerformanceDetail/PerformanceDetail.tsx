@@ -123,7 +123,7 @@ function PerformanceDetail() {
           }}
           style={{position: "absolute", bottom: "40px", right: "-100px", padding: "0 30px", lineHeight: "60px", fontSize: "23px",cursor: "pointer", borderRadius: "30px", backgroundColor: "white", color: "black"}}>예매 바로가기→</button>)}
       </div>
-        <hr style={{ width: "100%", border: "1px solid #ccc", margin: "50px 0" }} />
+        <hr style={{ width: "100%", border: "1px solid #ccc", margin: "50px 0", marginBottom: "90px" }} />
 
       {performance.detailImgUrl && performance.detailImgUrl.trim() !== "" && (
         <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>

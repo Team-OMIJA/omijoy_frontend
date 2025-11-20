@@ -44,7 +44,7 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
       const { scrollHeight, clientHeight } = document.documentElement;
       if (scrollHeight - scrollLocate <= clientHeight + 10) {
         const now = Date.now();
-        if (now - lastCalled.current >= 10) {
+        if (now - lastCalled.current >= 5) {
           lastCalled.current = now;
           callback();
           if (!hasMore) finished.current = true;
