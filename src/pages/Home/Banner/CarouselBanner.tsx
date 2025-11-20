@@ -18,7 +18,13 @@ function CarouselBanner() {
 
   const slides = components.map((component, index) => (
     <Carousel.Slide key={index}>
-      <Box sx={{ height: "370px", marginTop: "40px", marginBottom: "50px" }}>
+      <Box
+        sx={{
+          height: "380px",
+          marginTop: "40px",
+          marginBottom: "50px",
+        }}
+      >
         {component}
       </Box>
     </Carousel.Slide>
