@@ -114,7 +114,7 @@ function PerformancePlaceModal({ place, onClose}: PerformancePlaceModalProps) {
         onClick={handleUrlClick}
         disabled={!hasValidUrl}
         >
-        {hasValidUrl ? "공연장 방문" : "공연장 정보 없음"}
+        {hasValidUrl ? "공연장 상세페이지" : "공연장 정보 없음"}
         </button>
         <button 
         className="modal-kakao-directions-button" 
