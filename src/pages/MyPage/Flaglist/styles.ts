@@ -1,4 +1,3 @@
-
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
@@ -18,6 +17,7 @@ export const header = css`
 export const title = css`
   font-size: 22px;
   font-weight: 700;
+  color: #e0e0e0;
 `;
 
 export const list = css`
@@ -30,19 +30,20 @@ export const list = css`
 `;
 
 export const card = css`
-  background: #f7f7f7;
+  background: #737373ff;
   padding: 20px 18px;
   border-radius: 16px;
   cursor: pointer;
-  transition: 
-    background-color 0.25s ease, 
-    transform 0.25s ease,
+  transition: background-color 0.25s ease, transform 0.25s ease,
     box-shadow 0.25s ease;
 
   &:hover {
-    background-color: #ececec; /* 살짝 짙어짐 */
+    background-color: #a4a4a4ff; /* 약간 더 밝아지는 느낌 유지 */
     transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+
+    /* 화이트 톤 그림자 */
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.25),
+      0 0 16px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1); /* 깊이감 살짝 */
   }
 `;
 
@@ -50,10 +51,10 @@ export const placeName = css`
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 6px;
-  color: #111;
+  color: #ddddddff;
 `;
 
 export const address = css`
   font-size: 14px;
-  color: #555;
+  color: #d0d0d0ff;
 `;

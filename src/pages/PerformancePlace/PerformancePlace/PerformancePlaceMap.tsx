@@ -7,6 +7,9 @@ import {
 } from "../../../apis/performanceplaceApi";
 import { KOREA_REGIONS } from "../../../utils/regions";
 import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
+import axios from "axios";
+import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { instance } from "../../../apis/instance";
 
 type SidoKey = keyof typeof KOREA_REGIONS;
 
@@ -25,7 +28,7 @@ function PerformancePlaceMap() {
   const [places, setPlaces] = useState<PlaceMarker[]>([]);
   const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterSido, setFilterSido] = useState<SidoKey | "">("");
   const [filterGugun, setFilterGugun] = useState<string>("");
 
@@ -57,12 +60,10 @@ function PerformancePlaceMap() {
         },
         {
           enableHighAccuracy: true,
-          maximumAge: 10000
+          maximumAge: 10000,
         }
-        
       );
     }
-    
   }, [isKakaoMapLoaded]);
 
   const getLocation = () => {
@@ -112,13 +113,30 @@ function PerformancePlaceMap() {
     };
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
       enableHighAccuracy: true,
-      maximumAge: 10000
+      maximumAge: 10000,
     });
   };
 
-  const handleMarkerClick = useCallback((placeData: PlaceMarker) => {
+  const handleMarkerClick = useCallback(async (placeData: PlaceMarker) => {
     console.log("모달 열기 시도:", placeData.prfPlcName, placeData.prfPlcId);
-    setSelectedPlace(placeData);
+    const { principal } = usePrincipalState.getState();
+
+    // 기본 flagged = false 상태
+    let flagged = false;
+
+    // 로그인한 사용자 = 서버에 flagged 여부 요청
+    if (principal) {
+      const response = await instance.get(`/flag/check`, {
+        // backend에서 기대하는 param값들
+        params: {
+          prfId: placeData.prfPlcId,
+          userId: principal.id,
+        },
+      });
+      flagged = response.data.flagged;
+    }
+
+    setSelectedPlace({...placeData});
     setIsModalOpen(true);
   }, []);
 
@@ -248,11 +266,8 @@ function PerformancePlaceMap() {
           </p>
         )}
       </div>
-      {isModalOpen && selectedPlace? (
-        <PerformancePlaceModal 
-        place={selectedPlace} 
-        onClose={closeModal} 
-        />
+      {isModalOpen && selectedPlace ? (
+        <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
       ) : null}
     </div>
   );

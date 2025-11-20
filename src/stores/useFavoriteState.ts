@@ -57,7 +57,7 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
   // 서버에 토글 요청 + 전역 상태 갱신
   toggleFavorite: async (prfId) => {
     try {
-      await instance.post(`/favorite/${prfId}/like`);
+      await instance.post(`/favorite/toggle/${prfId}`);
 
       set((state) => {
         const prev = state.favorites[prfId] ?? false;
@@ -80,28 +80,26 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
       window.location.href = "/login";
     }
   },
-   // 현재 스크랩 여부 - 공연 상세 페이지 사용
-//  fetchDetailFavoriteState: async (prfId) => {
-//   try {
-//     const res = await instance.get(``)
-//   }
-//  }
+  // 현재 스크랩 여부 - 공연 상세 페이지 사용
+  //  fetchDetailFavoriteState: async (prfId) => {
+  //   try {
+  //     const res = await instance.get(``)
+  //   }
+  //  }
 
- 
- 
-//  async (prfId) => {
-//     try {
-//       const res = await instance.get(`/commonmodal/${prfId}`);
-//       const favorited = res.data.favorited;
+  //  async (prfId) => {
+  //     try {
+  //       const res = await instance.get(`/commonmodal/${prfId}`);
+  //       const favorited = res.data.favorited;
 
-//       set((state) => ({
-//         favorites: { ...state.favorites, [prfId]: favorited },
-//       }));
+  //       set((state) => ({
+  //         favorites: { ...state.favorites, [prfId]: favorited },
+  //       }));
 
-//       return favorited;
-//     } catch (err) {
-//       console.error("스크랩 상태 조회 실패:", err);
-//       return false;
-//     }
-//   },
+  //       return favorited;
+  //     } catch (err) {
+  //       console.error("스크랩 상태 조회 실패:", err);
+  //       return false;
+  //     }
+  //   },
 }));

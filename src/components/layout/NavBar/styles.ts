@@ -34,6 +34,7 @@ export const logo = css`
   margin-left: 100px;
   cursor: pointer;
   color: crimson;
+  /* color: #ffc800; */
 `;
 
 export const navListStyle = css`

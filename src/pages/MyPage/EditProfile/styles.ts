@@ -13,9 +13,7 @@ export const ProfileContainer = styled.div`
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem 2.5rem;
-
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
+    background-color: #121212;
 `;
 
 // 프로필 이미지
@@ -58,16 +56,14 @@ export const UserInfo = styled.div`
 `;
 
 export const BtnContainer = styled.div`
-display: flex;
-margin-top: 8px;
-`
+  display: flex;
+  margin-top: 8px;
+`;
 export const SaveBtn = styled.button`
-margin-left: 3px;
-`
+  margin-left: 3px;
+`;
 
-export const CancelBtn = styled.button`
-
-`
+export const CancelBtn = styled.button``;
 
 export const textFieldStyle = css`
   width: 200px;

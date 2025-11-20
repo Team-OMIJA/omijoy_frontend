@@ -12,6 +12,7 @@ export const title = css`
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 25px;
+  color: #e0e0e0;
 `;
 
 /* 공유 버튼 */
@@ -67,7 +68,7 @@ export const info = css`
 export const name = css`
   font-size: 15px;
   font-weight: 600;
-  color: #111;
+  color: #e0e0e0;
   margin-bottom: 6px;
   line-height: 1.4;
   word-break: keep-all;
@@ -78,7 +79,7 @@ export const name = css`
 /* 장소 */
 export const place = css`
   font-size: 13px;
-  color: #555;
+  color: #dbdbdb;
   margin: 2px 0;
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -88,13 +89,13 @@ export const place = css`
 /* 날짜 */
 export const date = css`
   font-size: 12.5px;
-  color: #777;
+  color: #a3a3a3;
   margin: 1px 0;
 `;
 
 /* 장르 */
 export const genre = css`
   font-size: 12.5px;
-  color: #999;
+  color: #a3a3a3;
   margin: 3px 0;
 `;
