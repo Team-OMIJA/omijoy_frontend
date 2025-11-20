@@ -48,7 +48,7 @@ export const HeaderText = styled.div`
   z-index: 5;
   text-align: center;
   white-space: nowrap;
-  color: #e0e0e0;
+  color: #dbdbdb;
 `;
 
 /* 카드 wrapper */
@@ -98,10 +98,12 @@ export const Title = styled.div`
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
+  color: #e0e0e0;
 `;
 
 /* 날짜 */
 export const DateText = styled.div`
   font-size: 14px;
   opacity: 0.9;
+  color: #dbdbdb;
 `;

@@ -43,8 +43,17 @@ function UpcomingList() {
             dragFree: true,
           }}
           withControls
-          controlSize={40}
+          controlSize={50}
           controlsOffset="sm"
+          styles={{
+            control: {
+              background: "rgba(255,255,255,0.28)",
+              border: "none",
+              boxShadow: "0 4px 18px rgba(0,0,0,0.25)",
+              backdropFilter: "blur(8px)",
+              color: "#fbfbfb", // 아이콘 기본 색상
+            },
+          }}
         >
           {performances.map((p) => (
             <Carousel.Slide key={p.prfId}>

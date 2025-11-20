@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { formatMonthDay } from "../../../components/FormatDate/FormatDate";
+import * as s from "../SiteViews/styles";
 
 function WeeklySiteViews() {
   const [views, setViews] = useState<WeeklyView[]>([]);
@@ -37,47 +38,51 @@ function WeeklySiteViews() {
   }, []);
 
   return (
-    <div
-      style={{
-        width: "50%",
-        backgroundColor: "white",
-        marginTop: "40px",
-        borderRadius: "16px",
-        padding: "20px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-      }}
-    >
-      <h2
-        style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}
-      >
-        📊 최근 7일 사이트 조회수
-      </h2>
+    <s.Card>
+      <s.Title>📊 최근 7일 사이트 조회수</s.Title>
 
-      <ResponsiveContainer width="100%" height={600}>
+      <ResponsiveContainer width="100%" height="80%">
         <BarChart data={views}>
-          {/* 배경 그리드 */}
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(148,163,184,0.15)"
+          />
 
-          {/* X축 날짜 */}
-          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+          <XAxis
+            dataKey="date"
+            tick={{ fontSize: 12, fill: "#94a3b8" }}
+            axisLine={false}
+            tickLine={false}
+          />
 
-          {/* Y축 (정수만 표시) */}
-          <YAxis allowDecimals={false} />
+          <YAxis
+            allowDecimals={false}
+            tick={{ fill: "#94a3b8" }}
+            axisLine={false}
+            tickLine={false}
+          />
 
-          {/* 툴팁 */}
-          <Tooltip formatter={(v: number) => [`${v}회`, "조회수"]} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "rgba(30, 41, 59, 0.85)", // 다크네이비 블러
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "8px",
+              backdropFilter: "blur(6px)",
+              color: "#e2e8f0",
+            }}
+            labelStyle={{ color: "#93c5fd" }}
+            formatter={(v: number) => [`${v}회`, "조회수"]}
+          />
 
-          {/* 막대 그래프 */}
           <Bar
             dataKey="views"
-            fill="#4AA7FF"
-            stroke="#1697F6"
-            strokeWidth={2}
-            barSize={40}
+            fill="#0ea5e9"
+            barSize={35}
+            radius={[1, 1, 0, 0]}
           />
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </s.Card>
   );
 }
 
