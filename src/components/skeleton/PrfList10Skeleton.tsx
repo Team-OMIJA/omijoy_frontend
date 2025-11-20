@@ -4,10 +4,12 @@ export default function PrfList10Skeleton() {
   return (
     <div
       style={{
+        width: "1350px",
+        margin: "0 auto",
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-        gap: "30px",
-        width: "100%",
+        gridTemplateColumns: "repeat(5, 1fr)",
+        columnGap: "30px",
+        rowGap: "40px",
       }}
     >
       {/* 카드 스켈레톤 5개 */}

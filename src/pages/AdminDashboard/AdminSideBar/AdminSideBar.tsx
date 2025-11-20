@@ -10,6 +10,16 @@ function AdminSidebar() {
     <s.Sidebar>
       <s.Logo>AdminPage</s.Logo>
 
+      {/* 구분선 추가 */}
+      <div
+        style={{
+          height: "2px",
+          background: "#2a2f3a",
+          margin: "4px 10px",
+          marginBottom: "-20px",
+        }}
+      />
+
       <s.Menu>
         <li onClick={() => navigate("/adminpage")}>
           <FiHome /> Dashboard

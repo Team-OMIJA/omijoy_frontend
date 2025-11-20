@@ -26,6 +26,9 @@ export const Logo = styled.div`
   font-size: 22px;
   font-weight: 700;
   text-align: center;
+
+  margin-top: 20px;
+  margin-bottom: -30px;
 `;
 
 /* 메뉴 */

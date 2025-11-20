@@ -3,8 +3,9 @@ import styled from "@emotion/styled";
 
 /* 전체 섹션 컨테이너 */
 export const SectionContainer = styled.div`
-  width: 100%;
-  padding: 40px 60px;
+  width: 1350px;
+  margin: 0 auto;
+  padding: 40px 0;
   box-sizing: border-box;
 `;
 
@@ -18,7 +19,7 @@ export const SectionHeader = styled.div`
 
 /* 제목 */
 export const SectionTitle = styled.h2`
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
   margin: 0;
   color: #e0e0e0;
@@ -26,22 +27,24 @@ export const SectionTitle = styled.h2`
 
 /* 그리드 */
 export const PerformanceGrid = styled.div`
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 30px;
+  row-gap: 40px;
 `;
 
 /* 카드 전체 */
 export const PerformanceCard = styled.div`
   text-align: left;
-  padding: 5px;
+  padding: 8px;
   border-radius: 14px;
 `;
 
 /* 포스터 이미지 */
 export const Poster = styled.img`
   width: 100%;
-  height: 260px;
+  height: 290px;
   object-fit: cover;
   border-radius: 5px;
   margin-bottom: 15px;
@@ -87,32 +90,11 @@ export const PerformanceGenre = styled.div`
   margin: 3px 0;
 `;
 
-/* 상세1 */
-export const PerformanceDetail1 = styled.div`
-  color: #dbdbdb;
-  font-size: 15px;
-  margin: 3px 0;
-`;
-
-/* 상세2 */
-export const PerformanceDetail2 = styled.div`
-  color: #a3a3a3;
-  font-size: 15px;
-  margin: 3px 0;
-`;
-
-/* 상세3 */
-export const PerformanceDetail3 = styled.div`
-  color: #dbdbdb;
-  font-size: 15px;
-  margin: 3px 0;
-`;
-
 /* 순위 오버레이 카드 */
 export const RankCard = styled.div`
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 290px;
   margin-bottom: 15px;
   border-radius: 5px;
   overflow: hidden;
