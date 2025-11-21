@@ -171,13 +171,15 @@ function PerformancePlaceMap() {
       <div
         style={{ flex: 1, position: "relative", width: "100%", height: "100%" }}
       >
-        <RegionFilterSidebar
-          selectedSido={tempSido}
-          selectedGugun={tempGugun}
-          onSidoChange={setTempSido}
-          onGugunChange={setTempGugun}
-          onApply={handleFilterApply}
-        />
+        {isKakaoMapLoaded && (
+          <RegionFilterSidebar
+            selectedSido={tempSido}
+            selectedGugun={tempGugun}
+            onSidoChange={setTempSido}
+            onGugunChange={setTempGugun}
+            onApply={handleFilterApply}
+          />
+        )}
 
         {errorMessage && (
           <div
