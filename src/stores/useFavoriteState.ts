@@ -58,7 +58,7 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
   // 서버에 토글 요청 + 전역 상태 갱신
   toggleFavorite: async (prfId) => {
     try {
-      await instance.post(`/favorite/${prfId}/like`);
+      await instance.post(`/favorite/toggle/${prfId}`);
 
       set((state) => {
         const prev = state.favorites[prfId] ?? false;

@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
-import { toggleFavoriteReq, getFavoritePrfListReq } from "../../../apis/favoriteApi";
+// import { toggleFavoriteReq, getFavoritePrfListReq } from "../../../apis/favoriteApi";
 import * as s from "../../Home/PerformanceStyles";
+// import { useNavigate } from "react-router-dom";
+
+
+// 🔥 Zustand 추가
+import { useFavoriteState } from "../../../stores/useFavoriteState";
 
 interface PerformanceDetail {
   prfId: string;
@@ -29,7 +34,14 @@ function PerformanceDetail() {
   const { id } = useParams<{ id: string }>();
   const [performance, setPerformance] = useState<PerformanceDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [liked, setLiked] = useState(false);
+  // const [liked, setLiked] = useState(false);
+  // const navigate = useNavigate();
+
+  // 🔥 Zustand에서 가져옴
+  const { favorites, toggleFavorite, fetchFavoriteState } = useFavoriteState();
+
+  // 🔥 Zustand 전역 좋아요 상태
+  const liked = id ? favorites[id] ?? false : false;
 
   useEffect(() => {
     const fetchPerformance = async () => {
@@ -46,31 +58,47 @@ function PerformanceDetail() {
       }
     };
 
-    const fetchLikedStatus = async () => {
-      try {
-        const favorites = (await getFavoritePrfListReq()) as { prfId: string }[];
-        if (favorites.some((fav) => fav.prfId === id)) {
-          setLiked(true);
-        }
-      } catch (err) {
-        console.error("좋아요 상태 확인 실패", err);
-      }
-    };
+    // const fetchLikedStatus = async () => {
+    //   try {
+    //     const favorites = (await getFavoritePrfListReq()) as { prfId: string }[];
+    //     if (favorites.some((fav) => fav.prfId === id)) {
+    //       setLiked(true);
+    //     }
+    //   } catch (err) {
+    //     console.error("좋아요 상태 확인 실패", err);
+    //   }
+    // };
 
       fetchPerformance();
-      fetchLikedStatus();
-    }, [id]);
 
-    const handleToggleFavorite = async () => {
-      try {
-        if (!id) return;
-        await toggleFavoriteReq(id);
-        setLiked((prev) => !prev);
-      } catch (err) {
-        console.error("좋아요 토글 실패", err);
-        alert("로그인이 필요합니다.");
-      }
-    };
+    //   fetchLikedStatus();
+    // }, [id]);
+
+    // const handleToggleFavorite = async () => {
+    //   try {
+    //     if (!id) return;
+    //     await toggleFavoriteReq(id);
+    //     setLiked((prev) => !prev);
+    //   } catch (err) {
+    //     console.error("좋아요 토글 실패", err);
+    //     alert("로그인이 필요합니다.");
+    //     navigate("/login");
+    //   }
+    // };
+
+    // 🔥 Zustand 방식으로 좋아요 상태 불러오기
+    if (id) fetchFavoriteState(id);
+
+  }, [id, fetchFavoriteState]);
+
+  // 🔥 좋아요 토글도 Zustand 함수 사용
+  const handleToggleFavorite = async () => {
+    if (!id) return;
+
+  // 🔥 Zustand 내부에서 서버 요청 + 로그인 체크 + 상태 업데이트 모두 처리함
+    await toggleFavorite(id);
+  };
+
 
   if (loading) return <div>로딩 중...</div>;
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
