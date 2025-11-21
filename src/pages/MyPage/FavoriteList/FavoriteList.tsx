@@ -8,6 +8,8 @@ import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { RxShare2 } from "react-icons/rx";
 import { IoArrowForward } from "react-icons/io5";
 import * as ps from "../../Home/PerformanceStyles";
+import { NextArrow, PrevArrow } from "../../../components/common/Button/CustomArrowBtn";
+
 
 function FavoriteList() {
   // const [favorites, setFavorites] = useState<Performance[]>([]);
@@ -35,43 +37,85 @@ function FavoriteList() {
     setSelectedPrfId(prfId);
     setOpen(true);
   };
+
+  const settings = {
+    dots: false, // 점 필요 없으면 false
+    infinite: true, // 무한 슬라이드
+    speed: 500,
+    slidesToShow: 6, // ⭐ 한 화면에 6개 보여주기
+    slidesToScroll: 1, // ⭐ 한 번에 1개씩 이동 (너가 원한 기능)
+    arrows: true, // 양쪽 화살표 켜기
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 4,
+        },
+      },
+      {
+        breakpoint: 800,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 500,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+    ],
+  };
+
   return (
     <>
-      <div css={s.container} >
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
-        <ps.PerformanceTitle>
-        <h2 css={s.title}>❤️My Favorites</h2>
-        </ps.PerformanceTitle>
-        <RxShare2
-          size={30}
-          onClick={() => {
-            const stored = localStorage.getItem("principal-storage");
-            const principal = stored ? JSON.parse(stored)?.state?.principal : null;
-
-            if (!principal?.id) {
-              alert("로그인 후 공유가 가능합니다.");
-              return;
-            }
-
-            const shareUrl = `${window.location.origin}/favorites/list/${principal.id}`;
-
-            navigator.clipboard.writeText(shareUrl)
-              .then(() => alert("URL이 클립보드에 복사되었습니다!"))
-              .catch(() => alert("URL 복사에 실패했습니다."));
+      <div css={s.container}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+            position: "relative",
           }}
-          style={{ color: "white", cursor: "pointer" }}
-        />
-        <IoArrowForward 
-          size={30} 
-          onClick={() => {
-            if (!principal.id) {
-              alert("로그인 후 공유가 가능합니다.");
-              return;
-            }
-            navigate(`/favorites/list/${principal.id}`);
-          }}
-          style={{ color: "white", cursor: "pointer"}}
-        />
+        >
+          <ps.PerformanceTitle>
+            <h2 css={s.title}>❤️My Favorites</h2>
+          </ps.PerformanceTitle>
+          <RxShare2
+            size={30}
+            onClick={() => {
+              const stored = localStorage.getItem("principal-storage");
+              const principal = stored
+                ? JSON.parse(stored)?.state?.principal
+                : null;
+
+              if (!principal?.id) {
+                alert("로그인 후 공유가 가능합니다.");
+                return;
+              }
+
+              const shareUrl = `${window.location.origin}/favorites/list/${principal.id}`;
+
+              navigator.clipboard
+                .writeText(shareUrl)
+                .then(() => alert("URL이 클립보드에 복사되었습니다!"))
+                .catch(() => alert("URL 복사에 실패했습니다."));
+            }}
+            style={{ color: "white", cursor: "pointer" }}
+          />
+          <IoArrowForward
+            size={30}
+            onClick={() => {
+              if (!principal.id) {
+                alert("로그인 후 공유가 가능합니다.");
+                return;
+              }
+              navigate(`/favorites/list/${principal.id}`);
+            }}
+            style={{ color: "white", cursor: "pointer" }}
+          />
         </div>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
@@ -86,18 +130,18 @@ function FavoriteList() {
                 <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
                 <div css={s.info}>
                   <ps.PerformanceTitle>
-                  <div>{item.prfNm}</div>
+                    <div>{item.prfNm}</div>
                   </ps.PerformanceTitle>
                   <ps.PerformancePlace>
-                  <div>{item.prfPlcNm}</div>
+                    <div>{item.prfPlcNm}</div>
                   </ps.PerformancePlace>
                   <ps.PerformancePeriod>
-                  <div>
-                    {item.prfStartDt} ~ {item.prfEndDt}
-                  </div>
+                    <div>
+                      {item.prfStartDt} ~ {item.prfEndDt}
+                    </div>
                   </ps.PerformancePeriod>
                   <ps.PerformanceGenre>
-                  <div>{item.genreNm}</div>
+                    <div>{item.genreNm}</div>
                   </ps.PerformanceGenre>
                 </div>
               </li>
