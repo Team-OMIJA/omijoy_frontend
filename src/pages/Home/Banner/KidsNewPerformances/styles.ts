@@ -39,7 +39,7 @@ export const DarkOverlay = styled.div`
 /* 상단 제목 */
 export const HeaderText = styled.div`
   position: absolute;
-  top: 20px;
+  top: 25px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
@@ -90,7 +90,7 @@ export const Poster = styled.img`
 
 /* 제목 */
 export const Title = styled.div`
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   text-align: center;
   margin-bottom: 6px;
@@ -103,7 +103,7 @@ export const Title = styled.div`
 
 /* 날짜 */
 export const DateText = styled.div`
-  font-size: 14px;
+  font-size: 15px;
   opacity: 0.9;
   color: #dbdbdb;
 `;

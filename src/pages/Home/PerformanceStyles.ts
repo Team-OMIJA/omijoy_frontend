@@ -12,22 +12,31 @@ export const SectionContainer = styled.div`
 /* 섹션 헤더 */
 export const SectionHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  gap: 5px;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 `;
 
 /* 제목 */
 export const SectionTitle = styled.h2`
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 700;
   margin: 0;
   color: #e0e0e0;
 `;
 
+/* 소제목 */
+export const SectionSubTitle = styled.h3`
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #acacac;
+`;
+
 /* 그리드 */
 export const PerformanceGrid = styled.div`
   width: 100%;
+  height: 470px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   column-gap: 30px;
@@ -59,7 +68,7 @@ export const Poster = styled.img`
 
 /* 공연 제목 */
 export const PerformanceTitle = styled.div`
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: #e0e0e0;
   margin-bottom: 6px;
@@ -71,7 +80,7 @@ export const PerformanceTitle = styled.div`
 /* 공연장 */
 export const PerformancePlace = styled.div`
   color: #dbdbdb;
-  font-size: 13px;
+  font-size: 14px;
   margin: 2px 0;
   word-break: keep-all;
 `;
@@ -79,14 +88,14 @@ export const PerformancePlace = styled.div`
 /* 기간 */
 export const PerformancePeriod = styled.div`
   color: #a3a3a3;
-  font-size: 12.5px;
+  font-size: 13px;
   margin: 1px 0;
 `;
 
 /* 장르 */
 export const PerformanceGenre = styled.div`
   color: #a3a3a3;
-  font-size: 12.5px;
+  font-size: 13px;
   margin: 3px 0;
 `;
 
