@@ -22,10 +22,10 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [heart, setHeart] = useState(false);
+    // const [heart, setHeart] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
-    const HeartIcon = heart ? ImHeart : SlHeart;
+    // const HeartIcon = heart ? ImHeart : SlHeart;
 
     useEffect(() => {
     if (!place.prfPlcId) return;
