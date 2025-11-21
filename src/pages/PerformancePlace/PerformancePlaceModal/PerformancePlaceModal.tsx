@@ -8,7 +8,7 @@ import Slider from "react-slick";
 import * as S from "./PerformancePlaceModal.styles";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toggleFlagReq } from "../../../apis/flagApi";
 
 import { usePrincipalState } from "../../../stores/usePrincipalState";
