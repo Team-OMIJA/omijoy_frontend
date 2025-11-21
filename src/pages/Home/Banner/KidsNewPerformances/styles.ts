@@ -39,7 +39,7 @@ export const DarkOverlay = styled.div`
 /* 상단 제목 */
 export const HeaderText = styled.div`
   position: absolute;
-  top: 25px;
+  top: 22px;
   left: 50%;
   transform: translateX(-50%);
   color: white;

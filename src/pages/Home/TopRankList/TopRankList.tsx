@@ -21,7 +21,7 @@ function TopRankList() {
     Autoplay({
       delay: 5000,
       stopOnInteraction: false,
-      stopOnMouseEnter: true, // 마우스 오버 시 멈춤
+      stopOnMouseEnter: true,
     })
   );
 
@@ -49,7 +49,10 @@ function TopRankList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", position: "relative" }}>
+          <s.gradientLeft />
+          <s.gradientRight />
+
           <Carousel
             slideSize="20%"
             slideGap="30px"
