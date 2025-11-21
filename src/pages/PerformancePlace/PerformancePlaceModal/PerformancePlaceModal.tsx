@@ -23,16 +23,9 @@ interface PerformancePlaceModalProps {
 
 function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const { principal } = usePrincipalState.getState();
-  // const hasValidUrl = place.url && place.url.trim() !== "";
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
-  // const [error, setError] = useState<string | null>(null);
-
-  // flagged 초기 상태 정확히 반영(부모가 넣어준 flagged)
-  const [flagged, setFlagged] = useState(place.flagged || false);
-  // 처음 상태 기억
+  // 처음 상태 기억 (모달이 닫힐 때 비교하기 위함)
   const initialFlagged = place.flagged;
-
+  const [flagged, setFlagged] = useState(place.flagged || false);
   const hasValidUrl = place.url && place.url.trim() !== "";
   const [isLoading, setIsLoading] = useState(false);
   const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
@@ -42,22 +35,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const toggleFlagMutation = useMutation({
-    mutationFn: () => toggleFlagReq(place.prfPlcId),
-    onSuccess: (data) => {
-      //   // data = true/false (flagged 여부)
-      const newFlagState =
-        // 객체일 경우 data.flagged 사용
-        typeof data === "boolean" ? data : data?.flagged ?? false;
-
-      setFlagged(newFlagState);
-    },
-    onError: (err) => {
-      console.error("플래그 요청 실패 : ", err);
-    },
-  });
-
-  // 모달 플래그 토글
+  // 버튼 클릭 시에는 화면의 상태만 변경
   const handleToggleFlag = () => {
     if (!principal) {
       alert("로그인 후 이용해주세요.");
@@ -65,19 +43,17 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
       return;
     }
     setFlagged((prev) => !prev);
-
-    // toggleFlagMutation.mutate();
-
-    // const response = await toggleFlagReq(place.prfPlcId);
-    // setFlagged(response.flagged);
   };
 
+  // 모달이 닫힐 때, 플래그 상태가 변경되었으면 서버에 요청
   const closeAndRefetchHandler = async () => {
     if (flagged !== initialFlagged) {
-      // 변경된 경우에만 서버 요청 1회
-      await toggleFlagReq(place.prfPlcId);
-      // myPage Flag 리스트 반영
-      queryClient.invalidateQueries(["flags"]);
+      try {
+        await toggleFlagReq(place.prfPlcId);
+        queryClient.invalidateQueries({ queryKey: ["flags"] });
+      } catch (err) {
+        console.error("플래그 상태 업데이트 실패:", err);
+      }
     }
     onClose();
   };
@@ -120,6 +96,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     const toName = encodeURIComponent(place.prfPlcName);
     const url = `https://map.kakao.com/link/to/${toName},${place.latitude},${place.longitude}`;
     window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   const settings = {
     dots: true,
@@ -141,11 +118,14 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     ],
   };
   return (
-    <S.ModalOverlay onClick={onClose}>
+    <S.ModalOverlay onClick={closeAndRefetchHandler}>
       <S.ModalBody onClick={(e) => e.stopPropagation()}>
-        <S.ModalCloseXButton onClick={onClose} aria-label="닫기">
+        <S.ModalCloseXButton onClick={closeAndRefetchHandler} aria-label="닫기">
           <IoClose />
         </S.ModalCloseXButton>
+        <S.ModalFlagButton onClick={handleToggleFlag} flagged={flagged}>
+          <FaFlagCheckered />
+        </S.ModalFlagButton>
         <S.ModalTitle>{place.prfPlcName}</S.ModalTitle>
         <S.ModalInfoItem>
           <strong>주소:</strong> {place.address || "정보 없음"}
@@ -202,6 +182,6 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
       </S.ModalBody>
     </S.ModalOverlay>
   );
-}}
+}
 
 export default PerformancePlaceModal;

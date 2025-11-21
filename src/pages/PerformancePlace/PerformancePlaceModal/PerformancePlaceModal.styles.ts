@@ -122,6 +122,34 @@ export const ModalCloseXButton = styled.button`
   }
 `;
 
+export const ModalFlagButton = styled.button<{ flagged: boolean }>`
+  position: absolute;
+  top: 60px;
+  right: 16px;
+  background: ${(props) => (props.flagged ? "#e3002a" : "#333333")};
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.flagged ? "#c70025" : "#444444")};
+    transform: scale(1.05);
+  }
+
+  svg {
+    font-size: 1.2rem;
+  }
+`;
+
 export const ModalPerformanceSection = styled.div`
   border-top: 1px solid #333;
   background-color: #121212;
@@ -200,12 +228,12 @@ export const SliderContainer = styled.div`
   }
 
   .slick-dots li button:before {
-    font-size: 12px !important; 
+    font-size: 12px !important;
     color: #888888 !important;
   }
   .slick-dots li.slick-active button:before {
-    font-size: 12px !important; 
-    color: #e3002a !important; 
+    font-size: 12px !important;
+    color: #e3002a !important;
   }
 `;
 
@@ -236,7 +264,6 @@ export const ModalPosterImage = styled.img`
 `;
 
 // ==== 플레그 =====
-import styled from "@emotion/styled";
 
 // 전체 래퍼
 export const Wrapper = styled.div`
@@ -330,4 +357,3 @@ export const DetailImg = styled.img`
   width: 100%;
   max-width: 800px;
 `;
-
