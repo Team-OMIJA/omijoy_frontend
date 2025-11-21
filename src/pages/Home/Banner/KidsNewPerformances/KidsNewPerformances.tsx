@@ -6,12 +6,15 @@ import {
   formatDateRange,
   formatDateDot,
 } from "../../../../components/FormatDate/FormatDate";
+import { useNavigate } from "react-router-dom";
 import * as s from "./styles";
 
 function KidsNewPerformances() {
   const [allData, setAllData] = useState<KidsNewPerformancs[]>([]);
   const [visibleData, setVisibleData] = useState<KidsNewPerformancs[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const pickRandomThree = (arr: KidsNewPerformancs[]) => {
     return [...arr].sort(() => Math.random() - 0.5).slice(0, 3);
@@ -56,7 +59,11 @@ function KidsNewPerformances() {
 
             return (
               <s.Card key={i}>
-                <s.Poster src={item.posterImgUrl} alt={item.prfNm} />
+                <s.Poster
+                  src={item.posterImgUrl}
+                  alt={item.prfNm}
+                  onClick={() => navigate(`/performance/${item.prfId}`)}
+                />
                 <s.Title>{title}</s.Title>
                 <s.DateText>{dateRange}</s.DateText>
               </s.Card>

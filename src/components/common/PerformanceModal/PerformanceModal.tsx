@@ -6,6 +6,10 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { instance } from "../../../apis/instance";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { useNavigate } from "react-router-dom";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
+import ChildCareIcon from "@mui/icons-material/ChildCare";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 
 type PerformanceDetail = {
   prfId: string;
@@ -105,6 +109,12 @@ function CommonModal({
     navigate(`/performance/${prfId}`);
   };
 
+  const goTicketHandler = () => {
+    if (data?.providerUrl) {
+      window.open(data.providerUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <Modal
       open={open}
@@ -124,13 +134,11 @@ function CommonModal({
           color: "#e0e0e0",
           borderRadius: "10px",
           p: 4,
-          width: 750,
+          width: 650,
           display: "flex",
           gap: 4,
           overflowY: "auto",
-
-          outline: "2px solid #b7b7b7",
-          outlineOffset: "-2px",
+          ":focus": { outline: "none" },
         }}
       >
         {data ? (
@@ -192,7 +200,10 @@ function CommonModal({
                   mb: 1,
                   mt: 1,
                   fontSize: "1.5rem",
-                  pr: 6, // 버튼 영역과 겹치지 않도록 패딩
+                  pr: 10, // 버튼 영역과 겹치지 않도록 패딩
+                  wordBreak: "keep-all",
+                  overflowWrap: "break-word",
+                  whiteSpace: "normal",
                 }}
               >
                 {removeRegionTag(data.prfNm)}
@@ -202,7 +213,7 @@ function CommonModal({
               <Typography sx={{ color: "#dbdbdb" }}>{data.prfPlcNm}</Typography>
 
               {/* 지역 */}
-              <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
+              <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
                 {data.area}
               </Typography>
 
@@ -213,50 +224,78 @@ function CommonModal({
                 {data.prfStartDt} ~ {data.prfEndDt}
               </Typography>
 
-              {/* 공연 시간 */}
+              {/* 기타 정보 */}
               <Typography
                 sx={{
                   color: "#a3a3a3",
-                  fontSize: "0.8rem",
-                  whiteSpace: "pre-line",
+                  mt: 1,
+                  fontSize: "0.9rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <AccessTimeIcon sx={{ fontSize: 18, mr: 0.7 }} />
+                {data.runtime?.trim() ? data.runtime : "예매처 참고"}
+              </Typography>
+
+              <Typography
+                sx={{
+                  color: "#a3a3a3",
+                  fontSize: "0.9rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <TheaterComedyIcon sx={{ fontSize: 18, mr: 0.7 }} />
+                {data.genreNm?.trim() ? data.genreNm : "예매처 참고"}
+              </Typography>
+
+              <Typography
+                sx={{
+                  color: "#a3a3a3",
+                  fontSize: "0.9rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ChildCareIcon sx={{ fontSize: 18, mr: 0.7 }} />
+                {data.prfAge?.trim() ? data.prfAge : "예매처 참고"}
+              </Typography>
+
+              {/* 가격 타이틀 */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#a3a3a3",
                   mt: 0.5,
                 }}
               >
-                {data.dtGuidance
-                  .replace(/, /g, ", ")
-                  .split(", ")
-                  .map((part) => part.trim())
-                  .join("\n")}
-              </Typography>
+                <ConfirmationNumberIcon sx={{ fontSize: 18, mr: 0.7 }} />
+                <Typography sx={{ fontSize: "0.9rem" }}>가격</Typography>
+              </Box>
 
-              {/* 기타 정보 */}
-              <Typography sx={{ color: "#a3a3a3", mt: 1, fontSize: "0.9rem" }}>
-                ⏱ {data.runtime}
-              </Typography>
-              <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
-                🎭 {data.genreNm}
-              </Typography>
-              <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
-                👶 {data.prfAge}
-              </Typography>
-
-              <Box sx={{ height: 8 }} />
-
-              {/* 가격 줄바꿈 처리 */}
+              {/* 가격: null-safe + 줄바꿈 처리 */}
               <Typography
                 sx={{
                   color: "#a3a3a3",
                   whiteSpace: "pre-line",
                   fontSize: "0.8rem",
+                  mt: 0.5,
                 }}
               >
                 {(() => {
+                  // 가격정보 null 또는 빈값이면 바로 대체
+                  if (!data.ticketPrice || !data.ticketPrice.trim()) {
+                    return "예매처 참고";
+                  }
+
                   const priceArray = data.ticketPrice
                     .split(",")
                     .map((p) => p.trim())
                     .filter((p) => p !== "");
 
-                  const grouped = [];
+                  const grouped: string[] = [];
                   for (let i = 0; i < priceArray.length; i++) {
                     if (
                       priceArray[i + 1] &&
@@ -269,7 +308,7 @@ function CommonModal({
                     }
                   }
 
-                  const lines = [];
+                  const lines: string[] = [];
                   for (let i = 0; i < grouped.length; i += 2) {
                     if (grouped[i + 1])
                       lines.push(`${grouped[i]}  ${grouped[i + 1]}`);
@@ -291,6 +330,7 @@ function CommonModal({
                     color: "#dbdbdb",
                     textTransform: "none",
                     borderRadius: "5px",
+                    fontWeight: 500,
                   }}
                 >
                   상세 페이지
@@ -299,14 +339,15 @@ function CommonModal({
                 <Button
                   variant="contained"
                   sx={{
-                    backgroundColor: "#eab308",
-                    color: "#1a1a1a",
+                    backgroundColor: "#Bf1C1C",
+                    color: "#dbdbdb",
                     px: 3,
-                    "&:hover": { backgroundColor: "#facc15" },
-                    fontWeight: 600,
+                    "&:hover": { backgroundColor: "#9f1717" },
+                    fontWeight: 500,
                     textTransform: "none",
                     borderRadius: "5px",
                   }}
+                  onClick={goTicketHandler}
                 >
                   예매 바로가기 →
                 </Button>
