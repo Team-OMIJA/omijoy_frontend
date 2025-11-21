@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 
 export const container = css`
   width: 100%;
-  margin-top: 50PX;
+  margin-top: 50px;
   padding: 40px 0px;
   box-sizing: border-box;
 `;
@@ -16,7 +16,7 @@ export const header = css`
 `;
 
 export const title = css`
-font-size: 40px;
+  font-size: 1.8em;
   font-weight: 700;
   margin-bottom: 25px;
   color: #e0e0e0;
