@@ -23,6 +23,14 @@ function MainRouter() {
           </>
         }
       />
+      <Route path="/theater" 
+        element={
+          <>
+        <NavBar/>
+        <Theater />
+          </>
+        }
+        />
 
       <Route element={<Layout />}>
         {/* index 사용시 기본 경로와 동일합니다. */}
