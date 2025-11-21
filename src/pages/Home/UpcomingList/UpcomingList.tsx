@@ -9,7 +9,7 @@ import {
 } from "../../../components/FormatDate/FormatDate";
 import { Carousel } from "@mantine/carousel";
 import * as s from "../PerformanceStyles";
-import { StyledCarousel } from "./styles";
+import * as ts from "./styles";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
@@ -29,16 +29,17 @@ function UpcomingList() {
   return (
     <s.SectionContainer>
       <s.SectionHeader>
-        <s.SectionTitle>전체 공연 예정 (가까운 날짜순)</s.SectionTitle>
+        <s.SectionTitle>전체 공연 예정</s.SectionTitle>
+        <s.SectionSubTitle>가까운 날짜순</s.SectionSubTitle>
       </s.SectionHeader>
 
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <StyledCarousel
+        <ts.StyledCarousel
           slideSize="20%"
           slideGap="30px"
-          height={430}
+          height={470}
           emblaOptions={{
             align: "start",
             slidesToScroll: 1,
@@ -73,7 +74,7 @@ function UpcomingList() {
               </s.PerformanceCard>
             </Carousel.Slide>
           ))}
-        </StyledCarousel>
+        </ts.StyledCarousel>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />

@@ -59,6 +59,7 @@ export const MoreButton = styled.button`
   cursor: pointer;
   color: #9e9e9e;
   transition: color 0.2s ease;
+  margin-left: auto;
 
   &:hover {
     color: #e0e0e0;
