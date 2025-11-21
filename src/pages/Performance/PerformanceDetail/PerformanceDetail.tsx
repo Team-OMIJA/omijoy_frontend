@@ -2,13 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
-import { toggleFavoriteReq, getFavoritePrfListReq } from "../../../apis/favoriteApi";
 import * as s from "../../Home/PerformanceStyles";
-// import { useNavigate } from "react-router-dom";
-
-
-// 🔥 Zustand 추가
 import { useFavoriteState } from "../../../stores/useFavoriteState";
+import { removeRegionTag } from "../../../apis/performanceApi";
 
 interface PerformanceDetail {
   prfId: string;
@@ -36,13 +32,9 @@ function PerformanceDetail() {
     null
   );
   const [loading, setLoading] = useState(true);
-  // const [liked, setLiked] = useState(false);
-  // const navigate = useNavigate();
 
-  // 🔥 Zustand에서 가져옴
   const { favorites, toggleFavorite, fetchFavoriteState } = useFavoriteState();
 
-  // 🔥 Zustand 전역 좋아요 상태
   const liked = id ? favorites[id] ?? false : false;
 
   useEffect(() => {
@@ -60,44 +52,16 @@ function PerformanceDetail() {
       }
     };
 
-    // const fetchLikedStatus = async () => {
-    //   try {
-    //     const favorites = (await getFavoritePrfListReq()) as { prfId: string }[];
-    //     if (favorites.some((fav) => fav.prfId === id)) {
-    //       setLiked(true);
-    //     }
-    //   } catch (err) {
-    //     console.error("좋아요 상태 확인 실패", err);
-    //   }
-    // };
+    fetchPerformance();
 
-      fetchPerformance();
-
-    //   fetchLikedStatus();
-    // }, [id]);
-
-    // const handleToggleFavorite = async () => {
-    //   try {
-    //     if (!id) return;
-    //     await toggleFavoriteReq(id);
-    //     setLiked((prev) => !prev);
-    //   } catch (err) {
-    //     console.error("좋아요 토글 실패", err);
-    //     alert("로그인이 필요합니다.");
-    //     navigate("/login");
-    //   }
-    // };
-
-    // 🔥 Zustand 방식으로 좋아요 상태 불러오기
     if (id) fetchFavoriteState(id);
 
   }, [id, fetchFavoriteState]);
 
-  // 🔥 좋아요 토글도 Zustand 함수 사용
+  
   const handleToggleFavorite = async () => {
     if (!id) return;
 
-  // 🔥 Zustand 내부에서 서버 요청 + 로그인 체크 + 상태 업데이트 모두 처리함
     await toggleFavorite(id);
   };
 
@@ -107,9 +71,7 @@ function PerformanceDetail() {
   const HeartIcon = liked ? ImHeart : SlHeart;
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <div
         style={{
           display: "flex",
@@ -129,54 +91,57 @@ function PerformanceDetail() {
           height={500}
           style={{ borderRadius: "10px" }}
         />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            marginTop: "-95px",
-            marginLeft: "100px",
-          }}
-        >
-          <div>
-            <s.PerformanceTitle>
-              <h1 style={{ position: "absolute", marginTop: "-210px" }}>
-                {performance.prfNm}
-              </h1>
+      </div>
+      <div style={{marginTop: "-570px", marginRight: "-100px"}}>
+        <s.PerformanceTitle>
+              <h1>{removeRegionTag(performance.prfNm)}</h1>
             </s.PerformanceTitle>
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              marginTop: "-10px",
-              lineHeight: "1",
-            }}
-          >
             <s.PerformanceDetail1>
-            <h2 style={{ margin: 0, lineHeight: 2 }}>{performance.prfPlcNm}</h2>
-            <p>{performance.area}</p>
+              <h2 style={{ margin: 0, lineHeight: 2 }}>
+                {(() => {
+                  const original = performance.prfPlcNm;
+                  let result = '';
+                  const seen = new Set<string>();
+                  original.split(/\s*(\([^)]+\))/).forEach((part) => {
+                    if (!part) return;
+                    if (!part.startsWith('(')) {
+                      result += part;
+                      return;
+                    }
+                    const content = part.slice(1, -1).trim();
+                    const normalizedContent = content.replace(/\s+/g, '');
+                    const normalizedResult = result.replace(/\s+/g, '');
+                    if (seen.has(normalizedContent) || normalizedResult.includes(normalizedContent)) {
+                      return;
+                    }
+                    seen.add(normalizedContent);
+                    result += `(${content})`;
+                  });
+                  return result.trim();
+                })()}
+              </h2>
+              <p>{performance.area}</p>
             </s.PerformanceDetail1>
-            <p style={{ whiteSpace: 'pre-line' }}>
-              <s.PerformanceDetail2 style={{fontSize: "17.5px", lineHeight: 1.3, margin: 0 }}>
+            <p>
+              <s.PerformanceTitle>
               {performance.prfStartDt} ~ {performance.prfEndDt}
+              </s.PerformanceTitle>
+              <s.PerformanceDetail2 style={{fontSize: "17.5px"}}>
               <br />
-              {performance.dtGuidance?.split(',').map((time) => time.trim()).join(' ')}
+              {performance.dtGuidance?.split('),').map((time) => time.trim()).map((line, idx) => (<span key={idx}>{line.endsWith(')') ? line : line + ')'}<br /></span>))}
               </s.PerformanceDetail2>
-            </p>
-            
-          </div>
-        </div>
-        <div style={{position: "absolute", top: "450px", left: "535px",textAlign: "left"}}>
-          <s.PerformanceDetail3>
-            <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}<br />{performance.child === "Y" && "어린이 동반 가능"}</p>
-            {performance.visit === "Y" && <p>내한 공연: ✔️</p>}
-            {performance.festival === "Y" && <p>축제 행사: ✔️</p>}
+              <s.PerformanceDetail3>
+            <p style={{ fontSize: "17.5px"}}>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}</p>
             </s.PerformanceDetail3>
-        </div>
-        <div style={{position: "absolute", top: "433px", right: "150px", textAlign: "left"}}>
+          <s.PerformanceDetail3>
+            <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
+            {performance.child === "Y" && "✔️ 미취학 아동 입장 가능"}</p>
+            <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
+            {performance.visit === "Y" && "✔️ 내한 공연"}</p>
+            </s.PerformanceDetail3>
           <s.PerformanceDetail1>
           <p style={{fontSize: "17.5px"}}>
-            가격<br />
+            <br />
             {performance.ticketPrice?.toString().split(', ').map((price, index) => (
               <span key={index}>
                 {price}
@@ -185,35 +150,32 @@ function PerformanceDetail() {
             ))}
           </p>
           </s.PerformanceDetail1>
-        </div>
-        <HeartIcon style={{position: "absolute", top: "40px", right: "-70px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
-        {performance.providerUrl && (
-        <button
-          onClick={() => {
-            const firstUrl = performance.providerUrl.split(",")[0].trim();
-            const validUrl = firstUrl.startsWith("http")
-              ? firstUrl
-              : `https://${firstUrl}`;
-            window.open(validUrl, "_blank");
-          }}
-          style={{
-            position: "absolute",
-            bottom: "40px",
-            right: "-100px",
-            padding: "0 30px",
-            lineHeight: "60px",
-            fontSize: "23px",
-            cursor: "pointer",
-            borderRadius: "30px",
-            backgroundColor: "white",
-            color: "black",
-          }}
-        >
-          예매 바로가기→
-        </button>
-      )}
+          </p>
+          <button
+            onClick={() => {
+              const firstUrl = performance.providerUrl.split(",")[0].trim();
+              const validUrl = firstUrl.startsWith("http")
+                ? firstUrl
+                : `https://${firstUrl}`;
+              window.open(validUrl, "_blank");
+            }}
+            style={{
+              padding: "0 30px",
+              lineHeight: "60px",
+              fontSize: "23px",
+              cursor: "pointer",
+              borderRadius: "30px",
+              backgroundColor: "white",
+              color: "black",
+            }}
+          >
+            예매 바로가기→
+          </button>
+          
       </div>
-        <hr style={{ width: "100%", border: "1px solid #ccc", margin: "120px 0", marginBottom: "90px" }} />
+      <HeartIcon style={{position: "absolute", top: "130px", right: "210px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
+      <hr style={{ width: "100%", border: "1px solid #ccc", margin: "120px 0", marginBottom: "90px" }} />
+      
 
       {performance.detailImgUrl && performance.detailImgUrl.trim() !== "" && (
         <div

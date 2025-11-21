@@ -4,13 +4,11 @@ import { GrClose, GrPowerReset } from "react-icons/gr";
 import useInfiniteScroll from "../../../configs/useInfiniteScroll";
 import { useNavigate, useNavigationType } from "react-router-dom";
 import ScrollTop from "../../../components/common/Button/ScrollTopButton";
-import {
-  formatDateDot,
-  formatDateRange,
-} from "../../../components/FormatDate/FormatDate";
+import {formatDateDot, formatDateRange } from "../../../components/FormatDate/FormatDate";
 import { removeRegionTag } from "../../../apis/performanceApi";
 import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
 import * as s from "../../Home/PerformanceStyles";
+import * as ps from './style';
 
 interface Performance {
   prfId: string;
@@ -35,7 +33,7 @@ function PerformanceList() {
 
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState(
-    () => sessionStorage.getItem("scroll-performance-sort") || "name"
+    () => sessionStorage.getItem("scroll-performance-sort") || "name_asc"
   );
   const navigate = useNavigate();
   const [page, setPage] = useState(() =>
@@ -134,18 +132,11 @@ function PerformanceList() {
     }
     setPage(0);
     getPerformance(query, false, 0);
-  }, [
-    sort,
-    stFilter,
-    arfilter,
-    gefilter,
-    vtFilter,
-    getPerformance,
-    navigationType,
-  ]);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType,]);
 
   const handleStatusChange = (value: string) => {
     setStFilter(value);
+    setStatusOpen(false);
   };
   const handleAreaChange = (value: string) => {
     if (value && !arfilter.includes(value)) setArFilter([...arfilter, value]);
@@ -169,71 +160,128 @@ function PerformanceList() {
 
   useInfiniteScroll(loadMore, hasMore);
 
-  const AREA_OPTIONS = [
-    "서울",
-    "부산",
-    "인천",
-    "대구",
-    "대전",
-    "광주",
-    "울산",
-    "세종",
-    "경기",
-    "강원",
-    "경북",
-    "경남",
-    "충북",
-    "충남",
-    "전북",
-    "전남",
-    "제주",
+  const AREA_OPTIONS = ["서울","부산","인천","대구","대전","광주","울산","세종","경기","강원","경북","경남","충북","충남","전북","전남","제주"];
+  const GENRE_OPTIONS = ["대중무용","대중음악","무용(서양/한국무용)","뮤지컬","복합","서양음악(클래식)","서커스/마술","연극","한국음악(국악)"];
+
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [areaOpen, setAreaOpen] = useState(false);
+  const [genreOpen, setGenreOpen] = useState(false);
+
+  const sortOptions = [
+    { value: "name_asc", label: "이름순 ↑" },
+    { value: "name_desc", label: "이름순 ↓" },
+    { value: "date", label: "최신순" },
   ];
-  const GENRE_OPTIONS = [
-    "대중무용",
-    "대중음악",
-    "무용(서양/한국무용)",
-    "뮤지컬",
-    "복합",
-    "서양음악(클래식)",
-    "서커스/마술",
-    "연극",
-    "한국음악(국악)",
-  ];
+    
+  useEffect(() => {
+    if (query) setSearchOpen(true);
+  }, []);
+
+  const handleSortChange = (value: string) => {
+    if (value === "name_asc" || value === "name_desc") {
+      setSort(value);
+    } else if (value === "name") {
+      setSort((prev) => (prev === "name_asc" ? "name_desc" : "name_asc"));
+    } else {
+      setSort("date");
+    }
+  };
+  
+  const sortRef = useRef<HTMLDivElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
+  const areaRef = useRef<HTMLDivElement>(null);
+  const genreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (sortRef.current && !sortRef.current.contains(target)) setSortOpen(false);
+      if (statusRef.current && !statusRef.current.contains(target)) setStatusOpen(false);
+      if (areaRef.current && !areaRef.current.contains(target)) setAreaOpen(false);
+      if (genreRef.current && !genreRef.current.contains(target)) setGenreOpen(false);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
-    <div
-      style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          marginBottom: "-10px",
-        }}
-      >
+    <div style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "-10px" }}>
         <ScrollTop />
-        <s.SectionTitle><h2>공연 리스트</h2></s.SectionTitle>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
-          <option value="name">이름순</option>
-          <option value="date">최신순</option>
-        </select>
-        <select
-          value={stFilter}
-          onChange={(e) => handleStatusChange(e.target.value)}
-          style={{ padding: "8px 12px", border: "solid #ccc", outline: "none" }}
-        >
-          <option value="공연중">공연중</option>
-          <option value="공연예정">공연예정</option>
-        </select>
-        <select value={arfilter} onChange={(e) => handleAreaChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
-          <option value="" hidden>지역</option>
-          {AREA_OPTIONS.map(area => <option key={area} value={area}>{area}</option>)}
-        </select>
-        <select value={gefilter} onChange={(e) => handleGenreChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
-          <option value="" hidden>장르</option>
-          {GENRE_OPTIONS.map(genre => <option key={genre} value={genre}>{genre}</option>)}
-        </select>
+        <ps.DropdownWrapper ref={sortRef}>
+        <ps.DropdownButton open={sortOpen} onClick={() => setSortOpen(prev => !prev)}>
+          {sortOptions.find(o => o.value === (sort.startsWith("name") ? sort : "date"))?.label || "정렬"}
+        </ps.DropdownButton>
+        {sortOpen && (
+          <ps.DropdownList>
+            {sortOptions.map(option => (
+              <ps.DropdownItem
+                key={option.value}
+                onClick={() => {
+                  handleSortChange(option.value);
+                  setSortOpen(false);
+                }}
+              >
+                {option.label}
+              </ps.DropdownItem>
+            ))}
+          </ps.DropdownList>
+        )}
+        </ps.DropdownWrapper>
+        <ps.DropdownWrapper ref={statusRef}>
+          <ps.DropdownButton open={statusOpen} onClick={() => setStatusOpen(prev => !prev)}>
+            {stFilter}
+          </ps.DropdownButton>
+          {statusOpen && (
+            <ps.DropdownList>
+              <ps.DropdownItem onClick={() => handleStatusChange("공연중")}>공연중</ps.DropdownItem>
+              <ps.DropdownItem onClick={() => handleStatusChange("공연예정")}>공연예정</ps.DropdownItem>
+            </ps.DropdownList>
+          )}
+        </ps.DropdownWrapper>
+        <ps.DropdownWrapper ref={areaRef}>
+          <ps.DropdownButton open={areaOpen} onClick={() => setAreaOpen(prev => !prev)}>
+            지역
+          </ps.DropdownButton>
+          {areaOpen && (
+            <ps.DropdownList>
+              {AREA_OPTIONS.map(area => (
+                <ps.DropdownItem
+                  key={area}
+                  onClick={() => {
+                    handleAreaChange(area);
+                    setAreaOpen(false);
+                  }}
+                >
+                  {area}
+                </ps.DropdownItem>
+              ))}
+            </ps.DropdownList>
+          )}
+        </ps.DropdownWrapper>
+        <ps.DropdownWrapper ref={genreRef}>
+          <ps.DropdownButton open={genreOpen} onClick={() => setGenreOpen(prev => !prev)}  style={{ minWidth: "200px" }}>
+            장르
+          </ps.DropdownButton>
+          {genreOpen && (
+            <ps.DropdownList>
+              {GENRE_OPTIONS.map(genre => (
+                <ps.DropdownItem
+                  key={genre}
+                  onClick={() => {
+                    handleGenreChange(genre);
+                    setGenreOpen(false);
+                  }}
+                >
+                  {genre}
+                </ps.DropdownItem>
+              ))}
+            </ps.DropdownList>
+          )}
+        </ps.DropdownWrapper>
         <s.PerformancePlace>
           <div style={{ marginLeft: 10 }}>
             <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -248,7 +296,7 @@ function PerformanceList() {
         </s.PerformancePlace>
         <div
           onClick={() => {
-            setSort("name");
+            setSort("name_asc");
             setArFilter([]);
             setGeFilter([]);
             setStFilter("공연중");
@@ -268,75 +316,82 @@ function PerformanceList() {
             justifyContent: "center",
           }}
         >
-          <GrPowerReset size={12} color="#333" />
-        </div>
-        <div style={{ position: "relative", width: 250, marginLeft: "auto" }}>
-          <input
-            type="text"
-            placeholder="공연명 검색"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") getPerformance(query);
-            }}
-            style={{
-              padding: "8px 36px 8px 24px",
-              width: 250,
-              borderRadius: 10,
-              border: "2px solid #ccc",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
-          />
-          <PiMagnifyingGlass
-            size={18}
-            onClick={() => {
-              setPage(0);
-              getPerformance(query, false, 0);
-            }}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: 13,
-              color: "grey",
-              cursor: "pointer",
-            }}
-          />
-          {query && (
-            <GrClose
-              size={12}
-              onClick={() => {
-                setQuery("");
-                setPage(0);
-                getPerformance("", false, 0);
-              }}
-              style={{
-                position: "absolute",
-                right: 40,
-                top: 16,
-                color: "grey",
-                cursor: "pointer",
-              }}
-            />
-          )}
-        </div>
+        <GrPowerReset size={12} color="#333" />
       </div>
-
+      <div style={{ position: "relative", marginLeft: "auto" }}>
+      <input
+        type="text"
+        placeholder="공연명 검색"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") getPerformance(query, false, 0);
+        }}
+        style={{
+          backgroundColor: "#fbfbfb",
+          padding: "8px 36px 8px 24px",
+          width: searchOpen || query ? 250 : 0,
+          opacity: searchOpen || query ? 1 : 0,
+          borderRadius: 10,
+          border: "2px solid #ccc",
+          outline: "none",
+          boxSizing: "border-box",
+          transition: "width 0.3s, opacity 0.3s",
+          pointerEvents: searchOpen || query ? "auto" : "none",
+        }}
+      />
+      <PiMagnifyingGlass
+        size={18}
+        onClick={() => {
+          if (!query) setSearchOpen((prev) => !prev);
+          else {
+            setPage(0);
+            getPerformance(query, false, 0);
+          }
+        }}
+        style={{
+          position: "absolute",
+          right: 10,
+          top: 13,
+          color: "grey",
+          cursor: "pointer",
+        }}
+      />
+      {searchOpen && query && (
+        <GrClose
+          size={12}
+          onClick={() => {
+            setQuery("");
+            getPerformance("", false, 0);
+          }}
+          style={{
+            position: "absolute",
+            right: 40,
+            top: 16,
+            color: "grey",
+            cursor: "pointer",
+          }}
+        />
+      )}
+      </div>
+      </div>
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
           gap: "8px",
-          marginBottom: "20px",
+          marginTop: "36px",
+          marginBottom: "25px",
         }}
       >
         {arfilter.map((item) => (
           <div
             key={`area-${item}`}
             style={{
+              color: "#dbdbdb",
               display: "flex",
               alignItems: "center",
-              background: "#e0e0e0",
+              background: "#3A3A3A",
               borderRadius: "16px",
               padding: "4px 8px",
             }}
@@ -362,9 +417,10 @@ function PerformanceList() {
           <div
             key={`genre-${item}`}
             style={{
+              color: "#dbdbdb",
               display: "flex",
               alignItems: "center",
-              background: "#e0e0e0",
+              background: "#3A3A3A",
               borderRadius: "16px",
               padding: "4px 8px",
             }}
@@ -433,7 +489,6 @@ function PerformanceList() {
                   <img
                     src={p.posterImgUrl}
                     alt={p.prfNm}
-                    // onClick={() => navigate(`/performance/${p.prfId}`)}
                     style={{
                       width: "100%",
                       height: "260px",
@@ -455,9 +510,8 @@ function PerformanceList() {
                         wordBreak: "keep-all",
                         overflowWrap: "break-word",
                         whiteSpace: "normal",
-                        // cursor: "pointer",
+                          cursor: "pointer",
                       }}
-                      // onClick={() => navigate(`/performance/${p.prfId}`)}
                     >
                       {removeRegionTag(p.prfNm)}
                     </h4>
@@ -465,18 +519,38 @@ function PerformanceList() {
 
                   {/* ───────────── 공연장명 ───────────── */}
                   <s.PerformancePlace>
-                    <p
-                      style={{
-                        fontSize: "13px",
-                        margin: "2px 0",
-                        wordBreak: "keep-all",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {p.prfPlcNm}
-                    </p>
-                  </s.PerformancePlace>
+                  <p
+                    style={{
+                      fontSize: "13px",
+                      margin: "2px 0",
+                      wordBreak: "keep-all",
+                      overflowWrap: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    {(() => {
+                      const original = p.prfPlcNm;
+                      let result = '';
+                      const seen = new Set<string>();
+                      original.split(/\s*(\([^)]+\))/).forEach((part) => {
+                        if (!part) return;
+                        if (!part.startsWith('(')) {
+                          result += part;
+                          return;
+                        }
+                        const content = part.slice(1, -1).trim();
+                        const normalizedContent = content.replace(/\s+/g, '');
+                        const normalizedResult = result.replace(/\s+/g, '');
+                        if (seen.has(normalizedContent) || normalizedResult.includes(normalizedContent)) {
+                          return;
+                        }
+                        seen.add(normalizedContent);
+                        result += `(${content})`;
+                      });
+                      return result.trim();
+                    })()}
+                  </p>
+                </s.PerformancePlace>
 
                   {/* ───────────── 날짜 ───────────── */}
                   <s.PerformancePeriod>
