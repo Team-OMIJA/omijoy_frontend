@@ -13,7 +13,8 @@ export const ProfileContainer = styled.div`
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem 2.5rem;
-    background-color: #121212;
+    /* background-color: #121212; */
+    background-color: #8e8e8eff ;
 `;
 
 // 프로필 이미지

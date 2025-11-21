@@ -78,8 +78,8 @@ function Flaglist() {
     <div css={s.container}>
       {/* Header */}
       <div css={s.header}>
-        <FaFlagCheckered size={25} color="white" />
-        <h2 css={s.title}>Flag</h2>
+        {/* <FaFlagCheckered size={25} color="white" /> */}
+        <h2 css={s.title}>PLACE</h2>
       </div>
 
       {/* List */}
