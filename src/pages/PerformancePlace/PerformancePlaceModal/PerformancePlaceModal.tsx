@@ -4,13 +4,17 @@ import {
   PrfPlcModal,
   findPerformancesByPlaceId,
 } from "../../../apis/performanceplaceApi";
-// import { SlHeart } from "react-icons/sl";
-// import { ImHeart } from "react-icons/im";
 import Slider from "react-slick";
 import * as S from "./PerformancePlaceModal.styles";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toggleFlagReq } from "../../../apis/flagApi";
+
+import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
+import { FaFlagCheckered } from "react-icons/fa";
 
 interface PerformancePlaceModalProps {
   place: PlaceMarker;
@@ -18,14 +22,65 @@ interface PerformancePlaceModalProps {
 }
 
 function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
+  const { principal } = usePrincipalState.getState();
+  // const hasValidUrl = place.url && place.url.trim() !== "";
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
+  // const [error, setError] = useState<string | null>(null);
+
+  // flagged 초기 상태 정확히 반영(부모가 넣어준 flagged)
+  const [flagged, setFlagged] = useState(place.flagged || false);
+  // 처음 상태 기억
+  const initialFlagged = place.flagged;
+
   const hasValidUrl = place.url && place.url.trim() !== "";
   const [isLoading, setIsLoading] = useState(false);
   const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
   const [error, setError] = useState<string | null>(null);
-  // const [heart, setHeart] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  // const HeartIcon = heart ? ImHeart : SlHeart;
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const toggleFlagMutation = useMutation({
+    mutationFn: () => toggleFlagReq(place.prfPlcId),
+    onSuccess: (data) => {
+      //   // data = true/false (flagged 여부)
+      const newFlagState =
+        // 객체일 경우 data.flagged 사용
+        typeof data === "boolean" ? data : data?.flagged ?? false;
+
+      setFlagged(newFlagState);
+    },
+    onError: (err) => {
+      console.error("플래그 요청 실패 : ", err);
+    },
+  });
+
+  // 모달 플래그 토글
+  const handleToggleFlag = () => {
+    if (!principal) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/login");
+      return;
+    }
+    setFlagged((prev) => !prev);
+
+    // toggleFlagMutation.mutate();
+
+    // const response = await toggleFlagReq(place.prfPlcId);
+    // setFlagged(response.flagged);
+  };
+
+  const closeAndRefetchHandler = async () => {
+    if (flagged !== initialFlagged) {
+      // 변경된 경우에만 서버 요청 1회
+      await toggleFlagReq(place.prfPlcId);
+      // myPage Flag 리스트 반영
+      queryClient.invalidateQueries(["flags"]);
+    }
+    onClose();
+  };
 
   useEffect(() => {
     if (!place.prfPlcId) return;
@@ -48,7 +103,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   }, [place.prfPlcId]);
 
   const handleUrlClick = () => {
-    if (hasValidUrl) {
+    if (hasValidUrl && place.url) {
       if (place.url) {
         window.open(place.url, "_blank", "noopener,noreferrer");
       }
@@ -65,9 +120,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     const toName = encodeURIComponent(place.prfPlcName);
     const url = `https://map.kakao.com/link/to/${toName},${place.latitude},${place.longitude}`;
     window.open(url, "_blank", "noopener,noreferrer");
-    console.log(place.prfPlcName, place.latitude, place.longitude);
-    console.log(url);
-  };
+
   const settings = {
     dots: true,
     infinite: performances.length > 5,
@@ -149,5 +202,6 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
       </S.ModalBody>
     </S.ModalOverlay>
   );
-}
+}}
+
 export default PerformancePlaceModal;

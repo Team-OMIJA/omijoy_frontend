@@ -13,9 +13,7 @@ export const ProfileContainer = styled.div`
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem 2.5rem;
-
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
+    background-color: #121212;
 `;
 
 // 프로필 이미지
@@ -26,24 +24,27 @@ export const AvatarWrapper = styled.div`
   justify-content: center;
 `;
 
-// ✎ 아이콘
+// 아이콘 (중앙정렬 시키기)
 export const EditLabel = styled.label`
   position: absolute;
   bottom: 6px;
   right: 6px;
-  background: #1976d2;
+  background: #4b4b4bff;
   color: #fff;
   border-radius: 50%;
   width: 26px;
   height: 26px;
-  text-align: center;
-  line-height: 26px;
-  font-size: 0.8rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.2s;
 
   &:hover {
-    background: #125aaa;
+    background: #202020ff;
   }
 `;
 
@@ -55,16 +56,14 @@ export const UserInfo = styled.div`
 `;
 
 export const BtnContainer = styled.div`
-display: flex;
-margin-top: 8px;
-`
+  display: flex;
+  margin-top: 8px;
+`;
 export const SaveBtn = styled.button`
-margin-left: 3px;
-`
+  margin-left: 3px;
+`;
 
-export const CancelBtn = styled.button`
-
-`
+export const CancelBtn = styled.button``;
 
 export const textFieldStyle = css`
   width: 200px;
