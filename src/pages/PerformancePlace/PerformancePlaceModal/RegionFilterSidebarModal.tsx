@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { KOREA_REGIONS } from "../../../utils/regions";
 import { FiChevronLeft, FiChevronRight, FiMapPin } from "react-icons/fi";
-import "../PerformancePlace/PerformancePlaceStyles.css";
+import * as S from "./RegionFilterSidebarModal.styles";
 
 type SidoKey = keyof typeof KOREA_REGIONS;
 
@@ -23,66 +23,62 @@ function RegionFilterSidebar({
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className={`sidebar-container ${isOpen ? "" : "closed"}`}>
-    
-      <button 
-        className="sidebar-toggle-btn" 
+    <S.SidebarContainer isOpen={isOpen}>
+      <S.SidebarToggleButton
         onClick={() => setIsOpen(!isOpen)}
         title={isOpen ? "필터 접기" : "필터 열기"}
       >
         {isOpen ? <FiChevronLeft size={20} /> : <FiChevronRight size={20} />}
-      </button>
+      </S.SidebarToggleButton>
 
-      <div className="sidebar-header">
+      <S.SidebarHeader>
         <FiMapPin /> 지역 필터
-      </div>
-      <div className="sidebar-content">
-        <div className="filter-section">
-          <div className="section-title">시 / 도 선택</div>
-          <div className="button-grid">
+      </S.SidebarHeader>
+      <S.SidebarContent>
+        <S.FilterSection>
+          <S.SectionTitle>시 / 도 선택</S.SectionTitle>
+          <S.ButtonGrid>
             {Object.keys(KOREA_REGIONS).map((sido) => (
-              <button
+              <S.FilterButton
                 key={sido}
-                className={`filter-btn ${selectedSido === sido ? "active" : ""}`}
+                active={selectedSido === sido}
                 onClick={() => {
                   onSidoChange(sido as SidoKey);
                   onGugunChange("");
                 }}
               >
                 {sido}
-              </button>
+              </S.FilterButton>
             ))}
-          </div>
-        </div>
+          </S.ButtonGrid>
+        </S.FilterSection>
         {selectedSido && (
-          <div className="filter-section">
-            <div className="section-title">{selectedSido} 상세 지역</div>
-            <div className="button-grid">
-              <button
-                className={`filter-btn ${selectedGugun === "" ? "active" : ""}`}
+          <S.FilterSection>
+            <S.SectionTitle>{selectedSido} 상세 지역</S.SectionTitle>
+            <S.ButtonGrid>
+              <S.FilterButton
+                active={selectedGugun === ""}
                 onClick={() => onGugunChange("")}
               >
                 전체
-              </button>
+              </S.FilterButton>
               {KOREA_REGIONS[selectedSido as SidoKey]?.map((gugun) => (
-                <button
+                <S.FilterButton
                   key={gugun}
-                  className={`filter-btn ${selectedGugun === gugun ? "active" : ""}`}
+                  active={selectedGugun === gugun}
                   onClick={() => onGugunChange(gugun)}
                 >
                   {gugun}
-                </button>
+                </S.FilterButton>
               ))}
-            </div>
-          </div>
+            </S.ButtonGrid>
+          </S.FilterSection>
         )}
-      </div>
-      <div className="sidebar-footer">
-        <button className="apply-btn" onClick={onApply}>
-          검색
-        </button>
-      </div>
-    </div>
+      </S.SidebarContent>
+      <S.SidebarFooter>
+        <S.ApplyButton onClick={onApply}>검색</S.ApplyButton>
+      </S.SidebarFooter>
+    </S.SidebarContainer>
   );
 }
 
