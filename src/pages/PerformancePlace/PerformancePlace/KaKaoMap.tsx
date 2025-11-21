@@ -132,6 +132,18 @@ function KaKaoMap({
 
     clusterer.clear();
 
+    const imageSrc = "/crimson_marker.svg";
+    // 일반 마커
+    const imageSize = new window.kakao.maps.Size(32, 80); 
+    const imageOption = { offset: new window.kakao.maps.Point(16, 55) };
+    // 호버 마커
+    const hoverSize = new window.kakao.maps.Size(34, 100); 
+    const hoverOption = { offset: new window.kakao.maps.Point(16, 65) }; 
+    // 호버 마커 생성 
+    const hoverImage = new window.kakao.maps.MarkerImage(imageSrc, hoverSize, hoverOption);
+    // 일반 마커 생성
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
     const newMarkers = places.map((place) => {
       const markerPosition = new window.kakao.maps.LatLng(
         place.latitude,
@@ -140,9 +152,21 @@ function KaKaoMap({
       const marker = new window.kakao.maps.Marker({
         position: markerPosition,
         title: place.prfPlcName,
+        image: markerImage,
       });
       window.kakao.maps.event.addListener(marker, "click", function () {
         onMarkerClick(place);
+      });
+
+      // 호버 상태
+      window.kakao.maps.event.addListener(marker, "mouseover", function() {
+        marker.setImage(hoverImage);
+        marker.setZIndex(10); 
+      });
+      // 호버 상태 해제
+      window.kakao.maps.event.addListener(marker, "mouseout", function() {
+        marker.setImage(markerImage);
+        marker.setZIndex(0);
       });
       return marker;
     });

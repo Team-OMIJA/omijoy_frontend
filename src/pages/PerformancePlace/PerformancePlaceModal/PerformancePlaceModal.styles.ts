@@ -70,6 +70,7 @@ export const ModalUrlButton = styled.button`
   color: #eeeeee;
 
   &:hover {
+    transform: scale(1.02);
     background-color: #444444;
   }
 
@@ -77,6 +78,7 @@ export const ModalUrlButton = styled.button`
     background-color: #252525;
     color: #555555;
     cursor: not-allowed;
+    transform: scale(1.00);
   }
 `;
 
@@ -96,7 +98,8 @@ export const ModalKakaoDirectionsButton = styled.button`
   color: #121212;
 
   &:hover {
-    background-color: #c7a006;
+    transform: scale(1.02);
+    background-color: #f2c306ff;
   }
 `;
 

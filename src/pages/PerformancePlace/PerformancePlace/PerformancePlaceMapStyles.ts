@@ -47,7 +47,7 @@ export const MapLoadingPlaceholder = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f0f0f0;
+  background: #c5c5c5ff;
 `;
 
 // == 맵 줌 ==

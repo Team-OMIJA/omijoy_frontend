@@ -100,7 +100,7 @@ export const ButtonGrid = styled.div`
 export const FilterButton = styled.button<{ active?: boolean }>`
   padding: 6px 0;
   background: ${({ active }) => (active ? "crimson" : "#3a3a3a")};
-  border: 1px solid ${({ active }) => (active ? "#8e44ad" : "#444")};
+  border: 1px solid ${({ active }) => (active ? "crimson" : "#444")};
   border-radius: 4px;
   font-size: 11px;
   color: ${({ active }) => (active ? "white" : "#ccc")};
