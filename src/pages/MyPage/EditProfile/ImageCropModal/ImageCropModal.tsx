@@ -35,7 +35,16 @@ function ImageCropModal({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleDone();
+        }
+      }}
+    >
       <div css={s.modalContainer}>
         <div css={s.cropWrapper}>
           <Cropper

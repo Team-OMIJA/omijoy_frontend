@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import * as s from "./styles";
+import * as ts from "./styles";
+import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFavoritePrfListReq } from "../../../apis/favoriteApi";
@@ -9,8 +11,13 @@ import { RxShare2 } from "react-icons/rx";
 import { IoArrowForward } from "react-icons/io5";
 import * as ps from "../../Home/PerformanceStyles";
 
+import {
+  NextArrow,
+  PrevArrow,
+} from "../../../components/common/Button/CustomArrowBtn";
+import Slider from "react-slick";
+
 function FavoriteList() {
-  // const [favorites, setFavorites] = useState<Performance[]>([]);
   const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
@@ -19,6 +26,7 @@ function FavoriteList() {
   const principal = stored ? JSON.parse(stored)?.state?.principal : null;
 
   useEffect(() => {
+    // 현재 내가 스크랩한 공연들 불러옴
     const fetchFavorites = async () => {
       try {
         const data = await getFavoritePrfListReq();
@@ -31,80 +39,140 @@ function FavoriteList() {
     // 의존성 배열 추가 - favoriteList 상태를 바로 반영
   }, [setFavoriteList]);
 
+  // 공연 id 기반으로 해당 공연 모달 열어줌
   const openModalHandler = (prfId: string) => {
     setSelectedPrfId(prfId);
     setOpen(true);
   };
+
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      { breakpoint: 1200, settings: { slidesToShow: 4 } },
+      { breakpoint: 800, settings: { slidesToShow: 3 } },
+      { breakpoint: 500, settings: { slidesToShow: 2 } },
+    ],
+  };
+
   return (
     <>
-      <div css={s.container} >
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
-        <ps.PerformanceTitle>
-        <h2 css={s.title}>❤️My Favorites</h2>
-        </ps.PerformanceTitle>
-        <RxShare2
-          size={30}
-          onClick={() => {
-            const stored = localStorage.getItem("principal-storage");
-            const principal = stored ? JSON.parse(stored)?.state?.principal : null;
-
-            if (!principal?.id) {
-              alert("로그인 후 공유가 가능합니다.");
-              return;
-            }
-
-            const shareUrl = `${window.location.origin}/favorites/list/${principal.id}`;
-
-            navigator.clipboard.writeText(shareUrl)
-              .then(() => alert("URL이 클립보드에 복사되었습니다!"))
-              .catch(() => alert("URL 복사에 실패했습니다."));
+      <div css={s.container}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+            position: "relative",
           }}
-          style={{ color: "white", cursor: "pointer" }}
-        />
-        <IoArrowForward 
-          size={30} 
-          onClick={() => {
-            if (!principal.id) {
-              alert("로그인 후 공유가 가능합니다.");
-              return;
-            }
-            navigate(`/favorites/list/${principal.id}`);
-          }}
-          style={{ color: "white", cursor: "pointer"}}
-        />
+        >
+          <ps.PerformanceTitle>
+            <h2 css={s.title}>FAVORITES</h2>
+          </ps.PerformanceTitle>
+
+          <RxShare2
+            size={30}
+            onClick={() => {
+              const stored = localStorage.getItem("principal-storage");
+              const principal = stored
+                ? JSON.parse(stored)?.state?.principal
+                : null;
+
+              if (!principal?.id) {
+                alert("로그인 후 공유가 가능합니다.");
+                return;
+              }
+
+              const shareUrl = `${window.location.origin}/favorites/list/${principal.id}`;
+
+              navigator.clipboard
+                .writeText(shareUrl)
+                .then(() => alert("URL이 클립보드에 복사되었습니다!"))
+                .catch(() => alert("URL 복사에 실패했습니다."));
+            }}
+            style={{ color: "white", cursor: "pointer" }}
+          />
+
+          <IoArrowForward
+            size={30}
+            onClick={() => {
+              if (!principal.id) {
+                alert("로그인 후 이동 가능합니다.");
+                return;
+              }
+              navigate(`/favorites/list/${principal.id}`);
+            }}
+            style={{ color: "white", cursor: "pointer" }}
+          />
         </div>
+
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
         ) : (
-          <ul css={s.list}>
-            {favoriteList.map((item) => (
-              <li
-                key={item.prfId}
-                css={s.card}
-                onClick={() => openModalHandler(item.prfId)}
-              >
-                <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
-                <div css={s.info}>
-                  <ps.PerformanceTitle>
-                  <div>{item.prfNm}</div>
-                  </ps.PerformanceTitle>
-                  <ps.PerformancePlace>
-                  <div>{item.prfPlcNm}</div>
-                  </ps.PerformancePlace>
-                  <ps.PerformancePeriod>
-                  <div>
-                    {item.prfStartDt} ~ {item.prfEndDt}
+          <div css={s.sliderWrapper}>
+
+            {/* 왼쪽 그라데이션 */}
+            <div css={s.gradientLeft} />
+
+            {/* 오른쪽 그라데이션 */}
+            <div css={s.gradientRight} />
+
+            <Carousel
+              slideSize="16.6%" // → 6개 보여주기 (100 / 6)
+              slideGap="30px"
+              emblaOptions={{
+                align: "start",
+                slidesToScroll: 1,
+                dragFree: true,
+              }}
+              withControls
+              controlSize={45}
+              controlsOffset="sm"
+              styles={{
+                control: {
+                  background: "rgba(255,255,255,0.25)",
+                  border: "none",
+                  backdropFilter: "blur(6px)",
+                  color: "#fff",
+                },
+              }}
+            >
+              {favoriteList.map((item) => (
+                <Carousel.Slide key={item.prfId}>
+                  <div
+                    css={s.card}
+                    onClick={() => openModalHandler(item.prfId)}
+                  >
+                    <img
+                      src={item.posterImgUrl}
+                      alt={item.prfNm}
+                      css={s.poster}
+                    />
+
+                    <div css={s.info}>
+                      <ps.PerformanceTitle>{item.prfNm}</ps.PerformanceTitle>
+                      <ps.PerformancePlace>{item.prfPlcNm}</ps.PerformancePlace>
+
+                      <ps.PerformancePeriod>
+                        {item.prfStartDt} ~ {item.prfEndDt}
+                      </ps.PerformancePeriod>
+
+                      <ps.PerformanceGenre>{item.genreNm}</ps.PerformanceGenre>
+                    </div>
                   </div>
-                  </ps.PerformancePeriod>
-                  <ps.PerformanceGenre>
-                  <div>{item.genreNm}</div>
-                  </ps.PerformanceGenre>
-                </div>
-              </li>
-            ))}
-          </ul>
+                </Carousel.Slide>
+              ))}
+            </Carousel>
+          </div>
         )}
       </div>
+
       <PerformanceModal
         open={open}
         setOpen={setOpen}
