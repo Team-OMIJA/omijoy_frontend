@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
-import "./PerformancePlaceStyles.css";
+import * as S from "./KaKaoMap.styles";
 
 declare global {
   interface Window {
@@ -30,16 +30,15 @@ function KaKaoMap({
   onMyLocationClick,
 }: KakaoMapProps) {
   const mapContainer = useRef(null);
-  const mapRef = useRef<kakao.maps.Map | null>(null);
-  const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
-  const infowindowRef = useRef<kakao.maps.InfoWindow | null>(null);
+  const mapRef = useRef<any>(null); // kakao.maps.Map
+  const clustererRef = useRef<any>(null); // kakao.maps.MarkerClusterer
   const myLocationMarkerRef = useRef<kakao.maps.Marker | null>(null);
-  const onMyLocationClickRef = useRef(onMyLocationClick);
 
-  useEffect(() => {
-    onMyLocationClickRef.current = onMyLocationClick;
-  }, [onMyLocationClick]);
+  const [mapType, setMapType] = useState<"ROADMAP" | "HYBRID">("ROADMAP");
+  const [currentMapLevel, setCurrentMapLevel] = useState(level);
 
+  const MIN_MAP_LEVEL = 1;
+  const MAX_MAP_LEVEL = 9;
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
 
@@ -50,96 +49,18 @@ function KaKaoMap({
       };
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
-      newMap.setMaxLevel(9);
+      newMap.setMaxLevel(MAX_MAP_LEVEL);
 
       clustererRef.current = new window.kakao.maps.MarkerClusterer({
         map: newMap,
         averageCenter: true,
         minLevel: 5,
-        gridSize: 100,
+        gridSize: 120,
         minClusterSize: 1,
       });
-      infowindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
-
-      const controlContainer = document.createElement("div");
-      controlContainer.className = "map-zoom-control-container";
-
-      const levelLabel = document.createElement("span");
-      levelLabel.className = "map-level-label";
-
-      const levelSlider = document.createElement("input");
-      levelSlider.type = "range";
-      const minMapLevel = 1;
-      const maxMapLevel = 9;
-      levelSlider.min = String(minMapLevel);
-      levelSlider.max = String(maxMapLevel);
-      levelSlider.className = "custom-v-slider";
-
-      levelSlider.oninput = () => {
-        const sliderValue = parseInt(levelSlider.value, 10);
-        const newLevel = maxMapLevel - sliderValue + minMapLevel;
-        newMap.setLevel(newLevel);
-      };
-      controlContainer.appendChild(levelLabel);
-      controlContainer.appendChild(levelSlider);
-      newMap.getNode().appendChild(controlContainer);
-
-      const myLocationBtn = document.createElement("div");
-      myLocationBtn.className = "my-location-btn";
-
-      myLocationBtn.onclick = () => {
-        onMyLocationClickRef.current();
-      };
-
-      const btnIcon = document.createElement("img");
-      btnIcon.src = "/my_location.svg";
-      btnIcon.className = "my-location-btn-icon";
-      btnIcon.alt = "내 위치";
-
-      myLocationBtn.appendChild(btnIcon);
-      newMap.getNode().appendChild(myLocationBtn);
-
-      const mapTypeContainer = document.createElement("div");
-      mapTypeContainer.className = "map-type-container";
-
-      const roadmapBtn = document.createElement("button");
-      roadmapBtn.innerHTML = "지도";
-      roadmapBtn.className = "map-type-btn";
-
-      const hybridBtn = document.createElement("button");
-      hybridBtn.innerHTML = "스카이뷰";
-      hybridBtn.className = "map-type-btn";
-
-      const setActiveButton = (
-        activeBtn: HTMLButtonElement,
-        inactiveBtn: HTMLButtonElement
-      ) => {
-        activeBtn.classList.add("active");
-        activeBtn.classList.remove("inactive");
-        inactiveBtn.classList.add("inactive");
-        inactiveBtn.classList.remove("active");
-      };
-
-      setActiveButton(roadmapBtn, hybridBtn);
-
-      roadmapBtn.onclick = () => {
-        newMap.setMapTypeId(window.kakao.maps.MapTypeId.ROADMAP);
-        setActiveButton(roadmapBtn, hybridBtn);
-      };
-
-      hybridBtn.onclick = () => {
-        newMap.setMapTypeId(window.kakao.maps.MapTypeId.HYBRID);
-        setActiveButton(hybridBtn, roadmapBtn);
-      };
-
-      mapTypeContainer.appendChild(roadmapBtn);
-      mapTypeContainer.appendChild(hybridBtn);
-      newMap.getNode().appendChild(mapTypeContainer);
 
       const updateZoomUI = () => {
-        const currentLevel = newMap.getLevel();
-        levelLabel.innerHTML = `레벨: ${currentLevel}`;
-        levelSlider.value = String(maxMapLevel - currentLevel + minMapLevel);
+        setCurrentMapLevel(newMap.getLevel());
       };
       window.kakao.maps.event.addListener(newMap, "zoom_changed", updateZoomUI);
       updateZoomUI();
@@ -151,10 +72,23 @@ function KaKaoMap({
     if (!map || !window.kakao) return;
 
     const newCenter = new window.kakao.maps.LatLng(latitude, longitude);
-    map.setLevel(level);
+    if (map.getLevel() !== level) {
+      map.setLevel(level);
+    }
     map.setCenter(newCenter);
     clustererRef.current?.redraw();
   }, [latitude, longitude, level]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !window.kakao) return;
+
+    const newMapType =
+      mapType === "HYBRID"
+        ? window.kakao.maps.MapTypeId.HYBRID
+        : window.kakao.maps.MapTypeId.ROADMAP;
+    map.setMapTypeId(newMapType);
+  }, [mapType]);
 
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao) return;
@@ -198,6 +132,18 @@ function KaKaoMap({
 
     clusterer.clear();
 
+    const imageSrc = "/crimson_marker.svg";
+    // 일반 마커
+    const imageSize = new window.kakao.maps.Size(32, 80); 
+    const imageOption = { offset: new window.kakao.maps.Point(16, 55) };
+    // 호버 마커
+    const hoverSize = new window.kakao.maps.Size(34, 100); 
+    const hoverOption = { offset: new window.kakao.maps.Point(16, 65) }; 
+    // 호버 마커 생성 
+    const hoverImage = new window.kakao.maps.MarkerImage(imageSrc, hoverSize, hoverOption);
+    // 일반 마커 생성
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
     const newMarkers = places.map((place) => {
       const markerPosition = new window.kakao.maps.LatLng(
         place.latitude,
@@ -206,9 +152,21 @@ function KaKaoMap({
       const marker = new window.kakao.maps.Marker({
         position: markerPosition,
         title: place.prfPlcName,
+        image: markerImage,
       });
       window.kakao.maps.event.addListener(marker, "click", function () {
         onMarkerClick(place);
+      });
+
+      // 호버 상태
+      window.kakao.maps.event.addListener(marker, "mouseover", function() {
+        marker.setImage(hoverImage);
+        marker.setZIndex(10); 
+      });
+      // 호버 상태 해제
+      window.kakao.maps.event.addListener(marker, "mouseout", function() {
+        marker.setImage(markerImage);
+        marker.setZIndex(0);
       });
       return marker;
     });
@@ -216,10 +174,48 @@ function KaKaoMap({
     clusterer.addMarkers(newMarkers);
   }, [places, onMarkerClick]);
 
+  const handleZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const newLevel =
+      MAX_MAP_LEVEL - parseInt(e.target.value, 10) + MIN_MAP_LEVEL;
+    map.setLevel(newLevel);
+  };
+
   return (
-    <div className="kakao-map-container">
-      <div id="map" ref={mapContainer} className="kakao-map"></div>
-    </div>
+    <S.KakaoMapContainer>
+      <S.KakaoMapDiv id="map" ref={mapContainer} />
+
+      <S.MapTypeContainer>
+        <S.MapTypeButton
+          active={mapType === "ROADMAP"}
+          onClick={() => setMapType("ROADMAP")}
+        >
+          지도
+        </S.MapTypeButton>
+        <S.MapTypeButton
+          active={mapType === "HYBRID"}
+          onClick={() => setMapType("HYBRID")}
+        >
+          스카이뷰
+        </S.MapTypeButton>
+      </S.MapTypeContainer>
+
+      <S.MyLocationButton onClick={onMyLocationClick}>
+        <img src="/my_location.svg" alt="내 위치" width={24} height={24} />
+      </S.MyLocationButton>
+
+      <S.MapZoomControlContainer>
+        <S.MapLevelLabel>레벨: {currentMapLevel}</S.MapLevelLabel>
+        <S.CustomVSlider
+          type="range"
+          min={MIN_MAP_LEVEL}
+          max={MAX_MAP_LEVEL}
+          value={MAX_MAP_LEVEL - currentMapLevel + MIN_MAP_LEVEL}
+          onChange={handleZoomChange}
+        />
+      </S.MapZoomControlContainer>
+    </S.KakaoMapContainer>
   );
 }
 
