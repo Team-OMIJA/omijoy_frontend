@@ -160,7 +160,7 @@ function PerformanceDetail() {
               <s.PerformanceDetail2 style={{fontSize: "17.5px", lineHeight: 1.3, margin: 0 }}>
               {performance.prfStartDt} ~ {performance.prfEndDt}
               <br />
-              {performance.dtGuidance?.toString()}
+              {performance.dtGuidance?.split(',').map((time) => time.trim()).join(' ')}
               </s.PerformanceDetail2>
             </p>
             
