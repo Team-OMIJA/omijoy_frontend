@@ -4,6 +4,7 @@ import { instance } from "./instance";
 import axios from "axios";
 
 export type ScrapRank = {
+  prfId: string;
   prfName: string;
   scrapCount: number;
   posterImgUrl: string;

@@ -109,3 +109,43 @@ export const PerformanceDetail3 = styled.div`
   font-size: 15px;
   margin: 3px 0;
 `;
+
+/* 왼쪽 페이드 (투명 → 배경색) */
+export const gradientLeft = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to right,
+
+    rgba(18, 18, 18, 1) 0%,
+    rgba(18, 18, 18, 0.8) 30%,
+    rgba(18, 18, 18, 0.4) 60%,
+    rgba(18, 18, 18, 0) 100%
+  );
+`;
+
+/* 오른쪽 페이드 (배경색 → 투명) */
+export const gradientRight = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to left,
+
+    rgba(18, 18, 18, 1) 0%,
+    rgba(18, 18, 18, 0.8) 30%,
+    rgba(18, 18, 18, 0.4) 60%,
+    rgba(18, 18, 18, 0) 100%
+  );
+`;

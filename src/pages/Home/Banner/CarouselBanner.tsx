@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 
 import Top1Favorite from "./Top1Favorite/Top1Favorite";
 import KidsNewPerformances from "./KidsNewPerformances/KidsNewPerformances";
+import DiscountInfoBanner from "./DiscountInfo/DiscountInfoBanner";
 
 function CarouselBanner() {
   const autoplay = useRef(
@@ -14,7 +15,11 @@ function CarouselBanner() {
     })
   );
 
-  const components = [<Top1Favorite />, <KidsNewPerformances />];
+  const components = [
+    <Top1Favorite />,
+    <KidsNewPerformances />,
+    <DiscountInfoBanner />,
+  ];
 
   const slides = components.map((component, index) => (
     <Carousel.Slide key={index}>
