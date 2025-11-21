@@ -128,6 +128,9 @@ function CommonModal({
           display: "flex",
           gap: 4,
           overflowY: "auto",
+
+          outline: "2px solid #b7b7b7",
+          outlineOffset: "-2px",
         }}
       >
         {data ? (
