@@ -55,7 +55,8 @@ function KaKaoMap({
         map: newMap,
         averageCenter: true,
         minLevel: 5,
-        gridSize: 100,
+        gridSize: 120,
+        minClusterSize: 1,
       });
 
       const updateZoomUI = () => {

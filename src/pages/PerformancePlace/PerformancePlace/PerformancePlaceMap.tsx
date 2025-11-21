@@ -4,7 +4,7 @@ import {findNearbyPlaces, findPlacesByGugun, PlaceMarker,} from "../../../apis/p
 import { KOREA_REGIONS } from "../../../utils/regions";
 import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
 import RegionFilterSidebar from "../PerformancePlaceModal/RegionFilterSidebarModal";
-import * as S from "./PerformancePlaceStyles";
+import * as S from "./PerformancePlaceMapStyles";
 
 type SidoKey = keyof typeof KOREA_REGIONS;
 

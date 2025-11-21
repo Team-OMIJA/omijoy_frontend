@@ -152,7 +152,61 @@ export const SliderContainer = styled.div`
     box-sizing: border-box;
   }
 
-  /* ... (slick-slider 관련 스타일은 여기에 그대로 유지) ... */
+  .slick-prev,
+  .slick-next {
+    width: 40px !important;
+    height: 40px !important;
+    background-color: rgba(100, 100, 100, 0.5) !important;
+    border-radius: 50% !important;
+    z-index: 100 !important;
+    transition: background-color 0.2s ease;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slick-prev:hover,
+  .slick-next:hover {
+    background-color: rgba(100, 100, 100, 0.8) !important;
+  }
+  /* =====포스터 밑 점 부분===== */
+  .slick-prev:before,
+  .slick-next:before {
+    content: "" !important;
+    display: block !important;
+    width: 10px !important;
+    height: 10px !important;
+    border-top: 2px solid #fff !important;
+    border-right: 2px solid #fff !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    font-family: inherit !important;
+  }
+
+  .slick-prev:before {
+    transform: rotate(-135deg);
+    margin-left: 5px;
+  }
+  .slick-next:before {
+    transform: rotate(45deg);
+    margin-right: 5px;
+  }
+
+  .slick-prev {
+    left: -15px !important;
+  }
+  .slick-next {
+    right: -15px !important;
+  }
+
+  .slick-dots li button:before {
+    font-size: 12px !important; 
+    color: #888888 !important;
+  }
+  .slick-dots li.slick-active button:before {
+    font-size: 12px !important; 
+    color: #e3002a !important; 
+  }
 `;
 
 export const ModalPerformanceItem = styled.div`
