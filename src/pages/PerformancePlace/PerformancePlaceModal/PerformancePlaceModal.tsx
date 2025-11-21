@@ -5,8 +5,6 @@ import {
   PrfPlcModal,
   findPerformancesByPlaceId,
 } from "../../../apis/performanceplaceApi";
-import { SlHeart } from "react-icons/sl";
-import { ImHeart } from "react-icons/im";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -22,7 +20,8 @@ interface PerformancePlaceModalProps {
 }
 
 function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
-    console.log(place)
+  console.log(place);
+  const { principal } = usePrincipalState.getState();
   const hasValidUrl = place.url && place.url.trim() !== "";
   const [isLoading, setIsLoading] = useState(false);
   const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
@@ -33,6 +32,8 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const [flagged, setFlagged] = useState(place.flagged || false);
 
   const [isDragging, setIsDragging] = useState(false);
+
+  const initialFlagged = place.flagged; // 처음 상태 기억
 
   const queryClient = useQueryClient();
 
@@ -46,36 +47,28 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
       const newFlagState =
         // 객체일 경우 data.flagged 사용
         typeof data === "boolean" ? data : data?.flagged ?? false;
-      setFlagged(newFlagState);
 
-      // 마이페이지 Flag 리스트 refetch
-      // 플래그 자동 갱신
-      queryClient.invalidateQueries({
-        queryKey: ["flags"],
-      });
+      setFlagged(newFlagState);
     },
     onError: (err) => {
       console.error("플래그 요청 실패 : ", err);
     },
   });
 
-//   const handleToggleFlag = () => {
-//     toggleFlagMutation.mutate();
-//   };
+  // 모달 플래그 토글
+  const handleToggleFlag = () => {
+    if (!principal) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/login");
+      return;
+    }
+    setFlagged((prev) => !prev);
 
-const handleToggleFlag = async () => {
-  const { principal } = usePrincipalState.getState();
+    // toggleFlagMutation.mutate();
 
-  if (!principal) {
-    alert("로그인 후 이용해주세요.");
-    navigate("/login");
-    return;
-  }
-
-  const response = await toggleFlagReq(place.prfPlcId);
-  setFlagged(response.flagged);
-};
-
+    // const response = await toggleFlagReq(place.prfPlcId);
+    // setFlagged(response.flagged);
+  };
 
   useEffect(() => {
     if (!place.prfPlcId) return;
@@ -111,24 +104,24 @@ const handleToggleFlag = async () => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-    const handleGetDirections = () => { 
-        const toName = encodeURIComponent(place.prfPlcName);
-        const url = `https://map.kakao.com/link/to/${toName},${place.latitude},${place.longitude}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-        console.log(place.prfPlcName, place.latitude, place.longitude)
-        console.log(url)
-    };
-    const settings = {
+  const handleGetDirections = () => {
+    const toName = encodeURIComponent(place.prfPlcName);
+    const url = `https://map.kakao.com/link/to/${toName},${place.latitude},${place.longitude}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    console.log(place.prfPlcName, place.latitude, place.longitude);
+    console.log(url);
+  };
+  const settings = {
     dots: true,
-    infinite: performances.length > 5, 
+    infinite: performances.length > 5,
     speed: 500,
-    slidesToShow: 5,   
-    slidesToScroll: 5, 
-    arrows: true,      
+    slidesToShow: 5,
+    slidesToScroll: 5,
+    arrows: true,
     beforeChange: () => setIsDragging(true),
     afterChange: () => setIsDragging(false),
-    responsive: [     
-    {
+    responsive: [
+      {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,
@@ -137,8 +130,20 @@ const handleToggleFlag = async () => {
       },
     ],
   };
+  // 마이페이지 Flag 리스트 refetch
+  // 플래그 자동 갱신
+  const closeAndRefetch = async () => {
+    // 상태가 변경되었을 때만 서버 호출
+    if (flagged !== initialFlagged) {
+       // 초기 true → 최종 false  → toggle 한 번
+    // 초기 false → 최종 true  → toggle 한 번
+      await toggleFlagReq(place.prfPlcId); // 1번만 요청됨
+      queryClient.invalidateQueries(["flags"]); // 리스트 반영
+    }
+    onClose();
+  };
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={closeAndRefetch}>
       <div className="modal-body" onClick={(e) => e.stopPropagation()}>
         <h2 className="modal-title">{place.prfPlcName}</h2>
 
@@ -213,7 +218,7 @@ const handleToggleFlag = async () => {
           )}
         </div>
 
-        <button className="modal-close-button" onClick={onClose}>
+        <button className="modal-close-button" onClick={closeAndRefetch}>
           닫기
         </button>
       </div>

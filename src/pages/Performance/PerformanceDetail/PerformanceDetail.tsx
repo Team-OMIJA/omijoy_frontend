@@ -1,9 +1,11 @@
-
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
-import { toggleFavoriteReq, getFavoritePrfListReq } from "../../../apis/favoriteApi";
+import {
+  toggleFavoriteReq,
+  getFavoritePrfListReq,
+} from "../../../apis/favoriteApi";
 import * as s from "../../Home/PerformanceStyles";
 
 interface PerformanceDetail {
@@ -33,7 +35,7 @@ function PerformanceDetail() {
   );
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
-  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchPerformance = async () => {
       try {
@@ -63,9 +65,7 @@ function PerformanceDetail() {
     };
 
     fetchPerformance();
-    if (localStorage.getItem("jwt")) {
-      fetchLikedStatus();
-    }
+    fetchLikedStatus();
   }, [id]);
 
   const handleToggleFavorite = async () => {
@@ -76,7 +76,6 @@ function PerformanceDetail() {
     } catch (err) {
       console.error("좋아요 토글 실패", err);
       alert("로그인이 필요합니다.");
-      navigate("/login");
     }
   };
 
@@ -119,43 +118,50 @@ function PerformanceDetail() {
         >
           <div>
             <s.PerformanceTitle>
-            <h1 style={{position: "absolute", marginTop: "-210px"}}>{performance.prfNm}</h1>
+              <h1 style={{ position: "absolute", marginTop: "-210px" }}>
+                {performance.prfNm}
+              </h1>
             </s.PerformanceTitle>
           </div>
-          <div style={{ position: "absolute", marginTop: "-10px", lineHeight: "1" }}>
+          <div
+            style={{
+              position: "absolute",
+              marginTop: "-10px",
+              lineHeight: "1",
+            }}
+          >
             <s.PerformanceDetail1>
-            <h2>{performance.area}</h2>
-            <p>{performance.prfPlcNm}</p>
+              <h2>{performance.area}</h2>
+              <p>{performance.prfPlcNm}</p>
             </s.PerformanceDetail1>
-            <p style={{ whiteSpace: 'pre-line' }}>
+            <p style={{ whiteSpace: "pre-line" }}>
               <s.PerformanceDetail2>
-              {performance.prfStartDt} ~ {performance.prfEndDt}
-              <br />
-              {performance.dtGuidance?.toString()}
+                {performance.prfStartDt} ~ {performance.prfEndDt}
+                <br />
+                {performance.dtGuidance?.toString()}
               </s.PerformanceDetail2>
             </p>
             <s.PerformanceDetail3>
-            <p>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}<br />{performance.child === "Y" && "어린이 동반 가능"}</p>
-            <p>
-              ⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}
-              <br />
-              👶 {performance.prfAge}
-              <br />
-              {performance.child === "Y" && "어린이 동반 가능"}
-            </p>
-            <p>
-              {performance.ticketPrice
-                ?.toString()
-                .split(", ")
-                .map((price, index) => (
-                  <span key={index}>
-                    {price}
-                    <br />
-                  </span>
-                ))}
-            </p>
-            {performance.visit === "Y" && <p>내한 공연</p>}
-            {performance.festival === "Y" && <p>축제 행사</p>}
+              <p>
+                ⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}
+                <br />
+                👶 {performance.prfAge}
+                <br />
+                {performance.child === "Y" && "어린이 동반 가능"}
+              </p>
+              <p>
+                {performance.ticketPrice
+                  ?.toString()
+                  .split(", ")
+                  .map((price, index) => (
+                    <span key={index}>
+                      {price}
+                      <br />
+                    </span>
+                  ))}
+              </p>
+              {performance.visit === "Y" && <p>내한 공연</p>}
+              {performance.festival === "Y" && <p>축제 행사</p>}
             </s.PerformanceDetail3>
           </div>
         </div>
@@ -168,7 +174,33 @@ function PerformanceDetail() {
             color: "crimson",
             cursor: "pointer",
           }}
-          style={{position: "absolute", bottom: "40px", right: "-100px", padding: "0 30px", lineHeight: "60px", fontSize: "23px",cursor: "pointer", borderRadius: "30px", backgroundColor: "white", color: "black"}}>예매 바로가기→</button>)}
+          onClick={handleToggleFavorite}
+        />
+        {performance.providerUrl && (
+          <button
+            onClick={() => {
+              const firstUrl = performance.providerUrl.split(",")[0].trim();
+              const validUrl = firstUrl.startsWith("http")
+                ? firstUrl
+                : `https://${firstUrl}`;
+              window.open(validUrl, "_blank");
+            }}
+            style={{
+              position: "absolute",
+              bottom: "40px",
+              right: "-100px",
+              padding: "0 30px",
+              lineHeight: "60px",
+              fontSize: "23px",
+              cursor: "pointer",
+              borderRadius: "30px",
+              backgroundColor: "white",
+              color: "black",
+            }}
+          >
+            예매 바로가기→
+          </button>
+        )}
       </div>
       <hr
         style={{ width: "100%", border: "1px solid #ccc", margin: "50px 0" }}
