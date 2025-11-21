@@ -91,91 +91,87 @@ function PerformanceDetail() {
           height={500}
           style={{ borderRadius: "10px" }}
         />
-        <HeartIcon style={{position: "absolute", top: "130px", right: "210px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
+        <HeartIcon style={{position: "absolute", top: "40px", right: "-80px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
       </div>
-        <s.PerformanceTitle>
-              <h1>{removeRegionTag(performance.prfNm)}</h1>
-            </s.PerformanceTitle>
-            <s.PerformanceDetail1>
-              <h2 style={{ margin: 0, lineHeight: 2 }}>
-                {(() => {
-                  const original = performance.prfPlcNm;
-                  let result = '';
-                  const seen = new Set<string>();
-                  original.split(/\s*(\([^)]+\))/).forEach((part) => {
-                    if (!part) return;
-                    if (!part.startsWith('(')) {
-                      result += part;
-                      return;
-                    }
-                    const content = part.slice(1, -1).trim();
-                    const normalizedContent = content.replace(/\s+/g, '');
-                    const normalizedResult = result.replace(/\s+/g, '');
-                    if (seen.has(normalizedContent) || normalizedResult.includes(normalizedContent)) {
-                      return;
-                    }
-                    seen.add(normalizedContent);
-                    result += `(${content})`;
-                  });
-                  return result.trim();
-                })()}
-              </h2>
-              <p>{performance.area}</p>
-            </s.PerformanceDetail1>
-            <p>
-              <s.PerformanceTitle>
-              {performance.prfStartDt} ~ {performance.prfEndDt}
-              </s.PerformanceTitle>
-              <s.PerformanceDetail2 style={{fontSize: "17.5px"}}>
-              <br />
-              {performance.dtGuidance?.split('),').map((time) => time.trim()).map((line, idx) => (<span key={idx}>{line.endsWith(')') ? line : line + ')'}<br /></span>))}
-              </s.PerformanceDetail2>
-              <s.PerformanceDetail3>
-            <p style={{ fontSize: "17.5px"}}>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}</p>
-            </s.PerformanceDetail3>
-          <s.PerformanceDetail3>
-            <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
-            {performance.child === "Y" && "✔️ 미취학 아동 입장 가능"}</p>
-            <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
-            {performance.visit === "Y" && "✔️ 내한 공연"}</p>
-            </s.PerformanceDetail3>
+      <s.PerformanceTitle>
+            <h1>{removeRegionTag(performance.prfNm)}</h1>
+          </s.PerformanceTitle>
           <s.PerformanceDetail1>
-          <p style={{fontSize: "17.5px"}}>
-            <br />
-            {performance.ticketPrice?.toString().split(', ').map((price, index) => (
-              <span key={index}>
-                {price}
-                <br />
-              </span>
-            ))}
-          </p>
+            <h2 style={{ margin: 0, lineHeight: 2 }}>
+              {(() => {
+                const original = performance.prfPlcNm;
+                let result = '';
+                const seen = new Set<string>();
+                original.split(/\s*(\([^)]+\))/).forEach((part) => {
+                  if (!part) return;
+                  if (!part.startsWith('(')) {
+                    result += part;
+                    return;
+                  }
+                  const content = part.slice(1, -1).trim();
+                  const normalizedContent = content.replace(/\s+/g, '');
+                  const normalizedResult = result.replace(/\s+/g, '');
+                  if (seen.has(normalizedContent) || normalizedResult.includes(normalizedContent)) {
+                    return;
+                  }
+                  seen.add(normalizedContent);
+                  result += `(${content})`;
+                });
+                return result.trim();
+              })()}
+            </h2>
+            <p>{performance.area}</p>
           </s.PerformanceDetail1>
-          </p>
-          <button
-            onClick={() => {
-              const firstUrl = performance.providerUrl.split(",")[0].trim();
-              const validUrl = firstUrl.startsWith("http")
-                ? firstUrl
-                : `https://${firstUrl}`;
-              window.open(validUrl, "_blank");
-            }}
-            style={{
-              padding: "0 30px",
-              lineHeight: "60px",
-              fontSize: "23px",
-              cursor: "pointer",
-              borderRadius: "30px",
-              backgroundColor: "white",
-              color: "black",
-            }}
-          >
-            예매 바로가기→
-          </button>
-          
-      
+          <p>
+            <s.PerformanceTitle>
+            {performance.prfStartDt} ~ {performance.prfEndDt}
+            </s.PerformanceTitle>
+            <s.PerformanceDetail2 style={{fontSize: "17.5px"}}>
+            <br />
+            {performance.dtGuidance?.split('),').map((time) => time.trim()).map((line, idx) => (<span key={idx}>{line.endsWith(')') ? line : line + ')'}<br /></span>))}
+            </s.PerformanceDetail2>
+            <s.PerformanceDetail3>
+          <p style={{ fontSize: "17.5px"}}>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}</p>
+          </s.PerformanceDetail3>
+        <s.PerformanceDetail3>
+          <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
+          {performance.child === "Y" && "✔️ 미취학 아동 입장 가능"}</p>
+          <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
+          {performance.visit === "Y" && "✔️ 내한 공연"}</p>
+          </s.PerformanceDetail3>
+        <s.PerformanceDetail1>
+        <p style={{fontSize: "17.5px"}}>
+          <br />
+          {performance.ticketPrice?.toString().split(', ').map((price, index) => (
+            <span key={index}>
+              {price}
+              <br />
+            </span>
+          ))}
+      </p>
+      </s.PerformanceDetail1>
+        </p>
+        <button
+          onClick={() => {
+            const firstUrl = performance.providerUrl.split(",")[0].trim();
+            const validUrl = firstUrl.startsWith("http")
+              ? firstUrl
+              : `https://${firstUrl}`;
+            window.open(validUrl, "_blank");
+          }}
+          style={{
+            padding: "0 30px",
+            lineHeight: "60px",
+            fontSize: "23px",
+            cursor: "pointer",
+            borderRadius: "30px",
+            backgroundColor: "white",
+            color: "black",
+          }}
+        >
+          예매 바로가기→
+        </button>
       <hr style={{ width: "100%", border: "1px solid #ccc", margin: "120px 0", marginBottom: "90px" }} />
-      
-
       {performance.detailImgUrl && performance.detailImgUrl.trim() !== "" && (
         <div
           style={{
