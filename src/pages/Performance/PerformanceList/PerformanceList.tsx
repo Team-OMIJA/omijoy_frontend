@@ -165,6 +165,7 @@ function PerformanceList() {
       getPerformance(query, true, nextPage);
     }
   }, [loading, hasMore, page, query, getPerformance]);
+  
 
   useInfiniteScroll(loadMore, hasMore);
 
@@ -212,14 +213,8 @@ function PerformanceList() {
         }}
       >
         <ScrollTop />
-        <s.SectionTitle>
-          <h2>공연 리스트</h2>
-        </s.SectionTitle>
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          style={{ padding: "8px 12px", border: "solid #ccc", outline: "none" }}
-        >
+        <s.SectionTitle><h2>공연 리스트</h2></s.SectionTitle>
+        <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
           <option value="name">이름순</option>
           <option value="date">최신순</option>
         </select>
@@ -231,33 +226,13 @@ function PerformanceList() {
           <option value="공연중">공연중</option>
           <option value="공연예정">공연예정</option>
         </select>
-        <select
-          value={arfilter}
-          onChange={(e) => handleAreaChange(e.target.value)}
-          style={{ padding: "8px 12px", border: "solid #ccc", outline: "none" }}
-        >
-          <option value="" hidden>
-            지역
-          </option>
-          {AREA_OPTIONS.map((area) => (
-            <option key={area} value={area}>
-              {area}
-            </option>
-          ))}
+        <select value={arfilter} onChange={(e) => handleAreaChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
+          <option value="" hidden>지역</option>
+          {AREA_OPTIONS.map(area => <option key={area} value={area}>{area}</option>)}
         </select>
-        <select
-          value={gefilter}
-          onChange={(e) => handleGenreChange(e.target.value)}
-          style={{ padding: "8px 12px", border: "solid #ccc", outline: "none" }}
-        >
-          <option value="" hidden>
-            장르
-          </option>
-          {GENRE_OPTIONS.map((genre) => (
-            <option key={genre} value={genre}>
-              {genre}
-            </option>
-          ))}
+        <select value={gefilter} onChange={(e) => handleGenreChange(e.target.value)} style={{ padding:"8px 12px", border:"solid #ccc", outline:"none" }}>
+          <option value="" hidden>장르</option>
+          {GENRE_OPTIONS.map(genre => <option key={genre} value={genre}>{genre}</option>)}
         </select>
         <s.PerformancePlace>
           <div style={{ marginLeft: 10 }}>
@@ -346,6 +321,7 @@ function PerformanceList() {
           )}
         </div>
       </div>
+
       <div
         style={{
           display: "flex",
@@ -435,8 +411,24 @@ function PerformanceList() {
               >
                 <div
                   onClick={() => navigate(`/performance/${p.prfId}`)}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", position: "relative",  }}
                 >
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "8px",
+                      left: "8px",
+                      background: "rgba(0,0,0,0.6)",
+                      color: "white",
+                      padding: "4px 8px",
+                      fontSize: "14px",
+                      borderRadius: "12px",
+                      zIndex: 2,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {p.genreNm}
+                  </div>
                   {/* ───────────── 포스터 ───────────── */}
                   <img
                     src={p.posterImgUrl}
