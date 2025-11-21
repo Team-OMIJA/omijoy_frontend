@@ -15,12 +15,11 @@ export const navStyle = css`
 
 export const logo = css`
   font-weight: bolder;
-  font-size: 1.2em;
+  font-size: 1.3em;
   margin-left: 100px;
   margin-right: 60px;
   cursor: pointer;
   color: crimson;
-  /* color: #ffc800; */
 `;
 
 export const navListStyle = css`

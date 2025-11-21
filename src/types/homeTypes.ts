@@ -30,6 +30,7 @@ export interface UpcomingPerformance {
 
 // KidPrfs for Banner
 export interface KidsNewPerformancs {
+  prfId: string;
   prfNm: string;
   posterImgUrl: string;
   prfStartDt: string;

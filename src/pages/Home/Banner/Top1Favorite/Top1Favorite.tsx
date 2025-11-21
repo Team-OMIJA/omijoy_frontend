@@ -7,10 +7,13 @@ import { formatDateRange } from "../../../../components/FormatDate/FormatDate";
 import { formatDateDot } from "../../../../components/FormatDate/FormatDate";
 import { removeRegionTag } from "../../../../apis/performanceApi";
 import * as s from "./styles";
+import { useNavigate } from "react-router-dom";
 
 function Top1Favorite() {
   const [data, setData] = useState<ScrapRank | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -33,7 +36,10 @@ function Top1Favorite() {
 
   return (
     <s.Container>
-      <s.BannerWrapper>
+      <s.BannerWrapper
+        onClick={() => navigate(`/performance/${data.prfId}`)}
+        style={{ cursor: "pointer" }}
+      >
         {/* 흐린 배경 */}
         <s.BackgroundBlur img={data.posterImgUrl} />
 
