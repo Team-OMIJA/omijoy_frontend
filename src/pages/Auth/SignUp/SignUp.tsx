@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Button, Snackbar, Stack, TextField } from '@mui/material';
+import { Button, Snackbar, Stack, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../../apis/instance';
+import './SignUp.css';
 
 type SignUpForm = {
   email: string;
@@ -103,38 +104,67 @@ function SignUp() {
 
   return (
     <>
-      <Stack spacing={2} mt={2} alignItems='center'>
-        <TextField
-          label='이메일'
-          name='email'
-          type='email'
-          value={form.email}
-          onChange={changeHandler}
-          error={!!errorMessage.email}
-          helperText={errorMessage.email || ' '}
-        />
-        <TextField
-          label='비밀번호'
-          name='password'
-          type='password'
-          value={form.password}
-          onChange={changeHandler}
-          error={!!errorMessage.password}
-          helperText={errorMessage.password || ' '}
-        />
-        <TextField
-          label='비밀번호 확인'
-          name='confirm'
-          type='password'
-          value={form.confirm}
-          onChange={changeHandler}
-          error={!!errorMessage.confirm}
-          helperText={errorMessage.confirm || ' '}
-        />
-        <Button variant='contained' color='primary' onClick={signUpHandler} disabled={isDisabled}>
-          회원가입
-        </Button>
-      </Stack>
+      <div className='signup-page'>
+        <div className='signup-panel'>
+          <Typography className='signup-title' component='h1' variant='h5'>
+            회원가입
+          </Typography>
+          <p className='signup-caption'>
+            새로운 계정을 만들어
+            <br /> 오미조이 커뮤니티와 혜택을 즐겨보세요.
+          </p>
+
+          <Stack spacing={2} className='signup-form'>
+            <TextField
+              label='이메일'
+              name='email'
+              type='email'
+              value={form.email}
+              onChange={changeHandler}
+              error={!!errorMessage.email}
+              helperText={errorMessage.email || ' '}
+            />
+            <TextField
+              label='비밀번호'
+              name='password'
+              type='password'
+              value={form.password}
+              onChange={changeHandler}
+              error={!!errorMessage.password}
+              helperText={errorMessage.password || ' '}
+            />
+            <TextField
+              label='비밀번호 확인'
+              name='confirm'
+              type='password'
+              value={form.confirm}
+              onChange={changeHandler}
+              error={!!errorMessage.confirm}
+              helperText={errorMessage.confirm || ' '}
+            />
+            <Button
+              className='signup-submit-button'
+              variant='outlined'
+              color='primary'
+              onClick={signUpHandler}
+              disabled={isDisabled}
+            >
+              회원가입
+            </Button>
+          </Stack>
+
+          <button
+            type='button'
+            className='signup-link'
+            onClick={() => {
+              navigate('/login', { replace: true });
+            }}
+          >
+            이미 계정이 있으신가요? 로그인하기
+          </button>
+        </div>
+      </div>
+
       <Snackbar
         open={snack.open}
         autoHideDuration={2000}

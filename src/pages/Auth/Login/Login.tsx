@@ -1,7 +1,9 @@
 import { ChangeEvent, useState } from 'react';
-import { Alert, Button, Snackbar, Stack, TextField } from '@mui/material';
+import { Alert, Button, Snackbar, Stack, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../../apis/instance';
+import axios from 'axios';
+import './Login.css';
 
 type User = {
   email: string;
@@ -18,7 +20,7 @@ function Login() {
 
   const [isAuthenticate, setAuth] = useState(false);
   const [open, setOpen] = useState(false);
-  const [errMsg, setErrMsg] = useState('login failed');
+  const [errMsg, setErrMsg] = useState<string>('login failed');
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -34,9 +36,18 @@ function Login() {
           setAuth(true);
         }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.log(err);
-        setErrMsg(err);
+
+        if (axios.isAxiosError(err)) {
+          const backendMessage =
+            err.response?.data?.message || err.response?.data?.error || err.message || '로그인에 실패했습니다.';
+          setErrMsg(backendMessage);
+        } else {
+          setErrMsg('알 수 없는 오류가 발생했습니다.');
+        }
+
+        setOpen(true);
       });
   };
 
@@ -44,34 +55,83 @@ function Login() {
     window.location.replace(`${import.meta.env.BASE_URL}`);
   }
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
-      <Stack spacing={2} mt={2} alignItems='center'>
-        <TextField label='Email' name='email' onChange={changeHandler} />
-        <TextField type='password' label='Password' name='password' onChange={changeHandler} />
-        <Button variant='outlined' color='primary' onClick={loginHandler}>
-          Login
-        </Button>
-        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`}>구글 로그인</a>
-        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`}>카카오 로그인</a>
-        <a href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`}>네이버 로그인</a>
-        <Snackbar
-          open={open}
-          autoHideDuration={2000}
-          onClose={() => setOpen(false)}
-          message='Id 혹은 비밀번호가 틀렸습니다.'
-        />
-      </Stack>
+      <div className='login-page'>
+        <div className='login-panel'>
+          <Typography className='login-title' component='h1' variant='h5'>
+            회원 로그인
+          </Typography>
 
-      <Button
-        onClick={() => {
-          navigate('/signup', { replace: true });
-        }}
+          <Stack spacing={2} className='login-form'>
+            <TextField fullWidth label='이메일' name='email' onChange={changeHandler} />
+            <TextField fullWidth type='password' label='패스워드' name='password' onChange={changeHandler} />
+            <Button className='login-submit-button' fullWidth variant='outlined' color='primary' onClick={loginHandler}>
+              로그인
+            </Button>
+          </Stack>
+
+          <div className='oauth-divider'>
+            <span>또는</span>
+          </div>
+          <p className='oauth-caption'>SNS 계정으로 로그인</p>
+
+          <div className='oauth-button-list'>
+            <a
+              className='oauth-button google'
+              href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`}
+              aria-label='구글 로그인'
+            >
+              <span className='oauth-icon' aria-hidden='true'>
+                G
+              </span>
+              <span className='sr-only'>구글 로그인</span>
+            </a>
+            <a
+              className='oauth-button naver'
+              href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`}
+              aria-label='네이버 로그인'
+            >
+              <span className='oauth-icon' aria-hidden='true'>
+                N
+              </span>
+              <span className='sr-only'>네이버 로그인</span>
+            </a>
+            <a
+              className='oauth-button kakao'
+              href={`${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`}
+              aria-label='카카오 로그인'
+            >
+              <span className='oauth-icon' aria-hidden='true'>
+                K
+              </span>
+              <span className='sr-only'>카카오 로그인</span>
+            </a>
+          </div>
+
+          <button
+            type='button'
+            className='signup-link'
+            onClick={() => {
+              navigate('/signup', { replace: true });
+            }}
+          >
+            회원가입
+          </button>
+        </div>
+      </div>
+
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        회원가입
-      </Button>
-      <Snackbar open={open} onClose={() => setOpen(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity='error' onClose={() => setOpen(false)}>
+        <Alert severity='error' onClose={handleClose} sx={{ width: '100%' }}>
           {errMsg}
         </Alert>
       </Snackbar>
