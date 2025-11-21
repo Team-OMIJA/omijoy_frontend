@@ -32,7 +32,7 @@ export const getTop1FavoriteForBanner = async (): Promise<ScrapRank> => {
 // 공연 스크랩 토글
 export const toggleFavoriteReq = async (prfId: string) => {
   try {
-    const response = await instance.post(`/favorite/${prfId}/like`);
+    const response = await instance.post(`/favorite/toggle/${prfId}`);
     return response.data;
   } catch (error) {
     console.error("스크랩 요청 실패 : ", error);

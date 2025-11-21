@@ -321,8 +321,15 @@ function PerformanceList() {
           )}
         </div>
       </div>
-      
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", marginBottom: "20px" }}>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "8px",
+          marginBottom: "20px",
+        }}
+      >
         {arfilter.map((item) => (
           <div
             key={`area-${item}`}
