@@ -165,6 +165,7 @@ function PerformanceList() {
       getPerformance(query, true, nextPage);
     }
   }, [loading, hasMore, page, query, getPerformance]);
+  
 
   useInfiniteScroll(loadMore, hasMore);
 
@@ -403,8 +404,24 @@ function PerformanceList() {
               >
                 <div
                   onClick={() => navigate(`/performance/${p.prfId}`)}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", position: "relative",  }}
                 >
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "8px",
+                      left: "8px",
+                      background: "rgba(0,0,0,0.6)",
+                      color: "white",
+                      padding: "4px 8px",
+                      fontSize: "14px",
+                      borderRadius: "12px",
+                      zIndex: 2,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {p.genreNm}
+                  </div>
                   {/* ───────────── 포스터 ───────────── */}
                   <img
                     src={p.posterImgUrl}
