@@ -49,7 +49,10 @@ function TopRankList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", position: "relative" }}>
+          <s.gradientLeft />
+          <s.gradientRight />
+
           <Carousel
             slideSize="20%"
             slideGap="30px"
