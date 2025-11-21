@@ -38,7 +38,8 @@ function TopRankList() {
   return (
     <s.SectionContainer>
       <s.SectionHeader>
-        <s.SectionTitle>전체 공연 순위 TOP 10</s.SectionTitle>
+        <s.SectionTitle>전체 공연 순위</s.SectionTitle>
+        <s.SectionSubTitle>TOP 10</s.SectionSubTitle>
 
         <ts.MoreButton onClick={() => navigate("/performance")}>
           <ArrowForwardIosIcon style={{ fontSize: "22px" }} />
@@ -52,7 +53,7 @@ function TopRankList() {
           <Carousel
             slideSize="20%"
             slideGap="30px"
-            height={430}
+            height={470}
             withControls={false}
             plugins={[autoplay.current]}
             emblaOptions={{

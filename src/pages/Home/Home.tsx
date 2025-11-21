@@ -10,11 +10,7 @@ function Home() {
       <MantineProvider>
         <CarouselBanner />
         <TopRankList />
-      </MantineProvider>
-
-      <AwardRecommendList />
-
-      <MantineProvider>
+        <AwardRecommendList />
         <UpcomingList />
       </MantineProvider>
     </>
