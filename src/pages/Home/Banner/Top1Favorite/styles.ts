@@ -50,7 +50,7 @@ export const LeftTextArea = styled.div`
 
 /* "누적 스크랩 1위" */
 export const SubLabel = styled.div`
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   opacity: 0.9;
   margin-bottom: 6px;
@@ -58,7 +58,7 @@ export const SubLabel = styled.div`
 
 /* 공연 제목 */
 export const Title = styled.div`
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1.3;
   margin-bottom: 10px;
@@ -70,7 +70,7 @@ export const Title = styled.div`
 
 /* 날짜 텍스트 */
 export const DateText = styled.div`
-  font-size: 15px;
+  font-size: 16px;
   color: #ddd;
 `;
 
@@ -80,7 +80,7 @@ export const PosterImage = styled.img`
   right: 40px;
   top: 50%;
   transform: translateY(-50%);
-  width: 180px;
+  width: 200px;
   height: 260px;
   object-fit: cover;
   border-radius: 10px;
