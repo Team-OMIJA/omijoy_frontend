@@ -60,31 +60,46 @@ function PerformanceDetail() {
       }
     };
 
-    const fetchLikedStatus = async () => {
-      try {
-        const favorites = (await getFavoritePrfListReq()) as { prfId: string }[];
-        if (favorites.some((fav) => fav.prfId === id)) {
-          setLiked(true);
-        }
-      } catch (err) {
-        console.error("좋아요 상태 확인 실패", err);
-      }
-    };
+    // const fetchLikedStatus = async () => {
+    //   try {
+    //     const favorites = (await getFavoritePrfListReq()) as { prfId: string }[];
+    //     if (favorites.some((fav) => fav.prfId === id)) {
+    //       setLiked(true);
+    //     }
+    //   } catch (err) {
+    //     console.error("좋아요 상태 확인 실패", err);
+    //   }
+    // };
 
       fetchPerformance();
-      fetchLikedStatus();
-    }, [id]);
 
-    const handleToggleFavorite = async () => {
-      try {
-        if (!id) return;
-        await toggleFavoriteReq(id);
-        setLiked((prev) => !prev);
-      } catch (err) {
-        console.error("좋아요 토글 실패", err);
-        alert("로그인이 필요합니다.");
-      }
-    };
+    //   fetchLikedStatus();
+    // }, [id]);
+
+    // const handleToggleFavorite = async () => {
+    //   try {
+    //     if (!id) return;
+    //     await toggleFavoriteReq(id);
+    //     setLiked((prev) => !prev);
+    //   } catch (err) {
+    //     console.error("좋아요 토글 실패", err);
+    //     alert("로그인이 필요합니다.");
+    //     navigate("/login");
+    //   }
+    // };
+
+    // 🔥 Zustand 방식으로 좋아요 상태 불러오기
+    if (id) fetchFavoriteState(id);
+
+  }, [id, fetchFavoriteState]);
+
+  // 🔥 좋아요 토글도 Zustand 함수 사용
+  const handleToggleFavorite = async () => {
+    if (!id) return;
+
+  // 🔥 Zustand 내부에서 서버 요청 + 로그인 체크 + 상태 업데이트 모두 처리함
+    await toggleFavorite(id);
+  };
 
   if (loading) return <div>로딩 중...</div>;
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
@@ -138,69 +153,67 @@ function PerformanceDetail() {
             }}
           >
             <s.PerformanceDetail1>
-            <h2>{performance.area}</h2>
-            <p>{performance.prfPlcNm}</p>
+            <h2 style={{ margin: 0, lineHeight: 2 }}>{performance.prfPlcNm}</h2>
+            <p>{performance.area}</p>
             </s.PerformanceDetail1>
             <p style={{ whiteSpace: 'pre-line' }}>
-              <s.PerformanceDetail2>
+              <s.PerformanceDetail2 style={{fontSize: "17.5px", lineHeight: 1.3, margin: 0 }}>
               {performance.prfStartDt} ~ {performance.prfEndDt}
               <br />
               {performance.dtGuidance?.toString()}
               </s.PerformanceDetail2>
             </p>
-            <s.PerformanceDetail3>
-            <p>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}<br />{performance.child === "Y" && "어린이 동반 가능"}</p>
-            <p>
-              {performance.ticketPrice?.toString().split(', ').map((price, index) => (
-                <span key={index}>
-                  {price}
-                  <br />
-                </span>
-              ))}
-            </p>
-            {performance.visit === "Y" && <p>내한 공연</p>}
-            {performance.festival === "Y" && <p>축제 행사</p>}
-            </s.PerformanceDetail3>
+            
           </div>
         </div>
-        <HeartIcon
+        <div style={{position: "absolute", top: "450px", left: "535px",textAlign: "left"}}>
+          <s.PerformanceDetail3>
+            <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}<br />{performance.child === "Y" && "어린이 동반 가능"}</p>
+            {performance.visit === "Y" && <p>내한 공연: ✔️</p>}
+            {performance.festival === "Y" && <p>축제 행사: ✔️</p>}
+            </s.PerformanceDetail3>
+        </div>
+        <div style={{position: "absolute", top: "433px", right: "150px", textAlign: "left"}}>
+          <s.PerformanceDetail1>
+          <p style={{fontSize: "17.5px"}}>
+            가격<br />
+            {performance.ticketPrice?.toString().split(', ').map((price, index) => (
+              <span key={index}>
+                {price}
+                <br />
+              </span>
+            ))}
+          </p>
+          </s.PerformanceDetail1>
+        </div>
+        <HeartIcon style={{position: "absolute", top: "40px", right: "-70px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
+        {performance.providerUrl && (
+        <button
+          onClick={() => {
+            const firstUrl = performance.providerUrl.split(",")[0].trim();
+            const validUrl = firstUrl.startsWith("http")
+              ? firstUrl
+              : `https://${firstUrl}`;
+            window.open(validUrl, "_blank");
+          }}
           style={{
             position: "absolute",
-            top: "40px",
-            right: "-70px",
-            fontSize: "40px",
-            color: "crimson",
+            bottom: "40px",
+            right: "-100px",
+            padding: "0 30px",
+            lineHeight: "60px",
+            fontSize: "23px",
             cursor: "pointer",
+            borderRadius: "30px",
+            backgroundColor: "white",
+            color: "black",
           }}
-          onClick={handleToggleFavorite}
-        />
-        {performance.providerUrl && (
-          <button
-            onClick={() => {
-              const firstUrl = performance.providerUrl.split(",")[0].trim();
-              const validUrl = firstUrl.startsWith("http")
-                ? firstUrl
-                : `https://${firstUrl}`;
-              window.open(validUrl, "_blank");
-            }}
-            style={{
-              position: "absolute",
-              bottom: "40px",
-              right: "-100px",
-              padding: "0 30px",
-              lineHeight: "60px",
-              fontSize: "23px",
-              cursor: "pointer",
-              borderRadius: "30px",
-              backgroundColor: "white",
-              color: "black",
-            }}
-          >
-            예매 바로가기→
-          </button>
-        )}
+        >
+          예매 바로가기→
+        </button>
+      )}
       </div>
-        <hr style={{ width: "100%", border: "1px solid #ccc", margin: "50px 0" }} />
+        <hr style={{ width: "100%", border: "1px solid #ccc", margin: "120px 0", marginBottom: "90px" }} />
 
       {performance.detailImgUrl && performance.detailImgUrl.trim() !== "" && (
         <div
