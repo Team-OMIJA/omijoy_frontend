@@ -10,15 +10,26 @@ import * as s from "./styles";
 
 function Top1Favorite() {
   const [data, setData] = useState<ScrapRank | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
+    const loadData = async () => {
       const top1 = await getTop1FavoriteForBanner();
       setData(top1);
-    })();
+      setLoading(false);
+    };
+
+    loadData();
   }, []);
 
-  if (!data) return null;
+  // 로딩 중 또는 데이터 없음
+  if (loading || !data) return null;
+
+  const title = removeRegionTag(data.prfName);
+  const dateRange = formatDateRange(
+    formatDateDot(data.prfStartDt),
+    formatDateDot(data.prfEndDt)
+  );
 
   return (
     <s.Container>
@@ -32,15 +43,8 @@ function Top1Favorite() {
         {/* 왼쪽 텍스트 */}
         <s.LeftTextArea>
           <s.SubLabel>누적 스크랩 수 1위</s.SubLabel>
-
-          <s.Title>{removeRegionTag(data.prfName)}</s.Title>
-
-          <s.DateText>
-            {formatDateRange(
-              formatDateDot(data.prfStartDt),
-              formatDateDot(data.prfEndDt)
-            )}
-          </s.DateText>
+          <s.Title>{title}</s.Title>
+          <s.DateText>{dateRange}</s.DateText>
         </s.LeftTextArea>
 
         {/* 오른쪽 포스터 */}

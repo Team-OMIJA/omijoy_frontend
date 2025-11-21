@@ -5,6 +5,7 @@ import { fetchAwardPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import CachedIcon from "@mui/icons-material/Cached";
 import * as s from "../PerformanceStyles";
+import * as ts from "./styles";
 
 function AwardRecommendList() {
   const [allPerformances, setAllPerformances] = useState<AwardPerformance[]>(
@@ -17,22 +18,26 @@ function AwardRecommendList() {
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 랜덤 5개 선택 함수
+  // --- 랜덤 5개 선택 ---
   const pickRandomFive = (arr: AwardPerformance[]) => {
     return [...arr].sort(() => Math.random() - 0.5).slice(0, 5);
   };
 
+  // --- "새로고침" 버튼 ---
   const handleNext = () => {
     setVisiblePerformances(pickRandomFive(allPerformances));
   };
 
+  // --- 초기 데이터 요청 ---
   useEffect(() => {
-    (async () => {
+    const loadData = async () => {
       const data = await fetchAwardPerformances();
       setAllPerformances(data);
       setVisiblePerformances(pickRandomFive(data));
       setLoading(false);
-    })();
+    };
+
+    loadData();
   }, []);
 
   return (
@@ -40,9 +45,9 @@ function AwardRecommendList() {
       <s.SectionHeader>
         <s.SectionTitle>수상작 추천 5</s.SectionTitle>
 
-        <s.RefreshButton onClick={handleNext}>
+        <ts.RefreshButton onClick={handleNext}>
           <CachedIcon style={{ fontSize: "25px" }} />
-        </s.RefreshButton>
+        </ts.RefreshButton>
       </s.SectionHeader>
 
       {loading ? (
