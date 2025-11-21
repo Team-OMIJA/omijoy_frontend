@@ -33,16 +33,6 @@ export const SectionSubTitle = styled.h3`
   color: #acacac;
 `;
 
-/* 그리드 */
-export const PerformanceGrid = styled.div`
-  width: 100%;
-  height: 470px;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  column-gap: 30px;
-  row-gap: 40px;
-`;
-
 /* 카드 전체 */
 export const PerformanceCard = styled.div`
   text-align: left;

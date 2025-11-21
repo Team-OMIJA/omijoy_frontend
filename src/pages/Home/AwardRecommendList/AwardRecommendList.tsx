@@ -19,6 +19,8 @@ function AwardRecommendList() {
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fade, setFade] = useState(false);
+  const [carouselKey, setCarouselKey] = useState(0);
 
   // --- 랜덤 5개 선택 ---
   const pickRandomFive = (arr: AwardPerformance[]) => {
@@ -27,7 +29,13 @@ function AwardRecommendList() {
 
   // --- "새로고침" 버튼 ---
   const handleNext = () => {
-    setVisiblePerformances(pickRandomFive(allPerformances));
+    setFade(true);
+
+    setTimeout(() => {
+      setVisiblePerformances(pickRandomFive(allPerformances));
+      setCarouselKey((prev) => prev + 1);
+      setFade(false);
+    }, 300);
   };
 
   // --- 초기 데이터 요청 ---
@@ -42,10 +50,10 @@ function AwardRecommendList() {
     loadData();
   }, []);
 
-  // --- 5초마다 자동 새로고침 ---
+  // --- 8초마다 자동 새로고침 ---
   const autoplay = useRef(
     Autoplay({
-      delay: 5000,
+      delay: 8000,
       stopOnInteraction: false,
     })
   );
@@ -53,7 +61,7 @@ function AwardRecommendList() {
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
-    }, 7000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
@@ -72,41 +80,50 @@ function AwardRecommendList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <Carousel
-          slideSize="20%"
-          slideGap="30px"
-          height={470}
-          withControls={false}
-          plugins={[autoplay.current]}
-          emblaOptions={{
-            align: "start",
-            slidesToScroll: 1,
-            dragFree: false,
+        <div
+          style={{
+            width: "100%",
+            transition: "opacity 0.3s ease",
+            opacity: fade ? 0 : 1,
           }}
-          onSlideChange={() => handleNext()}
         >
-          {visiblePerformances.map((p, i) => (
-            <Carousel.Slide key={i}>
-              <s.PerformanceCard>
-                <s.Poster
-                  src={p.poster}
-                  alt={p.title}
-                  onClick={() => {
-                    setSelectedPrfId(p.id);
-                    setOpen(true);
-                  }}
-                />
+          <Carousel
+            key={carouselKey}
+            slideSize="20%"
+            slideGap="30px"
+            height={470}
+            withControls={false}
+            plugins={[autoplay.current]}
+            emblaOptions={{
+              align: "start",
+              slidesToScroll: 1,
+              dragFree: false,
+            }}
+            onSlideChange={() => handleNext()}
+          >
+            {visiblePerformances.map((p, i) => (
+              <Carousel.Slide key={i}>
+                <s.PerformanceCard>
+                  <s.Poster
+                    src={p.poster}
+                    alt={p.title}
+                    onClick={() => {
+                      setSelectedPrfId(p.id);
+                      setOpen(true);
+                    }}
+                  />
 
-                <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
-                <s.PerformancePlace>{p.place}</s.PerformancePlace>
-                <s.PerformancePeriod>
-                  {p.stDate} - {p.edDate}
-                </s.PerformancePeriod>
-                <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
-              </s.PerformanceCard>
-            </Carousel.Slide>
-          ))}
-        </Carousel>
+                  <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                  <s.PerformancePlace>{p.place}</s.PerformancePlace>
+                  <s.PerformancePeriod>
+                    {p.stDate} - {p.edDate}
+                  </s.PerformancePeriod>
+                  <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
+                </s.PerformanceCard>
+              </Carousel.Slide>
+            ))}
+          </Carousel>
+        </div>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
