@@ -346,7 +346,6 @@ function PerformanceList() {
           )}
         </div>
       </div>
-
       <div
         style={{
           display: "flex",
