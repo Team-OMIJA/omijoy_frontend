@@ -1,13 +1,10 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect} from "react";
 import KaKaoMap from "./KaKaoMap";
-import {
-  findNearbyPlaces,
-  findPlacesByGugun,
-  PlaceMarker,
-} from "../../../apis/performanceplaceApi";
+import {findNearbyPlaces, findPlacesByGugun, PlaceMarker,} from "../../../apis/performanceplaceApi";
 import { KOREA_REGIONS } from "../../../utils/regions";
 import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
 import RegionFilterSidebar from "../PerformancePlaceModal/RegionFilterSidebarModal";
+import * as S from "./PerformancePlaceStyles";
 
 type SidoKey = keyof typeof KOREA_REGIONS;
 
@@ -155,54 +152,23 @@ function PerformancePlaceMap() {
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        touchAction: "none",
-        padding: 0,
-        margin: 0,
-        position: "relative",
-      }}
-    >
-      <div
-        style={{ flex: 1, position: "relative", width: "100%", height: "100%" }}
-      >
-        {isKakaoMapLoaded && (
-          <RegionFilterSidebar
-            selectedSido={tempSido}
-            selectedGugun={tempGugun}
-            onSidoChange={setTempSido}
-            onGugunChange={setTempGugun}
-            onApply={handleFilterApply}
-          />
+    <S.MapWrapper>
+      <S.MapContainer>
+        {isKakaoMapLoaded && !isLocationDenied && (
+          <>
+            <RegionFilterSidebar
+              selectedSido={tempSido}
+              selectedGugun={tempGugun}
+              onSidoChange={setTempSido}
+              onGugunChange={setTempGugun}
+              onApply={handleFilterApply}
+            />
+          </>
         )}
-
         {errorMessage && (
-          <div
-            style={{
-              position: "absolute",
-              top: "20px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 20,
-              background: "rgba(255, 255, 255, 0.95)",
-              padding: "8px 16px",
-              borderRadius: "20px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-              fontSize: "14px",
-              fontWeight: "bold",
-              color: "red",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <S.ErrorMessage>
             <span>{errorMessage}</span>
-          </div>
+          </S.ErrorMessage>
         )}
         {isKakaoMapLoaded ? (
           <KaKaoMap
@@ -216,25 +182,16 @@ function PerformancePlaceMap() {
             onMyLocationClick={getLocation}
           />
         ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              background: "#f0f0f0",
-            }}
-          >
+          <S.MapLoadingPlaceholder>
             지도를 불러오는 중입니다...
-          </div>
+          </S.MapLoadingPlaceholder>
         )}
-      </div>
+      </S.MapContainer>
 
       {isModalOpen && selectedPlace && (
         <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
       )}
-    </div>
+    </S.MapWrapper>
   );
 }
 
