@@ -91,8 +91,8 @@ function PerformanceDetail() {
           height={500}
           style={{ borderRadius: "10px" }}
         />
+        <HeartIcon style={{position: "absolute", top: "130px", right: "210px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
       </div>
-      <div style={{marginTop: "-570px", marginRight: "-100px"}}>
         <s.PerformanceTitle>
               <h1>{removeRegionTag(performance.prfNm)}</h1>
             </s.PerformanceTitle>
@@ -172,8 +172,7 @@ function PerformanceDetail() {
             예매 바로가기→
           </button>
           
-      </div>
-      <HeartIcon style={{position: "absolute", top: "130px", right: "210px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
+      
       <hr style={{ width: "100%", border: "1px solid #ccc", margin: "120px 0", marginBottom: "90px" }} />
       
 
