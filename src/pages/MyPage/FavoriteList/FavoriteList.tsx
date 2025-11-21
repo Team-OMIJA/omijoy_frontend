@@ -42,8 +42,8 @@ function FavoriteList() {
     dots: false, // 점 필요 없으면 false
     infinite: true, // 무한 슬라이드
     speed: 500,
-    slidesToShow: 6, // ⭐ 한 화면에 6개 보여주기
-    slidesToScroll: 1, // ⭐ 한 번에 1개씩 이동 (너가 원한 기능)
+    slidesToShow: 6, // 한 화면에 6개 보여주기
+    slidesToScroll: 1, // 한 번에 1개씩 이동 (너가 원한 기능)
     arrows: true, // 양쪽 화살표 켜기
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
