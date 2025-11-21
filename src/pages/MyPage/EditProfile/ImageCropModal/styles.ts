@@ -8,8 +8,8 @@ export const modalContainer = css({
   transform: "translate(-50%, -50%)",
   width: 360,
   height: 420,
-  backgroundColor: "#111",
-  borderRadius: "16px",
+  backgroundColor: "#121212",
+  borderRadius: "3px",
   padding: "20px",
   display: "flex",
   flexDirection: "column",
@@ -22,19 +22,21 @@ export const cropWrapper = css({
   width: "100%",
   height: "100%",
   position: "relative",
-  borderRadius: "12px",
+  // borderRadius: "9px",
   overflow: "hidden",
 });
 
 export const doneButton = css({
   marginTop: "12px",
+  marginLeft: "250px",
   padding: "8px 18px",
-  backgroundColor: "white",
+  backgroundColor: "#181818ff",
+  color: "#fefefeff",
   border: "none",
-  borderRadius: "6px",
+  borderRadius: "20px",
   cursor: "pointer",
   zIndex: 9999,
   "&:hover": {
-    backgroundColor: "#ddd",
+    backgroundColor: "#2f2f2fff",
   },
 });
