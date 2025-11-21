@@ -10,6 +10,7 @@ import OAuth2Redirect from "../../pages/Auth/OAuth2/OAuth2Redirect";
 import FavoriteSharedList from "../../pages/MyPage/FavoriteList/FavoriteSharedList";
 import AdminDashboard from "../../pages/AdminDashboard/AdminDashboard";
 import NavBar from "../../components/layout/NavBar/NavBar";
+import DiscountInfo from "../../pages/Home/Banner/DiscountInfo/DiscountInfo";
 
 function MainRouter() {
   return (
@@ -23,15 +24,24 @@ function MainRouter() {
           </>
         }
       />
-      <Route path="/theater" 
+      <Route
+        path="/theater"
         element={
           <>
-        <NavBar/>
-        <Theater />
+            <NavBar />
+            <Theater />
           </>
         }
-        />
-
+      />
+      <Route
+        path="/discountinfo"
+        element={
+          <>
+            <NavBar />
+            <DiscountInfo />
+          </>
+        }
+      />
       <Route element={<Layout />}>
         {/* index 사용시 기본 경로와 동일합니다. */}
         <Route index element={<Home />} />

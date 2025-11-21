@@ -21,7 +21,7 @@ function TopRankList() {
     Autoplay({
       delay: 5000,
       stopOnInteraction: false,
-      stopOnMouseEnter: true, // 마우스 오버 시 멈춤
+      stopOnMouseEnter: true,
     })
   );
 
