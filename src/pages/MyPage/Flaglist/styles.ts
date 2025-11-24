@@ -22,6 +22,20 @@ export const title = css`
   color: #e0e0e0;
 `;
 
+// 공연 스크랩 없을 시
+export const empty = css`
+  font-size: 16px;
+  text-align: center;
+  padding: 40px 0;
+`;
+
+// 로딩 중
+export const loading = css`
+  font-size: 16px;
+  text-align: center;
+  padding: 40px 0;
+`;
+
 export const list = css`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
