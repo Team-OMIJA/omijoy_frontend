@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { storage } from "../configs/firebaseConfig";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { storage } from '../configs/firebaseConfig';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
 export const useFirebaseUpload = () => {
   // 기본 상태 정의
@@ -10,9 +10,9 @@ export const useFirebaseUpload = () => {
   const [progress, setProgress] = useState<number>(0);
   // 업로드 완료 -> firebase가 반환하는 실제 링크
   // 업로드 URL이 아직 없을 수도 있고, 생기면 문자열일 수도 있다
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [_downloadUrl, setDownloadUrl] = useState<string | null>(null);
   // 업로드 중 발생한 에러
-  const [error, setError] = useState<Error | null>(null);
+  const [_error, setError] = useState<Error | null>(null);
   // 업로드 중인지-아닌지
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
@@ -22,7 +22,7 @@ export const useFirebaseUpload = () => {
     return new Promise((resolve, reject) => {
       // 파일이나 폴더가 비어있으면 업로드 X 에러 발생시킴
       if (!file || !folder) {
-        reject(new Error("파일이나 폴더가 지정되지 않았습니다."));
+        reject(new Error('파일이나 폴더가 지정되지 않았습니다.'));
         return;
       }
 
@@ -35,7 +35,7 @@ export const useFirebaseUpload = () => {
 
       // uuid로 중복 방지용 문자열 생성
       // 파일 확장자 추출(.뒤로 png, jpg, jpeg등)
-      const fileName = `${uuidv4()}.${file.name.split(".").pop()}`;
+      const fileName = `${uuidv4()}.${file.name.split('.').pop()}`;
       const storageRef = ref(storage, `${folder}/${fileName}`);
 
       // 업로드 시작(진행률 추적)
@@ -43,7 +43,7 @@ export const useFirebaseUpload = () => {
 
       uploadTask.on(
         // 업로드 중일때
-        "state_changed",
+        'state_changed',
         (snapshot) => {
           // 진행률 계산
           const currentProgress = Math.round(

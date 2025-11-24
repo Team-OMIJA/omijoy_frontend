@@ -12,6 +12,7 @@ type User = {
 
 function Login() {
   const navigate = useNavigate();
+  const [capsLockOn, setCapsLockOn] = useState(false);
 
   const [user, setUser] = useState<User>({
     email: '',
@@ -68,8 +69,45 @@ function Login() {
           </Typography>
 
           <Stack spacing={2} className='login-form'>
-            <TextField fullWidth label='이메일' name='email' onChange={changeHandler} />
-            <TextField fullWidth type='password' label='패스워드' name='password' onChange={changeHandler} />
+            <TextField
+              fullWidth
+              label='이메일'
+              name='email'
+              onChange={changeHandler}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  loginHandler();
+                }
+              }}
+            />
+            <TextField
+              fullWidth
+              type='password'
+              label='패스워드'
+              name='password'
+              onChange={changeHandler}
+              onKeyDown={(e) => {
+                // CapsLock 감지
+                if (e.getModifierState && e.getModifierState('CapsLock')) {
+                  setCapsLockOn(true);
+                } else {
+                  setCapsLockOn(false);
+                }
+
+                // Enter 눌렀을 때 로그인
+                if (e.key === 'Enter') {
+                  loginHandler();
+                }
+              }}
+              onKeyUp={(e) => {
+                // 키를 뗐을 때도 상태 한 번 더 확인 (CapsLock 끈 경우)
+                if (e.getModifierState) {
+                  setCapsLockOn(e.getModifierState('CapsLock'));
+                }
+              }}
+              error={capsLockOn}
+              helperText={capsLockOn ? 'CapsLock이 켜져 있습니다.' : ' '}
+            />
             <Button className='login-submit-button' fullWidth variant='outlined' color='primary' onClick={loginHandler}>
               로그인
             </Button>
