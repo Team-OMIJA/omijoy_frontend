@@ -1,10 +1,10 @@
-import { useCallback, useState, useEffect} from "react";
-import KaKaoMap from "./KaKaoMap";
-import {findNearbyPlaces, findPlacesByGugun, PlaceMarker,} from "../../../apis/performanceplaceApi";
-import { KOREA_REGIONS } from "../../../utils/regions";
-import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
-import RegionFilterSidebar from "../PerformancePlaceModal/RegionFilterSidebarModal";
-import * as S from "./PerformancePlaceMapStyles";
+import { useCallback, useState, useEffect } from 'react';
+import KaKaoMap from './KaKaoMap';
+import { findNearbyPlaces, findPlacesByGugun, PlaceMarker } from '../../../apis/performanceplaceApi';
+import { KOREA_REGIONS } from '../../../utils/regions';
+import PerformancePlaceModal from '../PerformancePlaceModal/PerformancePlaceModal';
+import RegionFilterSidebar from '../PerformancePlaceModal/RegionFilterSidebarModal';
+import * as S from './PerformancePlaceMapStyles';
 
 type SidoKey = keyof typeof KOREA_REGIONS;
 
@@ -19,13 +19,14 @@ function PerformancePlaceMap() {
     lng: KOREA_CENTER.lng,
   });
   const [mapLevel, setMapLevel] = useState(KOREA_LEVEL);
-  const [isLoading, setIsLoading] = useState(false);
+  //eslint-disable-next-line
+  const [_isLoading, setIsLoading] = useState(false);
   const [places, setPlaces] = useState<PlaceMarker[]>([]);
   const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [tempSido, setTempSido] = useState<SidoKey | "">("");
-  const [tempGugun, setTempGugun] = useState<string>("");
+  const [tempSido, setTempSido] = useState<SidoKey | ''>('');
+  const [tempGugun, setTempGugun] = useState<string>('');
   const [currentLocation, setCurrentLocation] = useState<{
     lat: number;
     lng: number;
@@ -34,9 +35,9 @@ function PerformancePlaceMap() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceMarker | null>(null);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, []);
 
@@ -57,7 +58,7 @@ function PerformancePlaceMap() {
           setMapLevel(LOCAL_LEVEL + 1);
         },
         (error) => {
-          console.error("초기 위치 로드 실패:", error.message);
+          console.error('초기 위치 로드 실패:', error.message);
         },
         { enableHighAccuracy: true, maximumAge: 10000 }
       );
@@ -70,7 +71,7 @@ function PerformancePlaceMap() {
     setPlaces([]);
 
     if (!navigator.geolocation) {
-      setErrorMessage("Geolocation이 지원되지 않습니다.");
+      setErrorMessage('Geolocation이 지원되지 않습니다.');
       setIsLocationDenied(true);
       setIsLoading(false);
       return;
@@ -88,7 +89,7 @@ function PerformancePlaceMap() {
         setMapLevel(LOCAL_LEVEL);
         setIsLocationDenied(false);
       } catch (error) {
-        setErrorMessage("근처 공연장 로드에 실패했습니다.");
+        setErrorMessage('근처 공연장 로드에 실패했습니다.');
         setCurrentLocation(null);
       }
       setIsLoading(false);
@@ -96,7 +97,7 @@ function PerformancePlaceMap() {
 
     const handleError = (error: GeolocationPositionError) => {
       if (error.code === 1) {
-        setErrorMessage("위치 권한이 거부되었습니다.");
+        setErrorMessage('위치 권한이 거부되었습니다.');
         setIsLocationDenied(true);
         setMapCenter(KOREA_CENTER);
         setMapLevel(KOREA_LEVEL);
@@ -123,7 +124,7 @@ function PerformancePlaceMap() {
 
   const handleFilterApply = async () => {
     if (!tempSido) {
-      alert("시/도를 선택해주세요.");
+      alert('시/도를 선택해주세요.');
       return;
     }
 
@@ -133,7 +134,7 @@ function PerformancePlaceMap() {
     setCurrentLocation(null);
 
     try {
-      const markerList = await findPlacesByGugun(tempSido, tempGugun);
+      const markerList = await findPlacesByGugun(tempSido as string, tempGugun);
       setPlaces(markerList);
 
       if (markerList.length > 0) {
@@ -143,10 +144,10 @@ function PerformancePlaceMap() {
         });
         setMapLevel(tempGugun ? GU_LEVEL : 10);
       } else {
-        setErrorMessage("해당 지역에 공연장이 없습니다.");
+        setErrorMessage('해당 지역에 공연장이 없습니다.');
       }
     } catch (error) {
-      setErrorMessage("지역 필터 검색에 실패했습니다.");
+      setErrorMessage('지역 필터 검색에 실패했습니다.');
     }
     setIsLoading(false);
   };
@@ -182,15 +183,11 @@ function PerformancePlaceMap() {
             onMyLocationClick={getLocation}
           />
         ) : (
-          <S.MapLoadingPlaceholder>
-            지도를 불러오는 중입니다...
-          </S.MapLoadingPlaceholder>
+          <S.MapLoadingPlaceholder>지도를 불러오는 중입니다...</S.MapLoadingPlaceholder>
         )}
       </S.MapContainer>
 
-      {isModalOpen && selectedPlace && (
-        <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
-      )}
+      {isModalOpen && selectedPlace && <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />}
     </S.MapWrapper>
   );
 }
