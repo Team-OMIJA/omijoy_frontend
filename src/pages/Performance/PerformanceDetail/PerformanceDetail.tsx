@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
-import * as s from "../../Home/PerformanceStyles";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { removeRegionTag } from "../../../apis/performanceApi";
+import * as s from "./styles";
 
 interface PerformanceDetail {
   prfId: string;
@@ -57,10 +57,8 @@ function PerformanceDetail() {
     fetchPerformance();
 
     if (id) fetchFavoriteState(id);
-
   }, [id, fetchFavoriteState]);
 
-  
   const handleToggleFavorite = async () => {
     if (!id) return;
 
@@ -73,7 +71,7 @@ function PerformanceDetail() {
   const HeartIcon = liked ? ImHeart : SlHeart;
 
   const getSiteName = (url: string) => {
-  const lower = url.toLowerCase();
+    const lower = url.toLowerCase();
     if (lower.includes("interpark")) return "인터파크";
     if (lower.includes("ticketlink")) return "티켓링크";
     if (lower.includes("yes24")) return "YES24";
@@ -97,193 +95,147 @@ function PerformanceDetail() {
     }
   };
 
-
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <div
-        style={{
-          display: "flex",
-          padding: "40px",
-          borderRadius: "16px",
-          width: "75%",
-          marginRight: "120px",
-          marginTop: "25px",
-          // alignItems: "center",
-          gap: "100px",
-          alignItems: "flex-start",
-          position: "relative",
-        }}
-      >
-      <div>
-        <img
-          src={performance.posterImgUrl}
-          alt={performance.prfNm}
-          width={400}
-          height={500}
-          style={{ borderRadius: "10px" }}
-        />
-      </div>
-      <div style={{marginTop: 0,  width: "524px"}}>
-        <s.PerformanceTitle>
-          <h1 style={{marginTop: 0}}>{removeRegionTag(performance.prfNm)}</h1>
-        </s.PerformanceTitle>
-        <s.PerformanceDetail1>
-          <h2 style={{ margin: 0, lineHeight: 2 }}>
-            {(() => {
-              const original = performance.prfPlcNm;
-              let result = '';
-              const seen = new Set<string>();
-              original.split(/\s*(\([^)]+\))/).forEach((part) => {
-                if (!part) return;
-                if (!part.startsWith('(')) {
-                  result += part;
-                  return;
-                }
-                const content = part.slice(1, -1).trim();
-                const normalizedContent = content.replace(/\s+/g, '');
-                const normalizedResult = result.replace(/\s+/g, '');
-                if (seen.has(normalizedContent) || normalizedResult.includes(normalizedContent)) {
-                  return;
-                }
-                seen.add(normalizedContent);
-                result += `(${content})`;
-              });
-              return result.trim();
-            })()}
-          </h2>
-          <p>{performance.area}</p>
-        </s.PerformanceDetail1>
+    <s.PageBackground>
+      <s.Container>
+        <s.Poster src={performance.posterImgUrl} />
 
-        <s.PerformanceTitle>
-          {performance.prfStartDt} ~ {performance.prfEndDt}
-        </s.PerformanceTitle>
-        <s.PerformanceDetail2 style={{fontSize: "17.5px"}}>
-          <br />
-          {performance.dtGuidance?.split('),').map((time) => time.trim()).map((line, idx) => (<span key={idx}>{line.endsWith(')') ? line : line + ')'}<br /></span>))}
-        </s.PerformanceDetail2>
-        <s.PerformanceDetail3>
-        <p style={{ fontSize: "17.5px"}}>⏱ {performance.runtime} <br /> 🎭 {performance.genreNm}<br />👶 {performance.prfAge}</p>
-        </s.PerformanceDetail3>
-        <s.PerformanceDetail3>
-        <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
-        {performance.child === "Y" && "✔️ 미취학 아동 입장 가능"}</p>
-        <p style={{ fontSize: "17.5px", margin: 0, lineHeight: 1.5 }}>
-        {performance.visit === "Y" && "✔️ 내한 공연"}</p>
-        </s.PerformanceDetail3>
-        <s.PerformanceDetail1>
-        {performance.ticketPrice?.toString().split(', ').map((price, idx) => (
-          <p key={`price-${idx}`} style={{ fontSize: "17.5px", marginBottom: "5px" }}>
-            {price}
-          </p>
-        ))}
-        </s.PerformanceDetail1>
+        {/* 오른쪽 내용 섹션 */}
+        <s.Content>
+          {/* <s.HeartWrapper>
+            <HeartIcon className="heart" onClick={handleToggleFavorite} />
+          </s.HeartWrapper> */}
 
-        <div
-          onMouseEnter={() => setShowLinks(true)}
-          onMouseLeave={() => setShowLinks(false)}
-          style={{display: "flex", flexDirection: "column", alignItems: "flex-end", position: "absolute", top: "40px", right: "-80px", marginTop: "450px"}}>
-        <button
-          style={{
-            width: "200px",
-            height: "60px",
-            // marginTop: "20px",
-            backgroundColor: "#Bf1C1C",
-            color: "#dbdbdb",
-            fontWeight: 500,
-            borderRadius: "6px",
-            textAlign: "center",
-            lineHeight: "60px",
-            border: "none",
-            cursor: "pointer"
-          }}
-        >
-          예매 바로가기 →
-        </button>
-        
-        {showLinks && (
-          <div
-            style={{
-              marginTop: "10px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "10px",
-              transition: "all 0.2s",
-              backgroundColor: "#424141f3",
-              padding: "20px",    
-              borderRadius: "20px",  
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              minWidth: "220px",
-              position: "relative", 
-              right: "-100px"   // 모달 위치 조정
-            }}
-          >
-            {performance.providerUrl
-              .split(",")
-              .map((rawUrl, index) => {
-                const trimmed = rawUrl.trim();
-                if (!trimmed) return null;
+          <s.TopRightButtons>
+            <s.HeartWrapper>
+              <s.HeartIconButton liked={liked} onClick={handleToggleFavorite}>
+                <HeartIcon />
+              </s.HeartIconButton>
 
-                const validUrl = trimmed.startsWith("http")
-                  ? trimmed
-                  : `https://${trimmed}`;
+              {/* 스크랩 카운트도 표시하고 싶으면 */}
+              {/* {performance.scrapCount > 0 && (
+                <s.ScrapCountText>{performance.scrapCount}</s.ScrapCountText>
+              )} */}
+            </s.HeartWrapper>
+          </s.TopRightButtons>
 
-                const siteName = getSiteName(validUrl);
+          {/* 제목 */}
+          <s.Title>{removeRegionTag(performance.prfNm)}</s.Title>
 
-                return (
-                  <button
-                    key={index}
-                    onClick={() => window.open(validUrl, "_blank")}
-                    style={{
-                      width: "200px",
-                      height: "50px",
-                      backgroundColor: "#Bf1C1C",
-                      color: "#f0f0f0",
-                      fontWeight: 500,
-                      borderRadius: "20px",
-                      textAlign: "center",
-                      lineHeight: "50px",
-                      display: "block",
-                      border: "none",
-                      cursor: "pointer"
-                    }}
-                  >
-                    {siteName}
-                  </button>
-                );
-              })}
-          </div>
-        )}
-        </div>
-        </div>
-        <HeartIcon style={{position: "absolute", top: "40px", right: "-80px", fontSize: "40px", color: "crimson", cursor: "pointer"}}  onClick={handleToggleFavorite}/>
-      </div>
-      
-      <hr style={{ width: "100%", border: "1px solid #ccc", marginTop: "0px",marginBottom: "50px" }} />
-      {performance.detailImgUrl && performance.detailImgUrl.trim() !== "" && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {performance.detailImgUrl
-            .split(",")
-            .map((url) => url.trim())
-            .filter((url) => url)
-            .map((url, idx) => (
-              <img
-                key={idx}
-                src={url}
-                alt={`detail-${idx}`}
-                style={{ width: "100%", maxWidth: "800px" }}
-              />
-            ))}
-        </div>
-      )}
-    </div>
+          {/* 2 컬럼 정보 레이아웃 */}
+          <s.InfoGrid>
+            {/* 왼쪽 컬럼 */}
+            <s.InfoGroup>
+              <s.InfoItem>
+                <s.Label>공연 장소</s.Label>
+                <s.Value>{performance.prfPlcNm}</s.Value>
+              </s.InfoItem>
+
+              <s.InfoItem>
+                <s.Label>지역</s.Label>
+                <s.Value>{performance.area}</s.Value>
+              </s.InfoItem>
+
+              <s.InfoItem>
+                <s.Label>공연 기간</s.Label>
+                <s.Value>
+                  {performance.prfStartDt} ~ {performance.prfEndDt}
+                </s.Value>
+              </s.InfoItem>
+
+              <s.InfoItem>
+                <s.Label>공연 시간</s.Label>
+                <s.Value>
+                  {performance.dtGuidance
+                    ?.split("),")
+                    .map((t) => (t.endsWith(")") ? t : t + ")"))
+                    .join("\n")}
+                </s.Value>
+              </s.InfoItem>
+            </s.InfoGroup>
+
+            {/* 오른쪽 컬럼 */}
+            <s.InfoGroup>
+              <s.InfoItem>
+                <s.Label>관람시간</s.Label>
+                <s.Value>{performance.runtime}</s.Value>
+              </s.InfoItem>
+
+              <s.InfoItem>
+                <s.Label>장르</s.Label>
+                <s.Value>{performance.genreNm}</s.Value>
+              </s.InfoItem>
+
+              <s.InfoItem>
+                <s.Label>관람등급</s.Label>
+                <s.Value>{performance.prfAge}</s.Value>
+              </s.InfoItem>
+
+              {performance.child === "Y" && (
+                <s.InfoItem>
+                  <s.Value>✔ 미취학 아동 입장 가능</s.Value>
+                </s.InfoItem>
+              )}
+
+              {performance.visit === "Y" && (
+                <s.InfoItem>
+                  <s.Value>✔ 내한 공연</s.Value>
+                </s.InfoItem>
+              )}
+
+              <s.InfoItem>
+                <s.Label>가격</s.Label>
+                <s.Value>
+                  {performance.ticketPrice
+                    ?.toString()
+                    .split(", ")
+                    .map((p, i) => (
+                      <div key={i}>{p}</div>
+                    ))}
+                </s.Value>
+              </s.InfoItem>
+              {/* 예매 버튼 + dropdown */}
+              <s.TicketWrapper
+                onMouseEnter={() => setShowLinks(true)}
+                onMouseLeave={() => setShowLinks(false)}
+              >
+                <s.TicketButton>예매 바로가기 →</s.TicketButton>
+
+                {showLinks && (
+                  <s.TicketDropdown>
+                    {performance.providerUrl?.split(",").map((raw, i) => {
+                      const url = raw.trim();
+                      if (!url) return null;
+
+                      const validUrl = url.startsWith("http")
+                        ? url
+                        : `https://${url}`;
+
+                      return (
+                        <s.TicketLink
+                          key={i}
+                          onClick={() => window.open(validUrl, "_blank")}
+                        >
+                          {getSiteName(validUrl)}
+                        </s.TicketLink>
+                      );
+                    })}
+                  </s.TicketDropdown>
+                )}
+              </s.TicketWrapper>
+            </s.InfoGroup>
+          </s.InfoGrid>
+        </s.Content>
+      </s.Container>
+
+      <s.Divider />
+
+      {/* 상세 이미지들 */}
+      {performance.detailImgUrl &&
+        performance.detailImgUrl
+          .split(",")
+          .map((url, i) => <s.DetailImage key={i} src={url.trim()} />)}
+    </s.PageBackground>
   );
 }
 
