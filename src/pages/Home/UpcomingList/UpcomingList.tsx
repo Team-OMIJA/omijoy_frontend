@@ -36,45 +36,49 @@ function UpcomingList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <ts.StyledCarousel
-          slideSize="20%"
-          slideGap="30px"
-          height={470}
-          emblaOptions={{
-            align: "start",
-            slidesToScroll: 1,
-            dragFree: true,
-          }}
-          withControls
-          controlSize={50}
-          controlsOffset="sm"
-        >
-          {performances.map((p) => (
-            <Carousel.Slide key={p.prfId}>
-              <s.PerformanceCard>
-                <s.Poster
-                  src={p.posterImgUrl}
-                  alt={p.prfNm}
-                  onClick={() => {
-                    setSelectedPrfId(p.prfId);
-                    setOpen(true);
-                  }}
-                />
-                <s.PerformanceTitle>{p.prfNm}</s.PerformanceTitle>
-                <s.PerformancePlace>{p.prfPlcNm}</s.PerformancePlace>
+        <div style={{ width: "100%", position: "relative" }}>
+          {/* <s.gradientLeft style={{ height: "300px" }} />
+          <s.gradientRight style={{ height: "300px" }} /> */}
+          <ts.StyledCarousel
+            slideSize="20%"
+            slideGap="30px"
+            height={470}
+            emblaOptions={{
+              align: "start",
+              slidesToScroll: 1,
+              dragFree: true,
+            }}
+            withControls
+            controlSize={50}
+            controlsOffset="sm"
+          >
+            {performances.map((p) => (
+              <Carousel.Slide key={p.prfId}>
+                <s.PerformanceCard>
+                  <s.Poster
+                    src={p.posterImgUrl}
+                    alt={p.prfNm}
+                    onClick={() => {
+                      setSelectedPrfId(p.prfId);
+                      setOpen(true);
+                    }}
+                  />
+                  <s.PerformanceTitle>{p.prfNm}</s.PerformanceTitle>
+                  <s.PerformancePlace>{p.prfPlcNm}</s.PerformancePlace>
 
-                <s.PerformancePeriod>
-                  {formatDateRange(
-                    formatUIDate(p.prfStartDt),
-                    formatUIDate(p.prfEndDt)
-                  )}
-                </s.PerformancePeriod>
+                  <s.PerformancePeriod>
+                    {formatDateRange(
+                      formatUIDate(p.prfStartDt),
+                      formatUIDate(p.prfEndDt)
+                    )}
+                  </s.PerformancePeriod>
 
-                <s.PerformanceGenre>{p.genreNm}</s.PerformanceGenre>
-              </s.PerformanceCard>
-            </Carousel.Slide>
-          ))}
-        </ts.StyledCarousel>
+                  <s.PerformanceGenre>{p.genreNm}</s.PerformanceGenre>
+                </s.PerformanceCard>
+              </Carousel.Slide>
+            ))}
+          </ts.StyledCarousel>
+        </div>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />

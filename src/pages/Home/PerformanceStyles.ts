@@ -31,13 +31,29 @@ export const SectionSubTitle = styled.h3`
   font-weight: 700;
   margin: 0;
   color: #acacac;
+  margin-top: 8px;
+  margin-left: 3px;
 `;
 
 /* 카드 전체 */
 export const PerformanceCard = styled.div`
-  text-align: left;
+  position: relative;
   padding: 8px;
   border-radius: 14px;
+`;
+
+/* 텍스트 Wrapper */
+export const TextWrapper = styled.div`
+  position: relative;
+  padding-bottom: 10px;
+`;
+
+/* 공연 제목 */
+export const PerformanceTitle = styled.div`
+  font-size: 17px;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin-bottom: 6px;
 `;
 
 /* 포스터 이미지 */
@@ -56,23 +72,11 @@ export const Poster = styled.img`
   }
 `;
 
-/* 공연 제목 */
-export const PerformanceTitle = styled.div`
-  font-size: 17px;
-  font-weight: 600;
-  color: #e0e0e0;
-  margin-bottom: 6px;
-  word-break: keep-all;
-  overflow-wrap: break-word;
-  white-space: normal;
-`;
-
 /* 공연장 */
 export const PerformancePlace = styled.div`
   color: #dbdbdb;
   font-size: 14px;
   margin: 2px 0;
-  word-break: keep-all;
 `;
 
 /* 기간 */
@@ -110,42 +114,48 @@ export const PerformanceDetail3 = styled.div`
   margin: 3px 0;
 `;
 
-/* 왼쪽 페이드 (투명 → 배경색) */
-export const gradientLeft = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100px;
-  height: 100%;
-  z-index: 5;
-  pointer-events: none;
+// /* 왼쪽 페이드 (투명 → 배경색) */
+// export const gradientLeft = styled.div`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100px;
+//   height: 100%;
+//   z-index: 5;
+//   pointer-events: none;
 
-  background: linear-gradient(
-    to right,
+//   background: linear-gradient(
+//     to right,
 
-    rgba(18, 18, 18, 1) 0%,
-    rgba(18, 18, 18, 0.8) 30%,
-    rgba(18, 18, 18, 0.4) 60%,
-    rgba(18, 18, 18, 0) 100%
-  );
-`;
+//     rgba(18, 18, 18, 1) 0%,
+//     rgba(18, 18, 18, 0.8) 15%,
+//     rgba(18, 18, 18, 0.4) 35%,
+//     rgba(18, 18, 18, 0) 100%
+//   );
+// `;
 
-/* 오른쪽 페이드 (배경색 → 투명) */
-export const gradientRight = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100px;
-  height: 100%;
-  z-index: 5;
-  pointer-events: none;
+// /* 오른쪽 페이드 (배경색 → 투명) */
+// export const gradientRight = styled.div`
+//   position: absolute;
+//   top: 0;
+//   right: 0;
+//   width: 100px;
+//   height: 100%;
+//   z-index: 5;
+//   pointer-events: none;
 
-  background: linear-gradient(
-    to left,
+//   background: linear-gradient(
+//     to left,
 
-    rgba(18, 18, 18, 1) 0%,
-    rgba(18, 18, 18, 0.8) 30%,
-    rgba(18, 18, 18, 0.4) 60%,
-    rgba(18, 18, 18, 0) 100%
-  );
-`;
+//     rgba(18, 18, 18, 1) 0%,
+//     rgba(18, 18, 18, 0.8) 15%,
+//     rgba(18, 18, 18, 0.4) 35%,
+//     rgba(18, 18, 18, 0) 100%
+//   );
+// `;
+
+// export const PosterWrapper = styled.div`
+//   position: relative;
+//   width: 100%;
+//   height: 100%;
+// `;
