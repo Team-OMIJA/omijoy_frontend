@@ -42,40 +42,44 @@ function AwardRecommendList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <Carousel
-          slideSize="20%"
-          slideGap="30px"
-          height={470}
-          withControls={false}
-          plugins={[autoplay.current]}
-          emblaOptions={{
-            align: "start",
-            dragFree: false,
-            slidesToScroll: 5,
-          }}
-        >
-          {allPerformances.map((p, i) => (
-            <Carousel.Slide key={i}>
-              <s.PerformanceCard>
-                <s.Poster
-                  src={p.poster}
-                  alt={p.title}
-                  onClick={() => {
-                    setSelectedPrfId(p.id);
-                    setOpen(true);
-                  }}
-                />
+        <div style={{ width: "100%", position: "relative" }}>
+          {/* <s.gradientLeft style={{ height: "300px" }} />
+          <s.gradientRight style={{ height: "300px" }} /> */}
+          <Carousel
+            slideSize="20%"
+            slideGap="30px"
+            height={470}
+            withControls={false}
+            plugins={[autoplay.current]}
+            emblaOptions={{
+              align: "start",
+              dragFree: false,
+              slidesToScroll: 5,
+            }}
+          >
+            {allPerformances.map((p, i) => (
+              <Carousel.Slide key={i}>
+                <s.PerformanceCard>
+                  <s.Poster
+                    src={p.poster}
+                    alt={p.title}
+                    onClick={() => {
+                      setSelectedPrfId(p.id);
+                      setOpen(true);
+                    }}
+                  />
 
-                <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
-                <s.PerformancePlace>{p.place}</s.PerformancePlace>
-                <s.PerformancePeriod>
-                  {p.stDate} - {p.edDate}
-                </s.PerformancePeriod>
-                <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
-              </s.PerformanceCard>
-            </Carousel.Slide>
-          ))}
-        </Carousel>
+                  <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                  <s.PerformancePlace>{p.place}</s.PerformancePlace>
+                  <s.PerformancePeriod>
+                    {p.stDate} - {p.edDate}
+                  </s.PerformancePeriod>
+                  <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
+                </s.PerformanceCard>
+              </Carousel.Slide>
+            ))}
+          </Carousel>
+        </div>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
