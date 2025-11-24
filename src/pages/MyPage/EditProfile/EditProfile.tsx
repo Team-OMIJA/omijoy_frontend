@@ -78,10 +78,19 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
       }
 
       // axios patch 요청 전송
-      await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/user/${principal?.id}`, {
-        username,
-        profileImg: profileUrl,
-      });
+      await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/user/${principal?.id}`,
+        {
+          username,
+          profileImg: profileUrl,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem('jwt'),
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       // 전역 상태 업데이트 - 새 프로필 정보로 principal을 덮어씀
       login({
