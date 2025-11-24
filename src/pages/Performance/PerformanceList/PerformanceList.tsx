@@ -8,7 +8,7 @@ import {formatDateDot, formatDateRange } from "../../../components/FormatDate/Fo
 import { removeRegionTag } from "../../../apis/performanceApi";
 import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
 import * as s from "../../Home/PerformanceStyles";
-import * as ps from './style';
+import * as ps from './PerformanceListstyle';
 
 interface Performance {
   prfId: string;
