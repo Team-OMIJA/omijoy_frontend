@@ -1,38 +1,38 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
-import { TopRankPerformance } from "../../../types/homeTypes";
-import { fetchTopRankPerformances } from "../../../apis/performanceApi";
-import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Carousel } from "@mantine/carousel";
 import Autoplay from "embla-carousel-autoplay";
+
 import * as s from "../PerformanceStyles";
 import * as ts from "./styles";
 
+import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
+import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { fetchTopRankPerformances } from "../../../apis/performanceApi";
+import { TopRankPerformance } from "../../../types/homeTypes";
+
 function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const autoplay = useRef(
     Autoplay({
-      delay: 5000,
-      stopOnInteraction: false,
-      stopOnMouseEnter: true,
+      delay: 4000,
     })
   );
 
   useEffect(() => {
-    const loadData = async () => {
+    const load = async () => {
       const data = await fetchTopRankPerformances();
       setPerformances(data);
       setLoading(false);
     };
-
-    loadData();
+    load();
   }, []);
 
   return (
@@ -42,7 +42,7 @@ function TopRankList() {
         <s.SectionSubTitle>TOP 10</s.SectionSubTitle>
 
         <ts.MoreButton onClick={() => navigate("/performance")}>
-          <ArrowForwardIosIcon style={{ fontSize: "22px" }} />
+          <ArrowForwardIosIcon style={{ fontSize: 22 }} />
         </ts.MoreButton>
       </s.SectionHeader>
 
@@ -50,9 +50,8 @@ function TopRankList() {
         <PrfListSkeleton />
       ) : (
         <div style={{ width: "100%", position: "relative" }}>
-          <s.gradientLeft />
-          <s.gradientRight />
-
+          {/* <s.gradientLeft style={{ height: "300px" }} />
+          <s.gradientRight style={{ height: "300px" }} /> */}
           <Carousel
             slideSize="20%"
             slideGap="30px"
@@ -61,8 +60,8 @@ function TopRankList() {
             plugins={[autoplay.current]}
             emblaOptions={{
               align: "start",
-              slidesToScroll: 1,
               dragFree: true,
+              slidesToScroll: 1,
             }}
           >
             {performances.map((p, i) => (

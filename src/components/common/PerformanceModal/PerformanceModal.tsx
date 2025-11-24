@@ -26,6 +26,7 @@ type PerformanceDetail = {
   ticketPrice: string;
   providerUrl: string;
   favorited: boolean;
+  scrapCount: number;
 };
 
 type CommonModalProps = {
@@ -168,18 +169,38 @@ function CommonModal({
                   gap: 0.5,
                 }}
               >
-                <IconButton
-                  onClick={handleToggleLocalFavorite}
-                  sx={{
-                    color: isLiked ? "red" : "#888",
-                    "&:hover": {
-                      color: "red",
-                      transform: "scale(1.1)",
-                    },
-                  }}
-                >
-                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                </IconButton>
+                {/* 하트 */}
+                <Box sx={{ position: "relative" }}>
+                  <IconButton
+                    onClick={handleToggleLocalFavorite}
+                    sx={{
+                      color: isLiked ? "red" : "#888",
+                      "&:hover": {
+                        color: "red",
+                        transform: "scale(1.1)",
+                      },
+                    }}
+                  >
+                    {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  </IconButton>
+
+                  {/* scrapCount가 1 이상일 때만 표시 */}
+                  {data?.scrapCount > 0 && (
+                    <Typography
+                      sx={{
+                        position: "absolute",
+                        top: "32px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        fontSize: "0.75rem",
+                        color: "#a3a3a3",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {data.scrapCount}
+                    </Typography>
+                  )}
+                </Box>
 
                 <IconButton
                   onClick={handleClose}
