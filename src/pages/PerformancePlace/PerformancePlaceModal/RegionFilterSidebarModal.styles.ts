@@ -87,7 +87,7 @@ export const SectionTitle = styled.h3`
   color: #d1d1d1;
   margin-bottom: 12px;
   font-weight: bold;
-  border-left: 3px solid crimson;
+  border-left: 3px solid #af1c1c;
   padding-left: 8px;
 `;
 
@@ -99,11 +99,11 @@ export const ButtonGrid = styled.div`
 
 export const FilterButton = styled.button<{ active?: boolean }>`
   padding: 6px 0;
-  background: ${({ active }) => (active ? "crimson" : "#3a3a3a")};
-  border: 1px solid ${({ active }) => (active ? "crimson" : "#444")};
+  background: ${({ active }) => (active ? "#a91c1c" : "#3a3a3a")};
+  border: 1px solid ${({ active }) => (active ? "#a91c1c" : "#444")};
   border-radius: 4px;
   font-size: 11px;
-  color: ${({ active }) => (active ? "white" : "#ccc")};
+  color: ${({ active }) => (active ? "#dbdbdb" : "#ccc")};
   font-weight: ${({ active }) => (active ? "bold" : "normal")};
   cursor: pointer;
   transition: all 0.2s;
@@ -112,7 +112,7 @@ export const FilterButton = styled.button<{ active?: boolean }>`
   text-overflow: ellipsis;
 
   &:hover {
-    background-color: ${({ active }) => (active ? "crimson" : "#505050")};
+    background-color: ${({ active }) => (active ? "#a11717" : "#505050")};
     color: white;
   }
 `;
@@ -120,15 +120,16 @@ export const FilterButton = styled.button<{ active?: boolean }>`
 export const ApplyButton = styled.button`
   width: 100%;
   padding: 10px;
-  background-color: crimson;
-  color: white;
+  background-color: #af1c1c;
+  color: #dbdbdb;
   border: none;
   border-radius: 4px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
+  letter-spacing: 1px;
 
   &:hover {
-    background-color: rgb(163, 17, 46);
+    background-color: #9f1717;
   }
 `;

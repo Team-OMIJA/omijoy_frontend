@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
+import { Modal, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -10,6 +10,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import ChildCareIcon from "@mui/icons-material/ChildCare";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import * as s from "./styles";
 
 type PerformanceDetail = {
   prfId: string;
@@ -116,6 +117,25 @@ function CommonModal({
     }
   };
 
+  if (!data) {
+    return (
+      <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{
+          backdropFilter: "blur(3px)",
+          backgroundColor: "rgba(0,0,0,0.25)",
+        }}
+      >
+        <s.ModalContainer>
+          <Typography sx={{ textAlign: "center", width: "100%" }}>
+            공연 정보를 불러오는 중...
+          </Typography>
+        </s.ModalContainer>
+      </Modal>
+    );
+  }
+
   return (
     <Modal
       open={open}
@@ -125,262 +145,141 @@ function CommonModal({
         backgroundColor: "rgba(0,0,0,0.25)",
       }}
     >
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          bgcolor: "#0f0f0f",
-          color: "#e0e0e0",
-          borderRadius: "10px",
-          p: 4,
-          width: 650,
-          display: "flex",
-          gap: 4,
-          overflowY: "auto",
-          ":focus": { outline: "none" },
-        }}
-      >
-        {data ? (
-          <>
-            {/* 포스터 */}
-            <img
-              src={data.posterImgUrl}
-              alt={data.prfNm}
-              style={{
-                width: 200,
-                height: 280,
-                objectFit: "cover",
-                borderRadius: 12,
+      <s.ModalContainer>
+        {/* 포스터 */}
+        <s.Poster src={data.posterImgUrl} alt={data.prfNm} />
+
+        {/* 오른쪽 정보 */}
+        <s.InfoWrapper>
+          {/* 상단 버튼(하트 + 닫기) */}
+          <s.TopRightButtons>
+            {/* 하트 */}
+            <s.HeartWrapper>
+              <IconButton
+                onClick={handleToggleLocalFavorite}
+                sx={{
+                  color: isLiked ? "red" : "#888",
+                  "&:hover": {
+                    color: "red",
+                    transform: "scale(1.1)",
+                  },
+                }}
+              >
+                {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              </IconButton>
+
+              {/* scrapCount > 0 일 때만 표시 */}
+              {data?.scrapCount > 0 && (
+                <s.ScrapCountText>{data.scrapCount}</s.ScrapCountText>
+              )}
+            </s.HeartWrapper>
+
+            {/* X 버튼 */}
+            <IconButton
+              onClick={handleClose}
+              sx={{
+                color: "#777",
+                "&:hover": { color: "#aaa" },
               }}
-            />
+            >
+              <CloseIcon />
+            </IconButton>
+          </s.TopRightButtons>
 
-            {/* 오른쪽 정보 */}
-            <Box sx={{ flex: 1, position: "relative" }}>
-              {/* 상단 버튼(좋아요 + 닫기) */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                }}
-              >
-                {/* 하트 */}
-                <Box sx={{ position: "relative" }}>
-                  <IconButton
-                    onClick={handleToggleLocalFavorite}
-                    sx={{
-                      color: isLiked ? "red" : "#888",
-                      "&:hover": {
-                        color: "red",
-                        transform: "scale(1.1)",
-                      },
-                    }}
-                  >
-                    {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                  </IconButton>
+          {/* 제목 */}
+          <s.Title>{removeRegionTag(data.prfNm)}</s.Title>
 
-                  {/* scrapCount가 1 이상일 때만 표시 */}
-                  {data?.scrapCount > 0 && (
-                    <Typography
-                      sx={{
-                        position: "absolute",
-                        top: "32px",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        fontSize: "0.75rem",
-                        color: "#a3a3a3",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {data.scrapCount}
-                    </Typography>
-                  )}
-                </Box>
+          {/* 장소 */}
+          <Typography sx={{ color: "#dbdbdb" }}>{data.prfPlcNm}</Typography>
 
-                <IconButton
-                  onClick={handleClose}
-                  sx={{
-                    color: "#777",
-                    "&:hover": { color: "#aaa" },
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-
-              {/* 제목 */}
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{
-                  mb: 1,
-                  mt: 1,
-                  fontSize: "1.5rem",
-                  pr: 10, // 버튼 영역과 겹치지 않도록 패딩
-                  wordBreak: "keep-all",
-                  overflowWrap: "break-word",
-                  whiteSpace: "normal",
-                }}
-              >
-                {removeRegionTag(data.prfNm)}
-              </Typography>
-
-              {/* 장소 */}
-              <Typography sx={{ color: "#dbdbdb" }}>{data.prfPlcNm}</Typography>
-
-              {/* 지역 */}
-              <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
-                {data.area}
-              </Typography>
-
-              <Box sx={{ height: 8 }} />
-
-              {/* 기간 */}
-              <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
-                {data.prfStartDt} ~ {data.prfEndDt}
-              </Typography>
-
-              {/* 기타 정보 */}
-              <Typography
-                sx={{
-                  color: "#a3a3a3",
-                  mt: 1,
-                  fontSize: "0.9rem",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <AccessTimeIcon sx={{ fontSize: 18, mr: 0.7 }} />
-                {data.runtime?.trim() ? data.runtime : "예매처 참고"}
-              </Typography>
-
-              <Typography
-                sx={{
-                  color: "#a3a3a3",
-                  fontSize: "0.9rem",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <TheaterComedyIcon sx={{ fontSize: 18, mr: 0.7 }} />
-                {data.genreNm?.trim() ? data.genreNm : "예매처 참고"}
-              </Typography>
-
-              <Typography
-                sx={{
-                  color: "#a3a3a3",
-                  fontSize: "0.9rem",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <ChildCareIcon sx={{ fontSize: 18, mr: 0.7 }} />
-                {data.prfAge?.trim() ? data.prfAge : "예매처 참고"}
-              </Typography>
-
-              {/* 가격 타이틀 */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#a3a3a3",
-                  mt: 0.5,
-                }}
-              >
-                <ConfirmationNumberIcon sx={{ fontSize: 18, mr: 0.7 }} />
-                <Typography sx={{ fontSize: "0.9rem" }}>가격</Typography>
-              </Box>
-
-              {/* 가격: null-safe + 줄바꿈 처리 */}
-              <Typography
-                sx={{
-                  color: "#a3a3a3",
-                  whiteSpace: "pre-line",
-                  fontSize: "0.8rem",
-                  mt: 0.5,
-                }}
-              >
-                {(() => {
-                  // 가격정보 null 또는 빈값이면 바로 대체
-                  if (!data.ticketPrice || !data.ticketPrice.trim()) {
-                    return "예매처 참고";
-                  }
-
-                  const priceArray = data.ticketPrice
-                    .split(",")
-                    .map((p) => p.trim())
-                    .filter((p) => p !== "");
-
-                  const grouped: string[] = [];
-                  for (let i = 0; i < priceArray.length; i++) {
-                    if (
-                      priceArray[i + 1] &&
-                      /^[0-9]+원$/.test(priceArray[i + 1])
-                    ) {
-                      grouped.push(`${priceArray[i]},${priceArray[i + 1]}`);
-                      i++;
-                    } else {
-                      grouped.push(priceArray[i]);
-                    }
-                  }
-
-                  const lines: string[] = [];
-                  for (let i = 0; i < grouped.length; i += 2) {
-                    if (grouped[i + 1])
-                      lines.push(`${grouped[i]}  ${grouped[i + 1]}`);
-                    else lines.push(grouped[i]);
-                  }
-
-                  return lines.join("\n");
-                })()}
-              </Typography>
-
-              {/* 아래 버튼들 */}
-              <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
-                <Button
-                  onClick={goDetailHandler}
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#3A3A3A",
-                    "&:hover": { backgroundColor: "#2C2C2C" },
-                    color: "#dbdbdb",
-                    textTransform: "none",
-                    borderRadius: "5px",
-                    fontWeight: 500,
-                  }}
-                >
-                  상세 페이지
-                </Button>
-
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#Bf1C1C",
-                    color: "#dbdbdb",
-                    px: 3,
-                    "&:hover": { backgroundColor: "#9f1717" },
-                    fontWeight: 500,
-                    textTransform: "none",
-                    borderRadius: "5px",
-                  }}
-                  onClick={goTicketHandler}
-                >
-                  예매 바로가기 →
-                </Button>
-              </Box>
-            </Box>
-          </>
-        ) : (
-          <Typography sx={{ textAlign: "center", width: "100%" }}>
-            공연 정보를 불러오는 중입니다...
+          {/* 지역 */}
+          <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
+            {data.area}
           </Typography>
-        )}
-      </Box>
+
+          <Box sx={{ height: 8 }} />
+
+          {/* 기간 */}
+          <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
+            {data.prfStartDt} ~ {data.prfEndDt}
+          </Typography>
+
+          {/* 러닝타임 */}
+          <s.InfoText>
+            <AccessTimeIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+            {data.runtime?.trim() ? data.runtime : "예매처 참고"}
+          </s.InfoText>
+
+          {/* 장르 */}
+          <s.InfoText>
+            <TheaterComedyIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+            {data.genreNm}
+          </s.InfoText>
+
+          {/* 나이 */}
+          <s.InfoText>
+            <ChildCareIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+            {data.prfAge}
+          </s.InfoText>
+
+          {/* 가격 타이틀 */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color: "#a3a3a3",
+              marginTop: "6px",
+            }}
+          >
+            <ConfirmationNumberIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+            <Typography sx={{ fontSize: "0.9rem" }}>가격</Typography>
+          </Box>
+
+          {/* 가격 */}
+          <s.PriceText>
+            {(() => {
+              if (!data?.ticketPrice || !data.ticketPrice.trim()) {
+                return "예매처 참고";
+              }
+
+              const priceArray = data.ticketPrice
+                .split(",")
+                .map((p) => p.trim())
+                .filter((p) => p !== "");
+
+              const grouped: string[] = [];
+              for (let i = 0; i < priceArray.length; i++) {
+                if (priceArray[i + 1] && /^[0-9]+원$/.test(priceArray[i + 1])) {
+                  grouped.push(`${priceArray[i]},${priceArray[i + 1]}`);
+                  i++;
+                } else {
+                  grouped.push(priceArray[i]);
+                }
+              }
+
+              const lines: string[] = [];
+              for (let i = 0; i < grouped.length; i += 2) {
+                if (grouped[i + 1])
+                  lines.push(`${grouped[i]}  ${grouped[i + 1]}`);
+                else lines.push(grouped[i]);
+              }
+
+              return lines.join("\n");
+            })()}
+          </s.PriceText>
+
+          {/* 하단 버튼 */}
+          <s.BottomButtons>
+            <s.DetailButton onClick={goDetailHandler}>
+              상세 페이지
+            </s.DetailButton>
+
+            <s.TicketButton onClick={goTicketHandler}>
+              예매 바로가기 →
+            </s.TicketButton>
+          </s.BottomButtons>
+        </s.InfoWrapper>
+      </s.ModalContainer>
     </Modal>
   );
 }
