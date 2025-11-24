@@ -1,18 +1,31 @@
+﻿import type { CSSProperties, MouseEventHandler } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-export function NextArrow(props: any) {
-  const { onClick } = props;
+type ArrowProps = {
+  className?: string;
+  style?: CSSProperties;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+};
+
+export function NextArrow({ className, style, onClick }: ArrowProps) {
   return (
-    <div className="arrow next" onClick={onClick}>
+    <div
+      className={["arrow", "next", className].filter(Boolean).join(" ")}
+      style={style}
+      onClick={onClick}
+    >
       <FaChevronRight />
     </div>
   );
 }
 
-export function PrevArrow(props: any) {
-  const { onClick } = props;
+export function PrevArrow({ className, style, onClick }: ArrowProps) {
   return (
-    <div className="arrow prev" onClick={onClick}>
+    <div
+      className={["arrow", "prev", className].filter(Boolean).join(" ")}
+      style={style}
+      onClick={onClick}
+    >
       <FaChevronLeft />
     </div>
   );

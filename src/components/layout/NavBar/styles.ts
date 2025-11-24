@@ -1,4 +1,4 @@
-import { css } from "@emotion/react";
+import { css } from '@emotion/react';
 
 export const navStyle = css`
   position: sticky;
@@ -35,12 +35,12 @@ export const navListStyle = css`
 export const linkStyle = (active: boolean) => css`
   position: relative;
   text-decoration: none;
-  color: ${active ? "#e0e0e0" : "#cfcfcf"};
-  font-weight: ${active ? "bold" : "normal"};
+  color: ${active ? '#e0e0e0' : '#cfcfcf'};
+  font-weight: ${active ? 'bold' : 'normal'};
   transition: color 0.2s ease;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 50%;
     bottom: -18px;
@@ -65,10 +65,10 @@ export const profileContainer = css`
 `;
 
 // 유저가 가지고있는() 이미지에 적용시킴
-export const profileStyle = (hasImg) => css`
+export const profileStyle = (hasImg: unknown) => css`
   width: 40px;
   height: 40px;
-  background-color: ${hasImg ? "transparent" : "ccc"};
+  background-color: ${hasImg ? 'transparent' : 'ccc'};
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;

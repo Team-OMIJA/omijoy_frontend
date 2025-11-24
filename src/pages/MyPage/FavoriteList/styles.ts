@@ -5,14 +5,14 @@ import { styled } from "@mui/material";
 
 export const container = css`
   width: 100%;
-  margin-top: 100PX;
+  margin-top: 100px;
   padding: 40px 0px;
   box-sizing: border-box;
   /* position: relative; */
 `;
 
 export const title = css`
-  font-size: 40px;
+  font-size: 1.8em;
   font-weight: 700;
   margin-bottom: 25px;
   color: #e0e0e0;
@@ -25,7 +25,7 @@ export const shareButtonWrapper = css`
   right: 60px;
 `;
 
-// 공연 스크랩 없을 시 
+// 공연 스크랩 없을 시
 export const empty = css`
   font-size: 16px;
   text-align: center;
