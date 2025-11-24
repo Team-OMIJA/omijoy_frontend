@@ -1,12 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import * as s from "./styles";
-import { useQuery } from "@tanstack/react-query";
-import { getFlagListReq } from "../../../apis/flagApi";
-import { usePrincipalState } from "../../../stores/usePrincipalState";
-import { FaFlagCheckered } from "react-icons/fa";
-import { useState } from "react";
-import PerformancePlaceModal from "../../PerformancePlace/PerformancePlaceModal/PerformancePlaceModal";
-import { PerformancePlace } from "../../../types/myPageTypes";
+import * as s from './styles';
+import { useQuery } from '@tanstack/react-query';
+import { getFlagListReq } from '../../../apis/flagApi';
+import { usePrincipalState } from '../../../stores/usePrincipalState';
+import { useState } from 'react';
+import PerformancePlaceModal from '../../PerformancePlace/PerformancePlaceModal/PerformancePlaceModal';
+import { PerformancePlace } from '../../../types/myPageTypes';
 
 // 1) 공연장 타입 정의 (콘솔 기반)
 export interface PerformancePlaceDetail {
@@ -43,18 +42,16 @@ function Flaglist() {
 
   // 3) React Query → flag 리스트 가져오기
   const { data, isLoading, isError } = useQuery<FlagItem[]>({
-    queryKey: ["flags", principal?.id], // 유저 ID 기반 캐싱
+    queryKey: ['flags', principal?.id], // 유저 ID 기반 캐싱
     queryFn: getFlagListReq, // API
     enabled: !!principal?.id, // 로그인되었을 때만 실행
   });
 
   // 모달 상태
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedPlace, setSelectedPlace] =
-    useState<PerformancePlaceDetail | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<PerformancePlaceDetail | null>(null);
 
-  if (!principal?.id)
-    return <div css={s.error}>로그인 후 이용 가능합니다.</div>;
+  if (!principal?.id) return <div css={s.error}>로그인 후 이용 가능합니다.</div>;
 
   if (isLoading) return <div css={s.loading}>로딩중...</div>;
   if (isError) return <div css={s.error}>에러 발생</div>;
@@ -92,11 +89,7 @@ function Flaglist() {
             };
 
             return (
-              <li
-                key={flag.flagId}
-                css={s.card}
-                onClick={() => openModal(place)}
-              >
+              <li key={flag.flagId} css={s.card} onClick={() => openModal(place)}>
                 <div css={s.placeName}>{place.prfPlcName}</div>
                 <div css={s.address}>{place.address}</div>
               </li>
