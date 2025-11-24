@@ -83,6 +83,9 @@ function PerformanceDetail() {
     if (lower.includes("lotte")) return "롯데콘서트홀";
     if (lower.includes("coffee")) return "커넥티브 티켓";
     if (lower.includes("nanumticket")) return "나눔 티켓";
+    if (lower.includes("coupang")) return "쿠팡";
+    if (lower.includes("clipservice")) return "클립서비스";
+    if (lower.includes("timeticket")) return "타임 티켓";
     try {
       const hostname = new URL(url).hostname;
       const parts = hostname.replace("www.", "").split(".");
@@ -179,13 +182,12 @@ function PerformanceDetail() {
         <div
           onMouseEnter={() => setShowLinks(true)}
           onMouseLeave={() => setShowLinks(false)}
-          style={{display: "flex", flexDirection: "column", alignItems: "center", marginTop: "0px"}}
-        >
+          style={{display: "flex", flexDirection: "column", alignItems: "flex-end", position: "absolute", top: "40px", right: "-80px", marginTop: "450px"}}>
         <button
           style={{
             width: "200px",
             height: "60px",
-            marginTop: "20px",
+            // marginTop: "20px",
             backgroundColor: "#Bf1C1C",
             color: "#dbdbdb",
             fontWeight: 500,
@@ -201,15 +203,20 @@ function PerformanceDetail() {
         
         {showLinks && (
           <div
-            onMouseEnter={() => setShowLinks(true)}
-            onMouseLeave={() => setShowLinks(false)}
             style={{
               marginTop: "10px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: "10px",
-              transition: "all 0.2s"
+              transition: "all 0.2s",
+              backgroundColor: "#424141f3",
+              padding: "20px",    
+              borderRadius: "20px",  
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              minWidth: "220px",
+              position: "relative", 
+              right: "-100px"   // 모달 위치 조정
             }}
           >
             {performance.providerUrl
@@ -234,7 +241,7 @@ function PerformanceDetail() {
                       backgroundColor: "#Bf1C1C",
                       color: "#f0f0f0",
                       fontWeight: 500,
-                      borderRadius: "6px",
+                      borderRadius: "20px",
                       textAlign: "center",
                       lineHeight: "50px",
                       display: "block",
