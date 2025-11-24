@@ -16,4 +16,6 @@ export interface PerformancePlace {
 
   // 프론트에서 관리하는 상태
   flagged: boolean; // 플래그 여부 (유저가 체크한 상태)
+
+  
 }

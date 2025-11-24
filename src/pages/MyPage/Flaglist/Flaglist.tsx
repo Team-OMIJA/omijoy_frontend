@@ -7,6 +7,7 @@ import { FaFlagCheckered } from "react-icons/fa";
 import { useState } from "react";
 import PerformancePlaceModal from "../../PerformancePlace/PerformancePlaceModal/PerformancePlaceModal";
 import { PerformancePlace } from "../../../types/myPageTypes";
+import { useNavigate } from "react-router-dom";
 
 // 1) 공연장 타입 정의 (콘솔 기반)
 export interface PerformancePlaceDetail {
@@ -53,11 +54,18 @@ function Flaglist() {
   const [selectedPlace, setSelectedPlace] =
     useState<PerformancePlaceDetail | null>(null);
 
-  if (!principal?.id)
-    return <div css={s.error}>로그인 후 이용 가능합니다.</div>;
+  const navigate = useNavigate();
+
+  // 지금 이거 굳이 필요한지 모르겠음
+  if (!principal?.id) {
+    alert("로그인 후 이용가능합니다.");
+    return navigate("/login");
+  }
 
   if (isLoading) return <div css={s.loading}>로딩중...</div>;
-  if (isError) return <div css={s.error}>에러 발생</div>;
+  if (isError) {
+    return alert("에러가 발생했습니다.");
+  }
 
   // 서버에서 받은 flag 리스트
   const flagList = data ?? [];
@@ -88,7 +96,7 @@ function Flaglist() {
           {flagList.map((flag) => {
             const place = {
               ...flag.prfPlcId, // 공연장 정보 그대로 spread
-              flagged: true, // 💡 이 컴포넌트에서는 항상 true
+              flagged: flag.flagId, // 💡 이 컴포넌트에서는 항상 true
             };
 
             return (

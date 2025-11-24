@@ -141,7 +141,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
           {place.parkBarrier === "Y" ? "⭕" : "❌"}
         </S.ModalInfoItem>
         <S.ModalInfoItem>
-          <strong>전화번호:</strong> {place.tel || "정보 없음"}
+          <strong>전화번호:</strong> {place.tel?.trim() || "정보 없음"}
         </S.ModalInfoItem>
         <S.ModalButtonGroup>
           <S.ModalUrlButton onClick={handleUrlClick} disabled={!hasValidUrl}>
