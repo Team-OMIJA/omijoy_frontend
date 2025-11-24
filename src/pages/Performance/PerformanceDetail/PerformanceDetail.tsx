@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
@@ -37,7 +37,26 @@ function PerformanceDetail() {
 
   const { favorites, toggleFavorite, fetchFavoriteState } = useFavoriteState();
 
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
   const liked = id ? favorites[id] ?? false : false;
+
+  // 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
+        setShowLinks(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchPerformance = async () => {
@@ -194,12 +213,12 @@ function PerformanceDetail() {
                     ))}
                 </s.Value>
               </s.InfoItem>
+
               {/* 예매 버튼 + dropdown */}
-              <s.TicketWrapper
-                onMouseEnter={() => setShowLinks(true)}
-                onMouseLeave={() => setShowLinks(false)}
-              >
-                <s.TicketButton>예매 바로가기 →</s.TicketButton>
+              <s.TicketWrapper ref={wrapperRef}>
+                <s.TicketButton onClick={() => setShowLinks((prev) => !prev)}>
+                  예매 바로가기 →
+                </s.TicketButton>
 
                 {showLinks && (
                   <s.TicketDropdown>

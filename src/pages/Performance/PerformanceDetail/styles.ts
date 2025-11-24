@@ -34,19 +34,6 @@ export const Content = styled.div`
   position: relative;
 `;
 
-// /* 하트 */
-// export const HeartWrapper = styled.div`
-//   position: absolute;
-//   top: 10px;
-//   right: 0;
-
-//   .heart {
-//     font-size: 40px;
-//     color: crimson;
-//     cursor: pointer;
-//   }
-// `;
-
 /* 제목 */
 export const Title = styled.h1`
   font-size: 32px;
@@ -55,13 +42,6 @@ export const Title = styled.h1`
   color: #dbdbdb;
   line-height: 1.3;
 `;
-
-/* 정보 섹션 */
-// export const InfoBox = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   gap: 6px;
-// `;
 
 /* 2컬럼 레이아웃 추가 */
 export const InfoGrid = styled.div`
