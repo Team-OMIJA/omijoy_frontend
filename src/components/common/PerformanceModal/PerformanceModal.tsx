@@ -79,8 +79,8 @@ function CommonModal({
         ? {
             ...prev,
             scrapCount: isLiked
-              ? Math.max((prev.scrapCount ?? 0) - 1, 0) // 최소값을 0으로 고정하기 위해 사용
-              : (prev.scrapCount ?? 0) + 1,
+              ? Math.max(prev.scrapCount - 1, 0) // 최소값을 0으로 고정하기 위해 사용
+              : prev.scrapCount + 1,
           }
         : prev
     );
@@ -181,29 +181,42 @@ function CommonModal({
           <s.Title>{removeRegionTag(data.prfNm)}</s.Title>
 
           {/* 장소 */}
-          <Typography sx={{ color: "#dbdbdb" }}>{data.prfPlcNm}</Typography>
+          <Typography sx={{ color: "#dbdbdb", marginTop: "2px" }}>
+            {data.prfPlcNm}
+          </Typography>
 
           {/* 지역 */}
-          <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
+          <Typography
+            sx={{ color: "#a3a3a3", fontSize: "0.9rem", marginTop: "3px" }}
+          >
             {data.area}
           </Typography>
 
-          <Box sx={{ height: 8 }} />
-
           {/* 기간 */}
-          <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
+          <Typography
+            sx={{
+              color: "#a3a3a3",
+              fontSize: "0.9rem",
+              marginTop: "5px",
+              marginBottom: "15px",
+            }}
+          >
             {data.prfStartDt} ~ {data.prfEndDt}
           </Typography>
 
           {/* 관람시간 */}
           <s.InfoText>
-            <AccessTimeIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+            <AccessTimeIcon
+              sx={{ fontSize: 18, marginRight: "6px", marginBottom: "3px" }}
+            />
             {data.runtime?.trim() ? data.runtime : "예매처 참고"}
           </s.InfoText>
 
           {/* 장르 */}
           <s.InfoText>
-            <TheaterComedyIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+            <TheaterComedyIcon
+              sx={{ fontSize: 18, marginRight: "6px", marginBottom: "3px" }}
+            />
             {data.genreNm}
           </s.InfoText>
 
@@ -219,7 +232,7 @@ function CommonModal({
               display: "flex",
               alignItems: "center",
               color: "#a3a3a3",
-              marginTop: "6px",
+              marginTop: "15px",
             }}
           >
             <ConfirmationNumberIcon sx={{ fontSize: 18, marginRight: "6px" }} />

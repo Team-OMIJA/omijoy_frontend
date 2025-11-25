@@ -97,6 +97,28 @@ function PerformanceDetail() {
     }
   };
 
+  // 공연 시간 포맷팅
+  let formattedTime = "";
+
+  if (performance.dtGuidance) {
+    formattedTime = performance.dtGuidance
+      .split("),")
+      .map((t) => {
+        let clean = t.trim();
+
+        if (!clean.endsWith(")")) clean += ")";
+
+        // 콤마 뒤 공백: "18:00)" → "18:00), "
+        clean = clean.replace(/,\s*/g, ", ");
+
+        return clean;
+      })
+      .join("\n");
+
+    // 요일과 괄호 사이 공백 강제 삽입
+    formattedTime = formattedTime.replace(/([가-힣요일])\(/g, "$1 (");
+  }
+
   return (
     <s.PageBackground>
       <s.Container>
@@ -143,12 +165,7 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>공연 시간</s.Label>
-                <s.Value>
-                  {performance.dtGuidance
-                    ?.split("),")
-                    .map((t) => (t.endsWith(")") ? t : t + ")"))
-                    .join("\n")}
-                </s.Value>
+                <s.Value>{formattedTime}</s.Value>
               </s.InfoItem>
 
               {performance.child === "Y" && (
@@ -188,7 +205,11 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>관람시간</s.Label>
-                <s.Value>{performance.runtime}</s.Value>
+                <s.Value>
+                  {performance.runtime?.trim()
+                    ? performance.runtime
+                    : "예매처 참고"}
+                </s.Value>
               </s.InfoItem>
 
               <s.InfoItem>

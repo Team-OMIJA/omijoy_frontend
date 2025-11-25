@@ -85,7 +85,6 @@ export const Value = styled.div`
   font-weight: 400;
   word-break: keep-all;
   overflow-wrap: break-word;
-  white-space: normal;
 `;
 
 /* 예매 버튼 */
