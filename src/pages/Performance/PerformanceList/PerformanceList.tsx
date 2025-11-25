@@ -4,7 +4,7 @@ import { GrClose, GrPowerReset } from 'react-icons/gr';
 import useInfiniteScroll from '../../../configs/useInfiniteScroll';
 import { useNavigate, useNavigationType } from 'react-router-dom';
 import ScrollTop from '../../../components/common/Button/ScrollTopButton';
-import { formatDateDot, formatDateRange } from '../../../components/formatDate/formatDate';
+import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
 import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
 import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
 import { Performance } from '../../../types/performancePageTypes';
@@ -43,7 +43,7 @@ function PerformanceList() {
     async (searchQuery: string, append = false, pageToLoad = 0) => {
       setLoading(true);
       try {
-        const baseUrl = 'http://localhost:8080/prfDetails';
+        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}:8080/prfDetails`;
         const isSearch = searchQuery && searchQuery.trim() !== '';
 
         const params = new URLSearchParams();
