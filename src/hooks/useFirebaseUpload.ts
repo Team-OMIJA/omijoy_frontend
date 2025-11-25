@@ -10,8 +10,10 @@ export const useFirebaseUpload = () => {
   const [progress, setProgress] = useState<number>(0);
   // 업로드 완료 -> firebase가 반환하는 실제 링크
   // 업로드 URL이 아직 없을 수도 있고, 생기면 문자열일 수도 있다
+  // eslint-disable-next-line
   const [_downloadUrl, setDownloadUrl] = useState<string | null>(null);
   // 업로드 중 발생한 에러
+  // eslint-disable-next-line
   const [_error, setError] = useState<Error | null>(null);
   // 업로드 중인지-아닌지
   const [isUploading, setIsUploading] = useState<boolean>(false);

@@ -1,4 +1,4 @@
-import { instance } from "./instance";
+﻿import { instance } from "./instance";
 
 export interface PlaceMarker {
   prfPlcId: string;
@@ -13,6 +13,7 @@ export interface PlaceMarker {
   parkBarrier: string | null;
   eleve: string | null;
   parkingLot: string | null;
+  flagged?: boolean;
 }
 
 export interface PrfPlcModal {
@@ -27,7 +28,7 @@ export const findPerformancesByPlaceId = async (
     const res = await instance.get(`/performanceplace/by-place/${prfPlcId}`);
     return res.data as PrfPlcModal[];
   } catch (err) {
-    console.error("findPerformancesByPlaceId API 오류:", err);
+    console.error("findPerformancesByPlaceId API error:", err);
     throw err;
   }
 };
@@ -42,7 +43,7 @@ export const findNearbyPlaces = async (
     const res = await instance.post(`/performanceplace/nearby`, dataToSend);
     return res.data as PlaceMarker[];
   } catch (err) {
-    console.error("findNearbyPlaces API 오류:", err);
+    console.error("findNearbyPlaces API error:", err);
     throw err;
   }
 };
@@ -57,7 +58,7 @@ export const findPlacesByGugun = async (
     });
     return res.data as PlaceMarker[];
   } catch (err) {
-    console.error("findPlacesByGugun API 오류:", err);
+    console.error("findPlacesByGugun API error:", err);
     throw err;
   }
 };
