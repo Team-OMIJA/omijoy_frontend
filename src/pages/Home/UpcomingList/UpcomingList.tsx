@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
-import { UpcomingPerformance } from "../../../types/homeTypes";
+import { UpcomingPerformance } from "../../../types/homePageTypes";
 import { getUpcomingPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import {
   formatDateRange,
   formatUIDate,
-} from "../../../components/FormatDate/FormatDate";
+} from "../../../components/formatDate/formatDate";
 import { Carousel } from "@mantine/carousel";
 import * as s from "../PerformanceStyles";
 import * as ts from "./styles";

@@ -1,7 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import MainRouter from "./routes/MainRouter/MainRouter";
 import { useEffect } from "react";
-import { increaseSiteViews } from "./apis/weeklySiteViewsApi";
+import { increaseSiteViews } from "./apis/adminApi";
 // import { usePrincipalState } from "./stores/usePrincipalState";
 import ScrollBack from "./components/common/Render/ScrollBack";
 import "@mantine/core/styles.css";

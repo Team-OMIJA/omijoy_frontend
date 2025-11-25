@@ -36,3 +36,22 @@ export interface KidsNewPerformancs {
   prfStartDt: string;
   prfEndDt: string;
 }
+
+// Common Modal Performance Detail
+export type PerformanceDetail = {
+  prfId: string;
+  posterImgUrl: string;
+  prfNm: string;
+  prfPlcNm: string;
+  area: string;
+  prfStartDt: string;
+  prfEndDt: string;
+  dtGuidance: string;
+  runtime: string;
+  genreNm: string;
+  prfAge: string;
+  ticketPrice: string;
+  providerUrl: string;
+  favorited: boolean;
+  scrapCount: number;
+};
