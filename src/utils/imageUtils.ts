@@ -1,21 +1,22 @@
 // any 쓰기 찝찝해서 area 타입이 croppedAreaPixels 역할을 수행한다길래 갈아 끼워봄
 // import { Area } from "react-easy-crop";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 
 export const getCroppedImg = async (
   // 이미지 경로
   imageSrc: string,
   // react-easy-crop 에서 내려주는 값 - any
   // 이미지에서 잘라낸 부분의 좌표 + 크기 정보
+  //eslint-disable-next-line
   croppedAreaPixels: any
   // croppedAreaPixels: Area
 ): Promise<File> => {
   const image = await createImage(imageSrc);
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
 
   // html 요소 중 canvas = 빈 도화지
   // 그릴 도구 -> 2d 렌더링 컨텍스트
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
   // 해당 캔버스에서 2d그림을 그릴 수 있는 객체를 가져와라
 
   canvas.width = croppedAreaPixels.width;
@@ -49,9 +50,9 @@ export const getCroppedImg = async (
   // firebase 저장 비용 감소를 기대하고 jpeg로 저장
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
-      const file = new File([blob!], `${uuidv4()}.jpg`, { type: "image/jpeg" });
+      const file = new File([blob!], `${uuidv4()}.jpg`, { type: 'image/jpeg' });
       resolve(file);
-    }, "image/jpeg");
+    }, 'image/jpeg');
   });
 };
 
@@ -60,7 +61,7 @@ function createImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.src = url;
-    img.crossOrigin = "anonymous";
+    img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
     img.onerror = (e) => reject(e);
   });
