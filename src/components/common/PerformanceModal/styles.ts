@@ -1,95 +1,114 @@
 /** @jsxImportSource @emotion/react */
-import styled from "@emotion/styled";
+import { styled } from "@mui/material/styles";
+import { Box, Typography, Button } from "@mui/material";
 
-// 전체 래퍼
-export const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-// 상단 박스
-export const TopBox = styled.div`
-  display: flex;
-  padding: 40px;
-  border-radius: 16px;
-  width: 75%;
-  margin-right: 120px;
-  margin-top: 25px;
-  align-items: center;
-  position: relative;
-`;
-
-// 포스터 이미지
-export const Poster = styled.img`
-  width: 400px;
-  height: 500px;
+export const ModalContainer = styled(Box)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #0f0f0f;
+  color: #e0e0e0;
   border-radius: 10px;
-  object-fit: cover;
+  padding: 32px;
+  width: 100%;
+  max-width: 650px;
+  display: flex;
+  gap: 32px;
+  overflow-y: auto;
+
+  &:focus {
+    outline: none;
+  }
 `;
 
-// 오른쪽 텍스트 구역
-export const RightBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin-top: -95px;
-  margin-left: 100px;
+export const Poster = styled("img")`
+  width: 200px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 12px;
+`;
+
+export const InfoWrapper = styled(Box)`
+  flex: 1;
   position: relative;
 `;
 
-// 제목
-export const Title = styled.h1`
+export const TopRightButtons = styled(Box)`
   position: absolute;
-  margin-top: -210px;
-`;
-
-// 정보 텍스트 영역
-export const InfoBox = styled.div`
-  position: absolute;
-  margin-top: -10px;
-  line-height: 1;
-`;
-
-// 좋아요 아이콘
-export const HeartButton = styled.div`
-  position: absolute;
-  top: 40px;
-  right: -70px;
-  font-size: 40px;
-  color: crimson;
-  cursor: pointer;
-`;
-
-// 예매 버튼
-export const TicketButton = styled.button`
-  position: absolute;
-  bottom: 40px;
-  right: -100px;
-  padding: 0 30px;
-  line-height: 60px;
-  font-size: 23px;
-  cursor: pointer;
-  border-radius: 30px;
-  background-color: black;
-  color: white;
-`;
-
-// 구분선
-export const Divider = styled.hr`
-  width: 100%;
-  border: 1px solid #ccc;
-  margin: 50px 0;
-`;
-
-// 상세 이미지 영역
-export const DetailImgWrapper = styled.div`
+  top: 0;
+  right: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const HeartWrapper = styled(Box)`
+  position: relative;
+`;
+
+export const ScrapCountText = styled(Typography)`
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #a3a3a3;
+  white-space: nowrap;
+`;
+
+export const Title = styled(Typography)`
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-right: 60px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  white-space: normal;
+`;
+
+export const InfoText = styled(Typography)`
+  color: #a3a3a3;
+  font-size: 0.9rem;
+  display: flex;
   align-items: center;
 `;
 
-export const DetailImg = styled.img`
-  width: 100%;
-  max-width: 800px;
+export const PriceText = styled(Typography)`
+  color: #a3a3a3;
+  white-space: pre-line;
+  font-size: 0.8rem;
+`;
+
+export const BottomButtons = styled(Box)`
+  margin-top: 24px;
+  display: flex;
+  gap: 16px;
+`;
+
+export const DetailButton = styled(Button)`
+  background-color: #3a3a3a;
+  color: #dbdbdb;
+  text-transform: none;
+  border-radius: 5px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #2c2c2c;
+  }
+`;
+
+export const TicketButton = styled(Button)`
+  background-color: #bf1c1c;
+  color: #dbdbdb;
+  padding-left: 24px;
+  padding-right: 24px;
+  text-transform: none;
+  border-radius: 5px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #9f1717;
+  }
 `;
