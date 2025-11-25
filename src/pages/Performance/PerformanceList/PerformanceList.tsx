@@ -1,26 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { PiMagnifyingGlass, PiXCircle } from 'react-icons/pi';
-import { GrClose, GrPowerReset } from 'react-icons/gr';
-import useInfiniteScroll from '../../../configs/useInfiniteScroll';
-import { useNavigate, useNavigationType } from 'react-router-dom';
-import ScrollTop from '../../../components/common/Button/ScrollTopButton';
-import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
-import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
-import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
-import * as s from '../../Home/PerformanceStyles';
-import * as ps from './styles';
-
-interface Performance {
-  prfId: string;
-  prfNm: string;
-  prfStartDt: string;
-  prfEndDt: string;
-  prfPlcNm: string;
-  ticketPrice: string;
-  posterImgUrl: string;
-  area: string;
-  genreNm: string;
-}
+import { useState, useEffect, useCallback, useRef } from "react";
+import { PiMagnifyingGlass } from "react-icons/pi";
+import { GrClose, GrPowerReset } from "react-icons/gr";
+import useInfiniteScroll from "../../../configs/useInfiniteScroll";
+import { useNavigate, useNavigationType } from "react-router-dom";
+import ScrollTop from "../../../components/common/Button/ScrollTopButton";
+import {formatDateDot,formatDateRange,} from "../../../components/FormatDate/FormatDate";
+import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
+import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
+import { Performance } from "../../../types/performancePageTypes";
+import * as s from "./styles";
 
 function PerformanceList() {
   const navigationType = useNavigationType();
@@ -132,15 +120,7 @@ function PerformanceList() {
     }
     setPage(0);
     getPerformance(query, false, 0);
-  }, [
-    sort,
-    stFilter,
-    arfilter,
-    gefilter,
-    vtFilter,
-    getPerformance,
-    navigationType,
-  ]);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
 
   const handleStatusChange = (value: string) => {
     setStFilter(value);
@@ -167,36 +147,8 @@ function PerformanceList() {
 
   useInfiniteScroll(loadMore, hasMore);
 
-  const AREA_OPTIONS = [
-    "서울",
-    "부산",
-    "인천",
-    "대구",
-    "대전",
-    "광주",
-    "울산",
-    "세종",
-    "경기",
-    "강원",
-    "경북",
-    "경남",
-    "충북",
-    "충남",
-    "전북",
-    "전남",
-    "제주",
-  ];
-  const GENRE_OPTIONS = [
-    "대중무용",
-    "대중음악",
-    "무용(서양/한국무용)",
-    "뮤지컬",
-    "복합",
-    "서양음악(클래식)",
-    "서커스/마술",
-    "연극",
-    "한국음악(국악)",
-  ];
+  const AREA_OPTIONS = ["서울", "부산", "인천", "대구", "대전", "광주", "울산", "세종", "경기", "강원", "경북", "경남", "충북", "충남", "전북", "전남", "제주"];
+  const GENRE_OPTIONS = [ "대중무용", "대중음악", "무용(서양/한국무용)", "뮤지컬", "복합", "서양음악(클래식)", "서커스/마술", "연극", "한국음악(국악)"];
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -259,19 +211,19 @@ function PerformanceList() {
         }}
       >
         <ScrollTop />
-        <ps.DropdownWrapper ref={sortRef}>
-          <ps.DropdownButton
+        <s.DropdownWrapper ref={sortRef}>
+          <s.DropdownButton
             open={sortOpen}
             onClick={() => setSortOpen((prev) => !prev)}
           >
             {sortOptions.find(
               (o) => o.value === (sort.startsWith("name") ? sort : "date")
             )?.label || "정렬"}
-          </ps.DropdownButton>
+          </s.DropdownButton>
           {sortOpen && (
-            <ps.DropdownList>
+            <s.DropdownList>
               {sortOptions.map((option) => (
-                <ps.DropdownItem
+                <s.DropdownItem
                   key={option.value}
                   onClick={() => {
                     handleSortChange(option.value);
@@ -279,40 +231,40 @@ function PerformanceList() {
                   }}
                 >
                   {option.label}
-                </ps.DropdownItem>
+                </s.DropdownItem>
               ))}
-            </ps.DropdownList>
+            </s.DropdownList>
           )}
-        </ps.DropdownWrapper>
-        <ps.DropdownWrapper ref={statusRef}>
-          <ps.DropdownButton
+        </s.DropdownWrapper>
+        <s.DropdownWrapper ref={statusRef}>
+          <s.DropdownButton
             open={statusOpen}
             onClick={() => setStatusOpen((prev) => !prev)}
           >
             {stFilter}
-          </ps.DropdownButton>
+          </s.DropdownButton>
           {statusOpen && (
-            <ps.DropdownList>
-              <ps.DropdownItem onClick={() => handleStatusChange("공연중")}>
+            <s.DropdownList>
+              <s.DropdownItem onClick={() => handleStatusChange("공연중")}>
                 공연중
-              </ps.DropdownItem>
-              <ps.DropdownItem onClick={() => handleStatusChange("공연예정")}>
+              </s.DropdownItem>
+              <s.DropdownItem onClick={() => handleStatusChange("공연예정")}>
                 공연예정
-              </ps.DropdownItem>
-            </ps.DropdownList>
+              </s.DropdownItem>
+            </s.DropdownList>
           )}
-        </ps.DropdownWrapper>
-        <ps.DropdownWrapper ref={areaRef}>
-          <ps.DropdownButton
+        </s.DropdownWrapper>
+        <s.DropdownWrapper ref={areaRef}>
+          <s.DropdownButton
             open={areaOpen}
             onClick={() => setAreaOpen((prev) => !prev)}
           >
             지역
-          </ps.DropdownButton>
+          </s.DropdownButton>
           {areaOpen && (
-            <ps.DropdownList>
+            <s.DropdownList>
               {AREA_OPTIONS.map((area) => (
-                <ps.DropdownItem
+                <s.DropdownItem
                   key={area}
                   onClick={() => {
                     handleAreaChange(area);
@@ -320,23 +272,19 @@ function PerformanceList() {
                   }}
                 >
                   {area}
-                </ps.DropdownItem>
+                </s.DropdownItem>
               ))}
-            </ps.DropdownList>
+            </s.DropdownList>
           )}
-        </ps.DropdownWrapper>
-        <ps.DropdownWrapper ref={genreRef}>
-          <ps.DropdownButton
-            open={genreOpen}
-            onClick={() => setGenreOpen((prev) => !prev)}
-            style={{ minWidth: "200px" }}
-          >
+        </s.DropdownWrapper>
+        <s.DropdownWrapper ref={genreRef}>
+          <s.DropdownButton open={genreOpen} onClick={() => setGenreOpen((prev) => !prev)}>
             장르
-          </ps.DropdownButton>
+          </s.DropdownButton>
           {genreOpen && (
-            <ps.DropdownList>
+            <s.DropdownList>
               {GENRE_OPTIONS.map((genre) => (
-                <ps.DropdownItem
+                <s.DropdownItem
                   key={genre}
                   onClick={() => {
                     handleGenreChange(genre);
@@ -344,24 +292,24 @@ function PerformanceList() {
                   }}
                 >
                   {genre}
-                </ps.DropdownItem>
+                </s.DropdownItem>
               ))}
-            </ps.DropdownList>
+            </s.DropdownList>
           )}
-        </ps.DropdownWrapper>
+        </s.DropdownWrapper>
         <s.PerformancePlace>
-          <div style={{ marginLeft: 10 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <s.PlaceInner>
+            <s.PlaceLabel>
               <input
                 type="checkbox"
                 checked={vtFilter}
                 onChange={(e) => setVtFilter(e.target.checked)}
               />
               내한 공연
-            </label>
-          </div>
+            </s.PlaceLabel>
+          </s.PlaceInner>
         </s.PerformancePlace>
-        <div
+        <s.ResetButton
           onClick={() => {
             setSort("name_asc");
             setArFilter([]);
@@ -372,42 +320,21 @@ function PerformanceList() {
             setPage(0);
             getPerformance("", false, 0);
           }}
-          style={{
-            padding: "6px 12px",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            background: "#f0f0f0",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
         >
           <GrPowerReset size={12} color="#333" />
-        </div>
-        <div style={{ position: "relative", marginLeft: "auto" }}>
-          <input
+        </s.ResetButton>
+        <s.SearchWrapper>
+          <s.SearchInput
             type="text"
             placeholder="공연명 검색"
             value={query}
+            open={searchOpen || !!query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") getPerformance(query, false, 0);
             }}
-            style={{
-              backgroundColor: "#fbfbfb",
-              padding: "8px 36px 8px 24px",
-              width: searchOpen || query ? 250 : 0,
-              opacity: searchOpen || query ? 1 : 0,
-              borderRadius: 10,
-              border: "2px solid #ccc",
-              outline: "none",
-              boxSizing: "border-box",
-              transition: "width 0.3s, opacity 0.3s",
-              pointerEvents: searchOpen || query ? "auto" : "none",
-            }}
           />
-          <PiMagnifyingGlass
+          <s.SearchIcon
             size={18}
             onClick={() => {
               if (!query) setSearchOpen((prev) => !prev);
@@ -416,99 +343,47 @@ function PerformanceList() {
                 getPerformance(query, false, 0);
               }
             }}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: 13,
-              color: "grey",
-              cursor: "pointer",
-            }}
           />
           {searchOpen && query && (
-            <GrClose
+            <s.ClearIcon
               size={12}
               onClick={() => {
                 setQuery("");
                 getPerformance("", false, 0);
               }}
-              style={{
-                position: "absolute",
-                right: 40,
-                top: 16,
-                color: "grey",
-                cursor: "pointer",
-              }}
             />
           )}
-        </div>
+        </s.SearchWrapper>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          marginTop: "36px",
-          marginBottom: "25px",
-        }}
-      >
+      <s.FilterContainerWithTop>
         {arfilter.map((item) => (
-          <div
-            key={`area-${item}`}
-            style={{
-              color: "#dbdbdb",
-              display: "flex",
-              alignItems: "center",
-              background: "#3A3A3A",
-              borderRadius: "16px",
-              padding: "4px 8px",
-            }}
-          >
+          <s.AreaFilterItem key={`area-${item}`}>
             <span>{item}</span>
-            <PiXCircle
+            <s.AreaFilterRemove
               size={16}
-              style={{ marginLeft: 6, cursor: "pointer" }}
               onClick={() => removeFilter("area", item)}
             />
-          </div>
+          </s.AreaFilterItem>
         ))}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          marginBottom: "20px",
-        }}
-      >
+      </s.FilterContainerWithTop>
+
+      <s.FilterContainer>
         {gefilter.map((item) => (
-          <div
-            key={`genre-${item}`}
-            style={{
-              color: "#dbdbdb",
-              display: "flex",
-              alignItems: "center",
-              background: "#3A3A3A",
-              borderRadius: "16px",
-              padding: "4px 8px",
-            }}
-          >
+          <s.GenreFilterItem key={`genre-${item}`}>
             <span>{item}</span>
-            <PiXCircle
+            <s.GenreFilterRemove
               size={14}
-              style={{ marginLeft: 6, cursor: "pointer" }}
               onClick={() => removeFilter("genre", item)}
             />
-          </div>
+          </s.GenreFilterItem>
         ))}
-      </div>
+      </s.FilterContainer>
+
 
       {performances.length === 0 && !loading && (
-        <div
-          className="detail-error"
-          style={{ color: "white", marginTop: "20px" }}
-        >
+        <s.ErrorMessage className="detail-error">
           공연 정보를 찾을 수 없습니다.
-        </div>
+        </s.ErrorMessage>
       )}
       {loading && page === 0 ? (
         <PrfList24Skeleton />
@@ -536,65 +411,24 @@ function PerformanceList() {
                   onClick={() => navigate(`/performance/${p.prfId}`)}
                   style={{ cursor: "pointer", position: "relative" }}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "8px",
-                      left: "8px",
-                      background: "rgba(0,0,0,0.6)",
-                      color: "white",
-                      padding: "4px 8px",
-                      fontSize: "14px",
-                      borderRadius: "12px",
-                      zIndex: 2,
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {p.genreNm}
-                  </div>
-                  {/* ───────────── 포스터 ───────────── */}
+
+                  <s.GenreNm>
+                  <div>{p.genreNm}</div>
+                  </s.GenreNm>
+
+                  <s.PosterImg>
                   <img
                     src={p.posterImgUrl}
                     alt={p.prfNm}
-                    style={{
-                      width: "100%",
-                      height: "260px",
-                      objectFit: "cover",
-                      borderRadius: "10px",
-                      marginBottom: "0px",
-                      // cursor: "pointer",
-                    }}
                   />
+                  </s.PosterImg>
 
-                  {/* ───────────── 공연명 ───────────── */}
                   <s.PerformanceDetail1>
-                    <h4
-                      style={{
-                        fontSize: "15px",
-                        fontWeight: "600",
-                        marginBottom: "4px",
-                        lineHeight: "1.4",
-                        wordBreak: "keep-all",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                        cursor: "pointer",
-                      }}
-                    >
                       {removeRegionTag(p.prfNm)}
-                    </h4>
                   </s.PerformanceDetail1>
 
-                  {/* ───────────── 공연장명 ───────────── */}
-                  <s.PerformancePlace>
-                    <p
-                      style={{
-                        fontSize: "13px",
-                        margin: "2px 0",
-                        wordBreak: "keep-all",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
+                  <s.PerformancePlace2>
+                    <p>
                       {(() => {
                         const original = p.prfPlcNm;
                         let result = "";
@@ -620,21 +454,10 @@ function PerformanceList() {
                         return result.trim();
                       })()}
                     </p>
-                  </s.PerformancePlace>
+                  </s.PerformancePlace2>
 
-                  {/* ───────────── 날짜 ───────────── */}
                   <s.PerformancePeriod>
-                    <p
-                      style={{
-                        fontSize: "12.5px",
-                        margin: "2px 0",
-                      }}
-                    >
-                      {formatDateRange(
-                        formatDateDot(p.prfStartDt),
-                        formatDateDot(p.prfEndDt)
-                      )}
-                    </p>
+                    <p>{formatDateRange(formatDateDot(p.prfStartDt),formatDateDot(p.prfEndDt))}</p>
                   </s.PerformancePeriod>
                 </div>
               </div>
