@@ -10,6 +10,7 @@ import { fetchPerformanceDetail } from "../../../apis/performanceApi";
 import { formatTime } from "../../../components/format/formatDate";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
 import { formatSiteName } from "../../../components/format/formatSiteName";
+import { formatTicketProvider } from "../../../components/format/formatTicketProvider";
 import * as s from "./styles";
 
 function PerformanceDetail() {
@@ -20,6 +21,7 @@ function PerformanceDetail() {
   const [loading, setLoading] = useState(true);
   const [showLinks, setShowLinks] = useState(false);
   const { favorites, toggleFavorite, fetchFavoriteState } = useFavoriteState();
+  const providerUrls = formatTicketProvider(performance?.providerUrl);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -27,7 +29,6 @@ function PerformanceDetail() {
 
   useOutsideClick(wrapperRef, () => setShowLinks(false));
 
-  // 상세 정보
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -54,10 +55,15 @@ function PerformanceDetail() {
     await toggleFavorite(id);
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
-
   const HeartIcon = liked ? ImHeart : SlHeart;
+
+  if (loading || !performance) {
+    return (
+      <s.PageBackground>
+        {loading ? "로딩 중..." : "공연 정보를 찾을 수 없습니다."}
+      </s.PageBackground>
+    );
+  }
 
   return (
     <s.PageBackground>
@@ -176,21 +182,11 @@ function PerformanceDetail() {
 
         {showLinks && (
           <s.TicketDropdown>
-            {performance.providerUrl?.split(",").map((raw, i) => {
-              const url = raw.trim();
-              if (!url) return null;
-
-              const validUrl = url.startsWith("http") ? url : `https://${url}`;
-
-              return (
-                <s.TicketLink
-                  key={i}
-                  onClick={() => window.open(validUrl, "_blank")}
-                >
-                  {formatSiteName(validUrl)}
-                </s.TicketLink>
-              );
-            })}
+            {providerUrls.map((url, i) => (
+              <s.TicketLink key={i} onClick={() => window.open(url, "_blank")}>
+                {formatSiteName(url)}
+              </s.TicketLink>
+            ))}
           </s.TicketDropdown>
         )}
       </s.TicketWrapper>
