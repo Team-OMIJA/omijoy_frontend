@@ -121,10 +121,6 @@ function PerformanceDetail() {
 
         {/* 오른쪽 내용 섹션 */}
         <s.Content>
-          {/* <s.HeartWrapper>
-            <HeartIcon className="heart" onClick={handleToggleFavorite} />
-          </s.HeartWrapper> */}
-
           <s.TopRightButtons>
             <s.HeartWrapper>
               <s.HeartIconButton liked={liked} onClick={handleToggleFavorite}>
@@ -176,11 +172,6 @@ function PerformanceDetail() {
             {/* 오른쪽 컬럼 */}
             <s.InfoGroup>
               <s.InfoItem>
-                <s.Label>관람시간</s.Label>
-                <s.Value>{performance.runtime}</s.Value>
-              </s.InfoItem>
-
-              <s.InfoItem>
                 <s.Label>장르</s.Label>
                 <s.Value>{performance.genreNm}</s.Value>
               </s.InfoItem>
@@ -188,6 +179,11 @@ function PerformanceDetail() {
               <s.InfoItem>
                 <s.Label>관람등급</s.Label>
                 <s.Value>{performance.prfAge}</s.Value>
+              </s.InfoItem>
+
+              <s.InfoItem>
+                <s.Label>관람시간</s.Label>
+                <s.Value>{performance.runtime}</s.Value>
               </s.InfoItem>
 
               {performance.child === "Y" && (
@@ -213,39 +209,37 @@ function PerformanceDetail() {
                     ))}
                 </s.Value>
               </s.InfoItem>
-
-              {/* 예매 버튼 + dropdown */}
-              <s.TicketWrapper ref={wrapperRef}>
-                <s.TicketButton onClick={() => setShowLinks((prev) => !prev)}>
-                  예매 바로가기 →
-                </s.TicketButton>
-
-                {showLinks && (
-                  <s.TicketDropdown>
-                    {performance.providerUrl?.split(",").map((raw, i) => {
-                      const url = raw.trim();
-                      if (!url) return null;
-
-                      const validUrl = url.startsWith("http")
-                        ? url
-                        : `https://${url}`;
-
-                      return (
-                        <s.TicketLink
-                          key={i}
-                          onClick={() => window.open(validUrl, "_blank")}
-                        >
-                          {getSiteName(validUrl)}
-                        </s.TicketLink>
-                      );
-                    })}
-                  </s.TicketDropdown>
-                )}
-              </s.TicketWrapper>
             </s.InfoGroup>
           </s.InfoGrid>
         </s.Content>
       </s.Container>
+
+      {/* 예매 버튼 + dropdown */}
+      <s.TicketWrapper ref={wrapperRef}>
+        <s.TicketButton onClick={() => setShowLinks((prev) => !prev)}>
+          예매 바로가기 →
+        </s.TicketButton>
+
+        {showLinks && (
+          <s.TicketDropdown>
+            {performance.providerUrl?.split(",").map((raw, i) => {
+              const url = raw.trim();
+              if (!url) return null;
+
+              const validUrl = url.startsWith("http") ? url : `https://${url}`;
+
+              return (
+                <s.TicketLink
+                  key={i}
+                  onClick={() => window.open(validUrl, "_blank")}
+                >
+                  {getSiteName(validUrl)}
+                </s.TicketLink>
+              );
+            })}
+          </s.TicketDropdown>
+        )}
+      </s.TicketWrapper>
 
       <s.Divider />
 

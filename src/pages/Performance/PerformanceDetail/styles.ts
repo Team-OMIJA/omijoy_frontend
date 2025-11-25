@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 /* 페이지 전체 배경 */
 export const PageBackground = styled.div`
   width: 100%;
-  background-color: rgba(18, 18, 18, 1);
+  background-color: #121212;
   padding-bottom: 60px;
 `;
 
@@ -11,19 +11,22 @@ export const PageBackground = styled.div`
 export const Container = styled.div`
   display: flex;
   gap: 50px;
-  padding: 40px;
+  padding: 30px;
   max-width: 1100px;
   margin: 0 auto;
   border-radius: 16px;
-  background-color: #0f0f0f;
+  background-color: #121212;
   position: relative;
+  margin-top: 20px;
 `;
 
 /* 포스터 */
 export const Poster = styled.img`
   width: 380px;
-  height: 520px;
+  height: 500px;
   border-radius: 12px;
+  margin-top: 10px;
+  margin-right: 10px;
   object-fit: cover;
 `;
 
@@ -38,9 +41,11 @@ export const Content = styled.div`
 export const Title = styled.h1`
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 20px;
   color: #dbdbdb;
   line-height: 1.3;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  white-space: normal;
 `;
 
 /* 2컬럼 레이아웃 추가 */
@@ -49,7 +54,7 @@ export const InfoGrid = styled.div`
   grid-template-columns: 1fr 1fr; /* 왼쪽 / 오른쪽 */
   column-gap: 50px;
   row-gap: 18px;
-  margin-top: 25px;
+  margin-top: 20px;
 `;
 
 /* 정보 그룹 (왼쪽/오른쪽 각각 묶음) */
@@ -81,8 +86,10 @@ export const Value = styled.div`
 /* 예매 버튼 */
 export const TicketWrapper = styled.div`
   position: relative;
-  margin-top: 35px;
+  margin-top: 20px;
   width: fit-content;
+  margin-left: auto;
+  margin-right: 210px;
 `;
 
 export const TicketButton = styled.button`
