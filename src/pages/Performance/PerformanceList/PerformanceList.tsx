@@ -5,10 +5,10 @@ import useInfiniteScroll from '../../../configs/useInfiniteScroll';
 import { useNavigate, useNavigationType } from 'react-router-dom';
 import ScrollTop from '../../../components/common/Button/ScrollTopButton';
 import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
-import { removeRegionTag } from '../../../apis/performanceApi';
+import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
 import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
 import * as s from '../../Home/PerformanceStyles';
-import * as ps from './PerformanceListStyle';
+import * as ps from './styles';
 
 interface Performance {
   prfId: string;
