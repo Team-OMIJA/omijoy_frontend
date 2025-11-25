@@ -198,7 +198,7 @@ function CommonModal({
               color: "#a3a3a3",
               fontSize: "0.9rem",
               marginTop: "5px",
-              marginBottom: "15px",
+              marginBottom: "12px",
             }}
           >
             {data.prfStartDt} ~ {data.prfEndDt}
@@ -232,7 +232,7 @@ function CommonModal({
               display: "flex",
               alignItems: "center",
               color: "#a3a3a3",
-              marginTop: "15px",
+              marginTop: "12px",
             }}
           >
             <ConfirmationNumberIcon sx={{ fontSize: 18, marginRight: "6px" }} />
