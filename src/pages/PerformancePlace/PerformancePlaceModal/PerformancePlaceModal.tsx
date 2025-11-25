@@ -8,7 +8,7 @@ import Slider from "react-slick";
 import * as S from "./PerformancePlaceModal.styles";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleFlagReq } from "../../../apis/flagApi";
 
 import { usePrincipalState } from "../../../stores/usePrincipalState";
@@ -18,7 +18,8 @@ import { FaFlagCheckered } from "react-icons/fa";
 
 interface PerformancePlaceModalProps {
   place: PlaceMarker;
-  onClose: () => void;
+  // 모달 닫을 때 flag 값 전달하기 위함
+  onClose: (updatedFlag?: boolean) => void;
 }
 
 function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
@@ -32,7 +33,17 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+  const mutation = useMutation({
+    // 서버에 플래그 토글 요청
+    mutationFn: () => toggleFlagReq(place.prfPlcId),
+    // 요청 성공 후 flags quertKey 와 관련된 캐시된 데이터를 무효화
+    // 안써서 지움
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries(["flags"]);
+    // },
+  });
+
   const navigate = useNavigate();
 
   // 버튼 클릭 시에는 화면의 상태만 변경
@@ -45,18 +56,25 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     setFlagged((prev) => !prev);
   };
 
-  // 모달이 닫힐 때, 플래그 상태가 변경되었으면 서버에 요청
-  const closeAndRefetchHandler = async () => {
-    if (flagged !== initialFlagged) {
-      try {
-        await toggleFlagReq(place.prfPlcId);
-        queryClient.invalidateQueries({ queryKey: ["flags"] });
-      } catch (err) {
-        console.error("플래그 상태 업데이트 실패:", err);
+  // 모달이 닫힐 때 서버 업데이트 + 공연장 맵 쪽(부모)에게 상태 전달
+  const closeAndSave = async () => {
+    try {
+      // 플래그 한 상태가 처음값이랑 달라졌을 때
+      if (flagged !== initialFlagged) {
+        // 서버에 post 요청 보내고 toggleFlagReq 실행
+        await mutation.mutateAsync();
+        // 성공 시 부모에게 변경된 flagged 전달
+        onClose(flagged);
+        return;
       }
+      onClose();
+    } catch(err) {
+      console.error("플래그 업데이트 실패 : ", err)
+      onClose();
     }
-    onClose();
-  };
+  }
+
+
 
   useEffect(() => {
     if (!place.prfPlcId) return;
@@ -118,9 +136,9 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     ],
   };
   return (
-    <S.ModalOverlay onClick={closeAndRefetchHandler}>
+    <S.ModalOverlay onClick={closeAndSave}>
       <S.ModalBody onClick={(e) => e.stopPropagation()}>
-        <S.ModalCloseXButton onClick={closeAndRefetchHandler} aria-label="닫기">
+        <S.ModalCloseXButton onClick={closeAndSave} aria-label="닫기">
           <IoClose />
         </S.ModalCloseXButton>
         <S.ModalFlagButton onClick={handleToggleFlag} flagged={flagged}>
