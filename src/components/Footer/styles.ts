@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 
 export const Wrapper = styled.footer`
   width: 100%;
+  margin-top: 40px;
   background: #0d0d0d;
   padding: 40px 0;
 `;

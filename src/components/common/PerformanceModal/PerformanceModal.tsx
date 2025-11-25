@@ -10,25 +10,9 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import ChildCareIcon from "@mui/icons-material/ChildCare";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import { PerformanceDetail } from "../../../types/homePageTypes";
+import { removeRegionTag } from "../../removeRegionTag/removeRegionTag";
 import * as s from "./styles";
-
-type PerformanceDetail = {
-  prfId: string;
-  posterImgUrl: string;
-  prfNm: string;
-  prfPlcNm: string;
-  area: string;
-  prfStartDt: string;
-  prfEndDt: string;
-  dtGuidance: string;
-  runtime: string;
-  genreNm: string;
-  prfAge: string;
-  ticketPrice: string;
-  providerUrl: string;
-  favorited: boolean;
-  scrapCount: number;
-};
 
 type CommonModalProps = {
   open: boolean;
@@ -55,11 +39,6 @@ function CommonModal({
   } = useFavoriteState();
   const isLiked = prfId ? favorites[prfId] ?? false : false;
   const navigate = useNavigate();
-
-  // [지역] 제거
-  const removeRegionTag = (text: string) => {
-    return text.replace(/\[.*?\]/g, "").trim();
-  };
 
   // 모달이 열릴 때 공연 정보 + 좋아요 상태 불러옴
   useEffect(() => {
@@ -91,8 +70,20 @@ function CommonModal({
   };
 
   const handleToggleLocalFavorite = async () => {
-    if (!prfId) return;
+    if (!prfId || !data) return;
     await toggleFavorite(prfId);
+
+    // 로컬 UI scrapCount 즉시 업데이트
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            scrapCount: isLiked
+              ? Math.max((prev.scrapCount ?? 0) - 1, 0) // 최소값을 0으로 고정하기 위해 사용
+              : (prev.scrapCount ?? 0) + 1,
+          }
+        : prev
+    );
 
     // 최신 zustand 상태 얻기
     const newState = useFavoriteState.getState().favorites[prfId];
@@ -204,7 +195,7 @@ function CommonModal({
             {data.prfStartDt} ~ {data.prfEndDt}
           </Typography>
 
-          {/* 러닝타임 */}
+          {/* 관람시간 */}
           <s.InfoText>
             <AccessTimeIcon sx={{ fontSize: 18, marginRight: "6px" }} />
             {data.runtime?.trim() ? data.runtime : "예매처 참고"}
@@ -216,7 +207,7 @@ function CommonModal({
             {data.genreNm}
           </s.InfoText>
 
-          {/* 나이 */}
+          {/* 관람등급 */}
           <s.InfoText>
             <ChildCareIcon sx={{ fontSize: 18, marginRight: "6px" }} />
             {data.prfAge}

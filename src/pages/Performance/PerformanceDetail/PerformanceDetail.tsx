@@ -3,38 +3,19 @@ import { useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
-import { removeRegionTag } from "../../../apis/performanceApi";
+import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
+import CheckIcon from "@mui/icons-material/Check";
+import { PerformanceDetailPage } from "../../../types/performancePageTypes";
+import { fetchPerformanceDetail } from "../../../apis/performanceApi";
 import * as s from "./styles";
-
-interface PerformanceDetail {
-  prfId: string;
-  prfNm: string;
-  prfStartDt: string;
-  prfEndDt: string;
-  prfPlcNm: string;
-  prfAge: string;
-  runtime: string;
-  ticketPrice: string;
-  posterImgUrl: string;
-  area: string;
-  genreNm: string;
-  visit: string;
-  child: string;
-  festival: string;
-  dtGuidance: string;
-  detailImgUrl: string;
-  providerUrl: string;
-}
 
 function PerformanceDetail() {
   const { id } = useParams<{ id: string }>();
-  const [performance, setPerformance] = useState<PerformanceDetail | null>(
+  const [performance, setPerformance] = useState<PerformanceDetailPage | null>(
     null
   );
   const [loading, setLoading] = useState(true);
-
   const [showLinks, setShowLinks] = useState(false);
-
   const { favorites, toggleFavorite, fetchFavoriteState } = useFavoriteState();
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -58,14 +39,14 @@ function PerformanceDetail() {
     };
   }, []);
 
+  // 상세 정보
   useEffect(() => {
-    const fetchPerformance = async () => {
+    const loadData = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/prfDetails/${id}`);
-        const data: PerformanceDetail = await res.json();
+        if (!id) return;
+        const data = await fetchPerformanceDetail(id);
         setPerformance(data);
       } catch (err) {
-        console.error("공연 상세 정보 불러오기 실패", err);
         setPerformance(null);
         alert("공연 정보를 불러올 수 없습니다.");
       } finally {
@@ -73,11 +54,12 @@ function PerformanceDetail() {
       }
     };
 
-    fetchPerformance();
+    loadData();
 
     if (id) fetchFavoriteState(id);
   }, [id, fetchFavoriteState]);
 
+  // 좋아요 토글
   const handleToggleFavorite = async () => {
     if (!id) return;
 
@@ -89,6 +71,7 @@ function PerformanceDetail() {
 
   const HeartIcon = liked ? ImHeart : SlHeart;
 
+  // 예매처 사이트 이름 추출
   const getSiteName = (url: string) => {
     const lower = url.toLowerCase();
     if (lower.includes("interpark")) return "인터파크";
@@ -127,7 +110,7 @@ function PerformanceDetail() {
                 <HeartIcon />
               </s.HeartIconButton>
 
-              {/* 스크랩 카운트도 표시하고 싶으면 */}
+              {/* 스크랩 카운트 표시 */}
               {/* {performance.scrapCount > 0 && (
                 <s.ScrapCountText>{performance.scrapCount}</s.ScrapCountText>
               )} */}
@@ -167,6 +150,28 @@ function PerformanceDetail() {
                     .join("\n")}
                 </s.Value>
               </s.InfoItem>
+
+              {performance.child === "Y" && (
+                <s.InfoItem>
+                  <s.CheckRow>
+                    <s.CheckIconStyle>
+                      <CheckIcon />
+                    </s.CheckIconStyle>
+                    <s.CheckText>미취학 아동 입장 가능</s.CheckText>
+                  </s.CheckRow>
+                </s.InfoItem>
+              )}
+
+              {performance.visit === "Y" && (
+                <s.InfoItem>
+                  <s.CheckRow>
+                    <s.CheckIconStyle>
+                      <CheckIcon />
+                    </s.CheckIconStyle>
+                    <s.CheckText>내한 공연</s.CheckText>
+                  </s.CheckRow>
+                </s.InfoItem>
+              )}
             </s.InfoGroup>
 
             {/* 오른쪽 컬럼 */}
@@ -185,18 +190,6 @@ function PerformanceDetail() {
                 <s.Label>관람시간</s.Label>
                 <s.Value>{performance.runtime}</s.Value>
               </s.InfoItem>
-
-              {performance.child === "Y" && (
-                <s.InfoItem>
-                  <s.Value>✔ 미취학 아동 입장 가능</s.Value>
-                </s.InfoItem>
-              )}
-
-              {performance.visit === "Y" && (
-                <s.InfoItem>
-                  <s.Value>✔ 내한 공연</s.Value>
-                </s.InfoItem>
-              )}
 
               <s.InfoItem>
                 <s.Label>가격</s.Label>

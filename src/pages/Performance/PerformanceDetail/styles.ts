@@ -39,10 +39,11 @@ export const Content = styled.div`
 
 /* 제목 */
 export const Title = styled.h1`
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   color: #dbdbdb;
   line-height: 1.3;
+  padding-right: 60px;
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
@@ -81,6 +82,10 @@ export const Value = styled.div`
   font-size: 17px;
   color: #dbdbdb;
   white-space: pre-line;
+  font-weight: 400;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  white-space: normal;
 `;
 
 /* 예매 버튼 */
@@ -170,7 +175,7 @@ export const ScrapCountText = styled.div`
   top: -4px;
   right: -4px;
   background-color: #b01c1c;
-  color: #fff;
+  color: #dbdbdb;
   font-size: 11px;
   padding: 2px 5px;
   border-radius: 10px;
@@ -189,4 +194,31 @@ export const HeartIconButton = styled.div<{ liked: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+export const CheckRow = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  gap: 8px;
+`;
+
+export const CheckIconStyle = styled.div`
+  display: flex;
+  align-items: center;
+
+  svg {
+    font-size: 22px;
+    color: #b01c1c;
+  }
+
+  path {
+    stroke: #b01c1c;
+    stroke-width: 1.3;
+  }
+`;
+
+export const CheckText = styled.div`
+  color: #dbdbdb;
+  font-weight: 400;
 `;
