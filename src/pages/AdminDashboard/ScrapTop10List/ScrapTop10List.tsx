@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getTop10Favorites, ScrapRank } from "../../../apis/favoriteApi";
+import { getTop10Favorites } from "../../../apis/adminApi";
+import { ScrapRank } from "../../../types/adminPageTypes";
 import * as s from "./styles";
 
 function ScrapTop10List() {

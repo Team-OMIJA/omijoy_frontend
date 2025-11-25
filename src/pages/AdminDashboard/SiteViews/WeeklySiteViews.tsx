@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  getWeeklySiteViews,
-  WeeklyView,
-} from "../../../apis/weeklySiteViewsApi";
+import { getWeeklySiteViews } from "../../../apis/adminApi";
+import { WeeklyView } from "../../../types/adminPageTypes";
 import {
   BarChart,
   Bar,
@@ -12,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { formatMonthDay } from "../../../components/FormatDate/FormatDate";
+import { formatMonthDay } from "../../../components/formatDate/formatDate";
 import * as s from "../SiteViews/styles";
 import CustomTooltip from "./CustomTooltip";
 

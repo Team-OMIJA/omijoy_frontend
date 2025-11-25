@@ -4,23 +4,12 @@ import { GrClose, GrPowerReset } from 'react-icons/gr';
 import useInfiniteScroll from '../../../configs/useInfiniteScroll';
 import { useNavigate, useNavigationType } from 'react-router-dom';
 import ScrollTop from '../../../components/common/Button/ScrollTopButton';
-import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
-import { removeRegionTag } from '../../../apis/performanceApi';
+import { formatDateDot, formatDateRange } from '../../../components/formatDate/formatDate';
+import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
 import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
+import { Performance } from '../../../types/performancePageTypes';
 import * as s from '../../Home/PerformanceStyles';
-import * as ps from './PerformanceListStyle';
-
-interface Performance {
-  prfId: string;
-  prfNm: string;
-  prfStartDt: string;
-  prfEndDt: string;
-  prfPlcNm: string;
-  ticketPrice: string;
-  posterImgUrl: string;
-  area: string;
-  genreNm: string;
-}
+import * as ps from './styles';
 
 function PerformanceList() {
   const navigationType = useNavigationType();
@@ -54,7 +43,7 @@ function PerformanceList() {
     async (searchQuery: string, append = false, pageToLoad = 0) => {
       setLoading(true);
       try {
-        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
+        const baseUrl = 'http://localhost:8080/prfDetails';
         const isSearch = searchQuery && searchQuery.trim() !== '';
 
         const params = new URLSearchParams();
@@ -211,7 +200,14 @@ function PerformanceList() {
 
   return (
     <div style={{ width: '100%', padding: '40px 60px', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '-10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          marginBottom: '-10px',
+        }}
+      >
         <ScrollTop />
         <ps.DropdownWrapper ref={sortRef}>
           <ps.DropdownButton open={sortOpen} onClick={() => setSortOpen((prev) => !prev)}>
