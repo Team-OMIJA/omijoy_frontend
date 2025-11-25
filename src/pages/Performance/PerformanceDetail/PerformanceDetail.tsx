@@ -86,6 +86,8 @@ function PerformanceDetail() {
     if (lower.includes("coupang")) return "쿠팡";
     if (lower.includes("clipservice")) return "클립서비스";
     if (lower.includes("timeticket")) return "타임 티켓";
+    if (lower.includes("maketicket")) return "마켓 티켓";
+    if (lower.includes("tmon")) return "티몬";
     try {
       const hostname = new URL(url).hostname;
       const parts = hostname.replace("www.", "").split(".");
