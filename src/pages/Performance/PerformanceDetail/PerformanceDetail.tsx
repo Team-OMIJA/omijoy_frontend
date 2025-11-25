@@ -7,6 +7,9 @@ import { removeRegionTag } from "../../../components/removeRegionTag/removeRegio
 import CheckIcon from "@mui/icons-material/Check";
 import { PerformanceDetailPage } from "../../../types/performancePageTypes";
 import { fetchPerformanceDetail } from "../../../apis/performanceApi";
+import { formatTime } from "../../../components/format/formatDate";
+import { useOutsideClick } from "../../../hooks/useOutsideClick";
+import { formatSiteName } from "../../../components/format/formatSiteName";
 import * as s from "./styles";
 
 function PerformanceDetail() {
@@ -22,22 +25,7 @@ function PerformanceDetail() {
 
   const liked = id ? favorites[id] ?? false : false;
 
-  // 외부 클릭 감지
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
-        setShowLinks(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useOutsideClick(wrapperRef, () => setShowLinks(false));
 
   // 상세 정보
   useEffect(() => {
@@ -70,54 +58,6 @@ function PerformanceDetail() {
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
 
   const HeartIcon = liked ? ImHeart : SlHeart;
-
-  // 예매처 사이트 이름 추출
-  const getSiteName = (url: string) => {
-    const lower = url.toLowerCase();
-    if (lower.includes("interpark")) return "인터파크";
-    if (lower.includes("ticketlink")) return "티켓링크";
-    if (lower.includes("yes24")) return "YES24";
-    if (lower.includes("naver")) return "네이버 예매";
-    if (lower.includes("wemakeprice")) return "위메프";
-    if (lower.includes("melon")) return "멜론티켓";
-    if (lower.includes("lotte")) return "롯데콘서트홀";
-    if (lower.includes("coffee")) return "커넥티브 티켓";
-    if (lower.includes("nanumticket")) return "나눔 티켓";
-    if (lower.includes("coupang")) return "쿠팡";
-    if (lower.includes("clipservice")) return "클립서비스";
-    if (lower.includes("timeticket")) return "타임 티켓";
-    try {
-      const hostname = new URL(url).hostname;
-      const parts = hostname.replace("www.", "").split(".");
-      const mainDomain = parts[0];
-
-      return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1);
-    } catch {
-      return "예매처";
-    }
-  };
-
-  // 공연 시간 포맷팅
-  let formattedTime = "";
-
-  if (performance.dtGuidance) {
-    formattedTime = performance.dtGuidance
-      .split("),")
-      .map((t) => {
-        let clean = t.trim();
-
-        if (!clean.endsWith(")")) clean += ")";
-
-        // 콤마 뒤 공백: "18:00)" → "18:00), "
-        clean = clean.replace(/,\s*/g, ", ");
-
-        return clean;
-      })
-      .join("\n");
-
-    // 요일과 괄호 사이 공백 강제 삽입
-    formattedTime = formattedTime.replace(/([가-힣요일])\(/g, "$1 (");
-  }
 
   return (
     <s.PageBackground>
@@ -165,7 +105,7 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>공연 시간</s.Label>
-                <s.Value>{formattedTime}</s.Value>
+                <s.Value>{formatTime(performance.dtGuidance)}</s.Value>
               </s.InfoItem>
 
               {performance.child === "Y" && (
@@ -247,7 +187,7 @@ function PerformanceDetail() {
                   key={i}
                   onClick={() => window.open(validUrl, "_blank")}
                 >
-                  {getSiteName(validUrl)}
+                  {formatSiteName(validUrl)}
                 </s.TicketLink>
               );
             })}

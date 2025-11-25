@@ -55,3 +55,26 @@ export function formatPeriod(period: string): string {
 
   return `${start} - ${end}`;
 }
+
+// 공연 시간 포맷팅 (dtGuidance)
+export function formatTime(timeStr?: string): string {
+  if (!timeStr) return "";
+
+  // "화(18:00), 수(17:00)" 이런 문자열 기준 처리
+  let result = timeStr
+    .split("),")
+    .map((t) => {
+      let clean = t.trim();
+      if (!clean.endsWith(")")) clean += ")";
+
+      // "18:00)" → "18:00), "
+      clean = clean.replace(/,\s*/g, ", ");
+      return clean;
+    })
+    .join("\n");
+
+  // 요일과 괄호 사이 강제 공백: "수(18:00)" → "수 (18:00)"
+  result = result.replace(/([가-힣요일])\(/g, "$1 (");
+
+  return result;
+}

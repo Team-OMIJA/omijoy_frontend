@@ -6,7 +6,7 @@ import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import {
   formatDateRange,
   formatUIDate,
-} from "../../../components/formatDate/formatDate";
+} from "../../../components/format/formatDate";
 import { Carousel } from "@mantine/carousel";
 import * as s from "../PerformanceStyles";
 import * as ts from "./styles";

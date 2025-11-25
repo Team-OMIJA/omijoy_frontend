@@ -6,10 +6,7 @@ import {
   KidsNewPerformancs,
 } from "../types/homePageTypes";
 import { PerformanceDetailPage } from "../types/performancePageTypes";
-import {
-  formatNewDate,
-  formatPeriod,
-} from "../components/formatDate/formatDate";
+import { formatNewDate, formatPeriod } from "../components/format/formatDate";
 import { removeRegionTag } from "../components/removeRegionTag/removeRegionTag";
 
 // TopRankList
