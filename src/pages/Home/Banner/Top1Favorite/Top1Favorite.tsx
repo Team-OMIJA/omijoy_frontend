@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import {
-  getTop1FavoriteForBanner,
-  ScrapRank,
-} from "../../../../apis/favoriteApi";
-import { formatDateRange } from "../../../../components/FormatDate/FormatDate";
-import { formatDateDot } from "../../../../components/FormatDate/FormatDate";
-import { removeRegionTag } from "../../../../apis/performanceApi";
-import * as s from "./styles";
 import { useNavigate } from "react-router-dom";
+import { getTop1FavoriteForBanner } from "../../../../apis/adminApi";
+import { ScrapRank } from "../../../../types/adminPageTypes";
+import {
+  formatDateRange,
+  formatDateDot,
+} from "../../../../components/formatDate/formatDate";
+import { removeRegionTag } from "../../../../components/removeRegionTag/removeRegionTag";
+import * as s from "./styles";
 
 function Top1Favorite() {
   const [data, setData] = useState<ScrapRank | null>(null);

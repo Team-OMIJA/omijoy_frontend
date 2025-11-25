@@ -4,14 +4,13 @@ import {
   AwardPerformance,
   UpcomingPerformance,
   KidsNewPerformancs,
-} from "../types/homeTypes";
-import { formatNewDate } from "../components/FormatDate/FormatDate";
-import { formatPeriod } from "../components/FormatDate/FormatDate";
-
-// [지역] 제거
-export const removeRegionTag = (text: string) => {
-  return text.replace(/\[.*?\]/g, "").trim();
-};
+} from "../types/homePageTypes";
+import { PerformanceDetailPage } from "../types/performancePageTypes";
+import {
+  formatNewDate,
+  formatPeriod,
+} from "../components/formatDate/formatDate";
+import { removeRegionTag } from "../components/removeRegionTag/removeRegionTag";
 
 // TopRankList
 export const fetchTopRankPerformances = async (): Promise<
@@ -139,5 +138,22 @@ export const fetchKidsPrfsThisMonth = async (): Promise<
   } catch (err) {
     console.error("Failed to fetch kidsNewPerformances data from server", err);
     return [];
+  }
+};
+
+// 공연 상세페이지 정보
+export const fetchPerformanceDetail = async (id: string) => {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  try {
+    const res = await fetch(`${BASE_URL}/prfDetails/${id}`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch performance detail");
+    }
+    const data: PerformanceDetailPage = await res.json();
+    return data;
+  } catch (error) {
+    console.error("공연 상세 정보 API 실패:", error);
+    throw error;
   }
 };

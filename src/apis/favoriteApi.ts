@@ -1,34 +1,4 @@
-// 스크랩(좋아요) 관련 api
-
 import { instance } from "./instance";
-import axios from "axios";
-
-export type ScrapRank = {
-  prfId: string;
-  prfName: string;
-  scrapCount: number;
-  posterImgUrl: string;
-  prfStartDt: string;
-  prfEndDt: string;
-};
-
-export const getTop10Favorites = async (): Promise<ScrapRank[]> => {
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-  try {
-    const response = await axios.get(`${BASE_URL}/favorite`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to get top10 favorites", error);
-    throw error;
-  }
-};
-
-// 배너에서 쓸 스크랩 1위 데이터만
-export const getTop1FavoriteForBanner = async (): Promise<ScrapRank> => {
-  const list = await getTop10Favorites();
-  return list[0];
-};
 
 // 공연 스크랩 토글
 export const toggleFavoriteReq = async (prfId: string) => {

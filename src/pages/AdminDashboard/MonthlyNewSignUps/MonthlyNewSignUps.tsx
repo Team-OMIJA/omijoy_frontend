@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMonthlyNewSignUps } from "../../../apis/signUpsApi";
+import { getMonthlyNewSignUps } from "../../../apis/adminApi";
 import {
   LineChart,
   Line,

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
-import { AwardPerformance } from "../../../types/homeTypes";
+import { AwardPerformance } from "../../../types/homePageTypes";
 import { fetchAwardPerformances } from "../../../apis/performanceApi";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import { Carousel } from "@mantine/carousel";

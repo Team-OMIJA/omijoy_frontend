@@ -10,7 +10,7 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { fetchTopRankPerformances } from "../../../apis/performanceApi";
-import { TopRankPerformance } from "../../../types/homeTypes";
+import { TopRankPerformance } from "../../../types/homePageTypes";
 
 function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
