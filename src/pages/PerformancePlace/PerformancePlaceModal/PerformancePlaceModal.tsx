@@ -8,7 +8,7 @@ import Slider from "react-slick";
 import * as S from "./PerformancePlaceModal.styles";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleFlagReq } from "../../../apis/flagApi";
 
 import { usePrincipalState } from "../../../stores/usePrincipalState";
@@ -33,6 +33,13 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => toggleFlagReq(place.prfPlcId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["flags"]);
+    },
+  });
+
   const navigate = useNavigate();
 
   // 버튼 클릭 시에는 화면의 상태만 변경
@@ -49,8 +56,9 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const closeAndRefetchHandler = async () => {
     if (flagged !== initialFlagged) {
       try {
-        await toggleFlagReq(place.prfPlcId);
-        queryClient.invalidateQueries({ queryKey: ["flags"] });
+        // await toggleFlagReq(place.prfPlcId);
+        // queryClient.invalidateQueries({ queryKey: ["flags"] });
+        await mutation.mutateAsync();
       } catch (err) {
         console.error("플래그 상태 업데이트 실패:", err);
       }

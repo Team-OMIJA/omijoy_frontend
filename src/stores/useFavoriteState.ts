@@ -80,6 +80,16 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
       window.location.href = "/login";
     }
   },
+
+  // 좋아요 카운트
+  // favoriteCounts: {},
+
+  // fetchFavoriteCount: async (prfId) => {
+  //   try {
+  //     const res = await instance.get(`/commonmodal/${prfId}`)
+  //     const count = res.data.count;
+  //   }
+  // }
   // 현재 스크랩 여부 - 공연 상세 페이지 사용
   //  fetchDetailFavoriteState: async (prfId) => {
   //   try {
@@ -103,3 +113,5 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
   //     }
   //   },
 }));
+
+
