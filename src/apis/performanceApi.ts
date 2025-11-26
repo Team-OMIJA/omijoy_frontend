@@ -21,7 +21,6 @@ export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> 
     const response = await axios.get(url, { responseType: 'text' });
     const parser = new DOMParser();
     const xmlData = parser.parseFromString(response.data, 'text/xml');
-    console.log(xmlData);
     const boxList = xmlData.getElementsByTagName('boxof');
 
     // XML → JS 객체 변환
