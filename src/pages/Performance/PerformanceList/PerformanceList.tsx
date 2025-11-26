@@ -43,7 +43,7 @@ function PerformanceList() {
     async (searchQuery: string, append = false, pageToLoad = 0) => {
       setLoading(true);
       try {
-        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}:8080/prfDetails`;
+        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
         const isSearch = searchQuery && searchQuery.trim() !== '';
 
         const params = new URLSearchParams();

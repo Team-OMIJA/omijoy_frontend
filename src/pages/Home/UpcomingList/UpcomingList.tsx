@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
-import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
-import { UpcomingPerformance } from "../../../types/homePageTypes";
-import { getUpcomingPerformances } from "../../../apis/performanceApi";
-import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
-import {
-  formatDateRange,
-  formatUIDate,
-} from "../../../components/formatDate/formatDate";
-import { Carousel } from "@mantine/carousel";
-import * as s from "../PerformanceStyles";
-import * as ts from "./styles";
+import { useEffect, useState } from 'react';
+import PerformanceModal from '../../../components/common/PerformanceModal/PerformanceModal';
+import { UpcomingPerformance } from '../../../types/homePageTypes';
+import { getUpcomingPerformances } from '../../../apis/performanceApi';
+import PrfListSkeleton from '../../../components/skeleton/PrfListSkeleton';
+import { formatDateRange, formatUIDate } from '../../../components/FormatDate/FormatDate';
+import { Carousel } from '@mantine/carousel';
+import * as s from '../PerformanceStyles';
+import * as ts from './styles';
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
@@ -36,21 +33,21 @@ function UpcomingList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div style={{ width: "100%", position: "relative" }}>
+        <div style={{ width: '100%', position: 'relative' }}>
           {/* <s.gradientLeft style={{ height: "300px" }} />
           <s.gradientRight style={{ height: "300px" }} /> */}
           <ts.StyledCarousel
-            slideSize="20%"
-            slideGap="30px"
+            slideSize='20%'
+            slideGap='30px'
             height={470}
             emblaOptions={{
-              align: "start",
+              align: 'start',
               slidesToScroll: 1,
               dragFree: true,
             }}
             withControls
             controlSize={50}
-            controlsOffset="sm"
+            controlsOffset='sm'
           >
             {performances.map((p) => (
               <Carousel.Slide key={p.prfId}>
@@ -67,10 +64,7 @@ function UpcomingList() {
                   <s.PerformancePlace>{p.prfPlcNm}</s.PerformancePlace>
 
                   <s.PerformancePeriod>
-                    {formatDateRange(
-                      formatUIDate(p.prfStartDt),
-                      formatUIDate(p.prfEndDt)
-                    )}
+                    {formatDateRange(formatUIDate(p.prfStartDt), formatUIDate(p.prfEndDt))}
                   </s.PerformancePeriod>
 
                   <s.PerformanceGenre>{p.genreNm}</s.PerformanceGenre>
