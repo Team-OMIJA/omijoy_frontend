@@ -2,6 +2,19 @@ import styled from "@emotion/styled";
 import { PiMagnifyingGlass, PiXCircle } from "react-icons/pi";
 import { GrClose } from "react-icons/gr";
 
+export const FullBox = styled.div`
+  width: 100%;
+  padding: 40px 60px;
+  box-sizing: border-box;
+`;
+
+export const SubBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: -10px;
+`;
+
 export const DropdownWrapper = styled.div<{ open?: boolean }>`
   position: relative;
   display: inline-block;
@@ -11,7 +24,6 @@ export const DropdownWrapper = styled.div<{ open?: boolean }>`
 `;
 
 export const DropdownButton = styled.div<{ open?: boolean }>`
-  width: 200px;
   background-color: #fbfbfb;
   color: #777;
   padding: 8px 12px;
@@ -34,6 +46,10 @@ export const DropdownButton = styled.div<{ open?: boolean }>`
     transition: transform 0.2s;
   }
 `;
+
+  export const GenreDropdownButton = styled(DropdownButton)`
+    width: 200px;
+  `;
 
 export const DropdownList = styled.ul`
   position: absolute;
@@ -73,6 +89,11 @@ export const ResetButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
 `;
 
 export const SearchWrapper = styled.div`
@@ -115,6 +136,23 @@ export const ErrorMessage = styled.div`
 `;
 
 
+export const PerformanceGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+`;
+
+export const PerformanceCard = styled.div`
+  text-align: left;
+  padding: 5px;
+  border-radius: 14px;
+`;
+
+export const ClickableWrapper = styled.div`
+  cursor: pointer;
+  position: relative;
+`;
 
 /* 공연 제목 */
 export const PerformanceTitle = styled.div`
@@ -259,7 +297,6 @@ export const AreaFilterRemove = styled(PiXCircle)`
   cursor: pointer;
 `;
 
-
 export const GenreFilterItem = styled.div`
   color: #dbdbdb;
   display: flex;
@@ -273,6 +310,3 @@ export const GenreFilterRemove = styled(PiXCircle)`
   margin-left: 6px;
   cursor: pointer;
 `;
-
-
-
