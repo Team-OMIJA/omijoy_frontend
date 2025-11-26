@@ -27,6 +27,7 @@ export const empty = css`
   font-size: 16px;
   text-align: center;
   padding: 40px 0;
+  color: #e0e0e0;
 `;
 
 // 로딩 중

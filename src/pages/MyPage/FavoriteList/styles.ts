@@ -30,6 +30,7 @@ export const empty = css`
   font-size: 16px;
   text-align: center;
   padding: 40px 0;
+  color: #e0e0e0;
 `;
 
 export const list = css`
@@ -41,6 +42,7 @@ export const list = css`
   list-style: none;
 `;
 
+// 포스터
 export const card = css`
   text-align: left;
   padding: 5px;

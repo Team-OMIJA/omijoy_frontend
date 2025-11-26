@@ -68,13 +68,11 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         return;
       }
       onClose();
-    } catch(err) {
-      console.error("플래그 업데이트 실패 : ", err)
+    } catch (err) {
+      console.error("플래그 업데이트 실패 : ", err);
       onClose();
     }
-  }
-
-
+  };
 
   useEffect(() => {
     if (!place.prfPlcId) return;

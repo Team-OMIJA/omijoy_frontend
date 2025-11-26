@@ -88,7 +88,7 @@ function FavoriteList() {
         </div>
 
         {favoriteList.length === 0 ? (
-          <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
+          <p css={s.empty}>스크랩한 공연이 없습니다.</p>
         ) : (
           <div css={s.sliderWrapper}>
             {/* 왼쪽 그라데이션 */}

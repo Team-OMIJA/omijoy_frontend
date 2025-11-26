@@ -2,6 +2,7 @@
 import * as s from "./styles";
 import { Avatar, Button } from "@mui/material";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { IoMdSettings } from "react-icons/io";
 
 interface ProfileViewProps {
   onEdit: () => void;
@@ -23,30 +24,13 @@ function ProfileView({ onEdit }: ProfileViewProps) {
       </s.AvatarWrapper>
 
       <s.UserInfo>
-        <p
-          css={{
-            fontSize: "1.2rem",
-            fontWeight: 500,
-            color: "#e0e0e0",
-            marginBottom: "0px",
-          }}
-        >
-          {principal?.username}
-        </p>
-        <s.BtnContainer>
-          <Button
-            // variant="outlined"
-            size="small"
-            onClick={onEdit}
-            sx={{
-              textTransform: "none",
-              borderRadius: "8px",
-              marginTop:"0px",
-            }}
-          >
-            수정
-          </Button>
-        </s.BtnContainer>
+        <s.UsernameRow>
+          <s.Username>{principal?.username}</s.Username>
+          <s.EditBtn onClick={onEdit}>
+            <IoMdSettings />
+          </s.EditBtn>
+        </s.UsernameRow>
+        <s.Email>{principal?.email}</s.Email>
       </s.UserInfo>
     </s.ProfileContainer>
   );
