@@ -1,270 +1,202 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { GrPowerReset } from "react-icons/gr";
-import useInfiniteScroll from "../../../configs/useInfiniteScroll";
-import { useNavigate, useNavigationType } from "react-router-dom";
-import ScrollTop from "../../../components/common/Button/ScrollTopButton";
-import { formatDateDot, formatDateRange } from "../../../components/FormatDate/FormatDate";
-import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
-import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
-import { Performance } from "../../../types/performancePageTypes";
-import * as s from "./styles";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { GrPowerReset } from 'react-icons/gr';
+import useInfiniteScroll from '../../../configs/useInfiniteScroll';
+import { useNavigate, useNavigationType } from 'react-router-dom';
+import ScrollTop from '../../../components/common/Button/ScrollTopButton';
+import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
+import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
+import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
+import { Performance } from '../../../types/performancePageTypes';
+import * as s from './styles';
 
 function PerformanceList() {
-  // 1) 네비게이션 타입 및 초기 마운트 체크
+
+  const navigate = useNavigate();
   const navigationType = useNavigationType();
   const isInitialMount = useRef(true);
 
-  // 2) sessionStorage 기반 초기 데이터 로드
-  const [performances, setPerformances] = useState<Performance[]>(() => {
-    const storedData = sessionStorage.getItem("scroll-performance-data");
-    return storedData ? JSON.parse(storedData) : [];
-  });
-  const [loading, setLoading] = useState(true);
-
-  // 3) 정렬/검색/필터/page 상태값 (sessionStorage 초기값 포함)
-  const [sort, setSort] = useState(
-    () => sessionStorage.getItem("scroll-performance-sort") || "name_asc"
+  const [performances, setPerformances] = useState<Performance[]>(() =>
+    JSON.parse(sessionStorage.getItem('scroll-performance-data') || '[]')
   );
-  const navigate = useNavigate();
   const [page, setPage] = useState(() =>
-    Number(sessionStorage.getItem("scroll-performance-page") || 0)
+    Number(sessionStorage.getItem('scroll-performance-page') || 0)
   );
-  const [hasMore, setHasMore] = useState(true);
+  const [sort, setSort] = useState(
+    () => sessionStorage.getItem('scroll-performance-sort') || 'name_asc'
+  );
   const [query, setQuery] = useState(
-    () => sessionStorage.getItem("scroll-performance-query") || ""
+    () => sessionStorage.getItem('scroll-performance-query') || ''
   );
-  const [stFilter, setStFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-stfilter") || '"공연중"')
+  const [stFilter, setStFilter] = useState(
+    () => JSON.parse(sessionStorage.getItem('scroll-performance-stfilter') || '"공연중"')
   );
   const [arfilter, setArFilter] = useState<string[]>(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]")
+    JSON.parse(sessionStorage.getItem('scroll-performance-arfilter') || '[]')
   );
   const [gefilter, setGeFilter] = useState<string[]>(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]")
+    JSON.parse(sessionStorage.getItem('scroll-performance-gefilter') || '[]')
   );
-  const [vtFilter, setVtFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false")
-  );
-
-  // 4) 공연 정보 불러오기 (검색/필터/정렬 적용)
-  const getPerformance = useCallback(
-    async (searchQuery: string, append = false, pageToLoad = 0) => {
-      setLoading(true);
-      try {
-        const baseUrl = "http://localhost:8080/prfDetails";
-        const isSearch = searchQuery.trim() !== "";
-
-        const params = new URLSearchParams();
-        if (isSearch) params.append("search", searchQuery);
-        params.append("sort", sort);
-        params.append("page", String(pageToLoad));
-        params.append("size", "30");
-        if (stFilter) params.append("stFilter", stFilter);
-        if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
-        if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
-        if (vtFilter) params.append("vtFilter", "Y");
-
-        const url = `${baseUrl}${isSearch ? "/search" : ""}?${params.toString()}`;
-        const response = await fetch(url);
-        const json: Performance[] = await response.json();
-
-        // append 모드(무한스크롤)인지 / 새로 로드인지
-        if (append) setPerformances((prev) => [...prev, ...json]);
-        else setPerformances(json);
-
-        setHasMore(json.length > 0);
-      } catch (err) {
-        console.log("공연 정보 불러오는 중 오류 발생", err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [sort, stFilter, arfilter, gefilter, vtFilter]
+  const [vtFilter, setVtFilter] = useState(
+    () => JSON.parse(sessionStorage.getItem('scroll-performance-vtfilter') || 'false')
   );
 
-  // 5) 모든 주요 상태값 → sessionStorage 자동 저장
-  useEffect(() => {
-    sessionStorage.setItem("scroll-performance-sort", sort);
-    sessionStorage.setItem("scroll-performance-query", query);
-    sessionStorage.setItem("scroll-performance-stfilter", JSON.stringify(stFilter));
-    sessionStorage.setItem("scroll-performance-arfilter", JSON.stringify(arfilter));
-    sessionStorage.setItem("scroll-performance-gefilter", JSON.stringify(gefilter));
-    sessionStorage.setItem("scroll-performance-page", String(page));
-    sessionStorage.setItem("scroll-performance-data", JSON.stringify(performances));
-    sessionStorage.setItem("scroll-performance-vtfilter", JSON.stringify(vtFilter));
-  }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
 
-  // 6) mount 또는 필터/정렬 변경 시 데이터 재요청
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-
-      // 뒤로가기 시 → 새 fetch 없이 기존 데이터 사용
-      if (navigationType === "POP" && performances.length > 0) {
-        setLoading(false);
-        return;
-      }
-    }
-
-    // 필터 변경 시 페이지 초기화 + 새 데이터 로드
-    setPage(0);
-    getPerformance(query, false, 0);
-  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
-
-  // 7) 필터 핸들러
-  const handleStatusChange = (value: string) => {
-    setStFilter(value);
-    setStatusOpen(false);
-  };
-
-  const handleAreaChange = (value: string) => {
-    if (value && !arfilter.includes(value)) setArFilter([...arfilter, value]);
-  };
-
-  const handleGenreChange = (value: string) => {
-    if (value && !gefilter.includes(value)) setGeFilter([...gefilter, value]);
-  };
-
-  const removeFilter = (type: "area" | "genre", value: string) => {
-    if (type === "area") setArFilter(arfilter.filter((item) => item !== value));
-    else setGeFilter(gefilter.filter((item) => item !== value));
-  };
-
-  // 8) 무한 스크롤 loadMore
-  const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      getPerformance(query, true, nextPage);
-    }
-  }, [loading, hasMore, page, query, getPerformance]);
-
-  useInfiniteScroll(loadMore, hasMore);
-
-  // 9) 필터 옵션 목록
-  const AREA_OPTIONS = [
-    "서울", "부산", "인천", "대구", "대전", "광주", "울산", "세종",
-    "경기", "강원", "경북", "경남", "충북", "충남", "전북", "전남", "제주"
-  ];
-
-  const GENRE_OPTIONS = [
-    "대중무용", "대중음악", "무용(서양/한국무용)", "뮤지컬", "복합",
-    "서양음악(클래식)", "서커스/마술", "연극", "한국음악(국악)"
-  ];
-
-  // 10) 드롭다운 열림/닫힘 관련 상태
   const [searchOpen, setSearchOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [areaOpen, setAreaOpen] = useState(false);
   const [genreOpen, setGenreOpen] = useState(false);
 
-  // 11) 정렬 옵션
-  const sortOptions = [
-    { value: "name_asc", label: "이름순 ↑" },
-    { value: "name_desc", label: "이름순 ↓" },
-    { value: "date", label: "최신순" },
-  ];
-
-  // 12) 초기 query가 있으면 검색창 열기
-  useEffect(() => {
-    if (query) setSearchOpen(true);
-  }, []);
-
-  // 13) 정렬 변경 핸들러
-  const handleSortChange = (value: string) => {
-    if (value === "name_asc" || value === "name_desc") {
-      setSort(value);
-    } else if (value === "name") {
-      setSort((prev) => (prev === "name_asc" ? "name_desc" : "name_asc"));
-    } else {
-      setSort("date");
-    }
-  };
-
-  // 14) 드롭다운 바깥 클릭 감지
   const sortRef = useRef<HTMLDivElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
   const areaRef = useRef<HTMLDivElement>(null);
   const genreRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (sortRef.current && !sortRef.current.contains(target)) setSortOpen(false);
-      if (statusRef.current && !statusRef.current.contains(target)) setStatusOpen(false);
-      if (areaRef.current && !areaRef.current.contains(target)) setAreaOpen(false);
-      if (genreRef.current && !genreRef.current.contains(target)) setGenreOpen(false);
-    };
+  // 옵션 상수
+  const AREA_OPTIONS = ["서울", "부산", "인천", "대구", "대전", "광주", "울산", "세종", "경기", "강원", "경북", "경남", "충북", "충남", "전북", "전남", "제주"];
+  const GENRE_OPTIONS = ["대중무용", "대중음악", "무용(서양/한국무용)", "뮤지컬", "복합", "서양음악(클래식)", "서커스/마술", "연극", "한국음악(국악)"];
 
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+  const sortOptions = [
+    { value: 'name_asc', label: '이름순 ↑' },
+    { value: 'name_desc', label: '이름순 ↓' },
+    { value: 'date', label: '최신순' },
+  ];
+
+  // 핸들러
+  const handleStatusChange = (v: string) => { setStFilter(v); setStatusOpen(false); };
+  const handleAreaChange = (v: string) => { if (!arfilter.includes(v)) setArFilter([...arfilter, v]); };
+  const handleGenreChange = (v: string) => { if (!gefilter.includes(v)) setGeFilter([...gefilter, v]); };
+  const removeFilter = (type: 'area' | 'genre', value: string) =>
+    type === 'area' ? setArFilter(arfilter.filter(i => i !== value)) : setGeFilter(gefilter.filter(i => i !== value));
+  const handleSortChange = (value: string) => {
+    if (value === 'name_asc' || value === 'name_desc') setSort(value);
+    else if (value === 'name') setSort(prev => (prev === 'name_asc' ? 'name_desc' : 'name_asc'));
+    else setSort('date');
+  };
+
+  // 데이터 fetch + 무한 스크롤
+  const getPerformance = useCallback(async (searchQuery: string, append = false, pageToLoad = 0) => {
+    setLoading(true);
+    try {
+      const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
+      const params = new URLSearchParams();
+      if (searchQuery.trim() !== '') params.append('search', searchQuery);
+      params.append('sort', sort);
+      params.append('page', String(pageToLoad));
+      params.append('size', '30');
+      if (stFilter) params.append('stFilter', stFilter);
+      if (arfilter.length) params.append('arFilter', arfilter.join(','));
+      if (gefilter.length) params.append('geFilter', gefilter.join(','));
+      if (vtFilter) params.append('vtFilter', 'Y');
+
+      const response = await fetch(`${baseUrl}${searchQuery ? '/search' : ''}?${params.toString()}`);
+      const json: Performance[] = await response.json();
+
+      append ? setPerformances(prev => [...prev, ...json]) : setPerformances(json);
+      setHasMore(json.length > 0);
+    } catch (err) { console.log('공연 정보 불러오는 중 오류 발생', err); }
+    finally { setLoading(false); }
+  }, [sort, stFilter, arfilter, gefilter, vtFilter]);
+
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) { 
+      setPage(prev => { 
+        const next = prev + 1; 
+        getPerformance(query, true, next); 
+        return next; 
+      }); 
+    }
+  }, [loading, hasMore, query, getPerformance]);
+
+  useInfiniteScroll(loadMore, hasMore);
+
+  // sessionStorage 자동 저장
+  useEffect(() => {
+    sessionStorage.setItem('scroll-performance-sort', sort);
+    sessionStorage.setItem('scroll-performance-query', query);
+    sessionStorage.setItem('scroll-performance-stfilter', JSON.stringify(stFilter));
+    sessionStorage.setItem('scroll-performance-arfilter', JSON.stringify(arfilter));
+    sessionStorage.setItem('scroll-performance-gefilter', JSON.stringify(gefilter));
+    sessionStorage.setItem('scroll-performance-page', String(page));
+    sessionStorage.setItem('scroll-performance-data', JSON.stringify(performances));
+    sessionStorage.setItem('scroll-performance-vtfilter', JSON.stringify(vtFilter));
+  }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
+
+  // mount + 필터 변경 + query 검색창
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (navigationType === 'POP' && performances.length) { setLoading(false); return; }
+    }
+    setPage(0);
+    getPerformance(query, false, 0);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
+
+  useEffect(() => { if (query) setSearchOpen(true); }, []);
+
+  // 드롭다운 바깥 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (sortRef.current && !sortRef.current.contains(t)) setSortOpen(false);
+      if (statusRef.current && !statusRef.current.contains(t)) setStatusOpen(false);
+      if (areaRef.current && !areaRef.current.contains(t)) setAreaOpen(false);
+      if (genreRef.current && !genreRef.current.contains(t)) setGenreOpen(false);
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  // 15) UI 렌더링
+  // UI
   return (
-    <s.FullBox>
-      {/* 상단 필터/정렬 옵션 */}
-      <s.SubBox>
+    <s.PerformanceListFullBox>
+      <s.PerformanceListSubBox>
         <ScrollTop />
 
-        {/* 정렬 드롭다운 */}
-        <s.DropdownWrapper ref={sortRef}>
-          <s.DropdownButton
-            open={sortOpen}
-            onClick={() => setSortOpen((prev) => !prev)}
-          >
-            {sortOptions.find(
-              (o) => o.value === (sort.startsWith("name") ? sort : "date")
-            )?.label || "정렬"}
-          </s.DropdownButton>
-
+        {/* --- 정렬 드롭다운 --- */}
+        <s.PerformanceListDropdownWrapper ref={sortRef}>
+          <s.PerformanceListDropdownButton open={sortOpen} onClick={() => setSortOpen(!sortOpen)}>
+            {sortOptions.find(o => o.value === (sort.startsWith('name') ? sort : 'date'))?.label}
+          </s.PerformanceListDropdownButton>
           {sortOpen && (
-            <s.DropdownList>
-              {sortOptions.map((option) => (
-                <s.DropdownItem
-                  key={option.value}
+            <s.PerformanceListDropdownList>
+              {sortOptions.map(o => (
+                <s.PerformanceListDropdownItem
+                  key={o.value}
                   onClick={() => {
-                    handleSortChange(option.value);
+                    handleSortChange(o.value);
                     setSortOpen(false);
                   }}
                 >
-                  {option.label}
-                </s.DropdownItem>
+                  {o.label}
+                </s.PerformanceListDropdownItem>
               ))}
-            </s.DropdownList>
+            </s.PerformanceListDropdownList>
           )}
-        </s.DropdownWrapper>
+        </s.PerformanceListDropdownWrapper>
 
-        {/* 상태 필터 */}
-        <s.DropdownWrapper ref={statusRef}>
-          <s.DropdownButton
-            open={statusOpen}
-            onClick={() => setStatusOpen((prev) => !prev)}
-          >
+        {/* --- 상태 필터 --- */}
+        <s.PerformanceListDropdownWrapper ref={statusRef}>
+          <s.PerformanceListDropdownButton open={statusOpen} onClick={() => setStatusOpen(!statusOpen)}>
             {stFilter}
-          </s.DropdownButton>
+          </s.PerformanceListDropdownButton>
           {statusOpen && (
-            <s.DropdownList>
-              <s.DropdownItem onClick={() => handleStatusChange("공연중")}>공연중</s.DropdownItem>
-              <s.DropdownItem onClick={() => handleStatusChange("공연예정")}>공연예정</s.DropdownItem>
-            </s.DropdownList>
+            <s.PerformanceListDropdownList>
+              <s.PerformanceListDropdownItem onClick={() => handleStatusChange('공연중')}>공연중</s.PerformanceListDropdownItem>
+              <s.PerformanceListDropdownItem onClick={() => handleStatusChange('공연예정')}>공연예정</s.PerformanceListDropdownItem>
+            </s.PerformanceListDropdownList>
           )}
-        </s.DropdownWrapper>
+        </s.PerformanceListDropdownWrapper>
 
-        {/* 지역 필터 */}
-        <s.DropdownWrapper ref={areaRef}>
-          <s.DropdownButton
-            open={areaOpen}
-            onClick={() => setAreaOpen((prev) => !prev)}
-          >
-            지역
-          </s.DropdownButton>
-
+        {/* --- 지역 필터 --- */}
+        <s.PerformanceListDropdownWrapper ref={areaRef}>
+          <s.PerformanceListDropdownButton open={areaOpen} onClick={() => setAreaOpen(!areaOpen)}>지역</s.PerformanceListDropdownButton>
           {areaOpen && (
-            <s.DropdownList>
-              {AREA_OPTIONS.map((area) => (
-                <s.DropdownItem
+            <s.PerformanceListDropdownList>
+              {AREA_OPTIONS.map(area => (
+                <s.PerformanceListDropdownItem
                   key={area}
                   onClick={() => {
                     handleAreaChange(area);
@@ -272,25 +204,22 @@ function PerformanceList() {
                   }}
                 >
                   {area}
-                </s.DropdownItem>
+                </s.PerformanceListDropdownItem>
               ))}
-            </s.DropdownList>
+            </s.PerformanceListDropdownList>
           )}
-        </s.DropdownWrapper>
+        </s.PerformanceListDropdownWrapper>
 
-        {/* 장르 필터 */}
-        <s.DropdownWrapper ref={genreRef}>
-          <s.GenreDropdownButton
-            open={genreOpen}
-            onClick={() => setGenreOpen((prev) => !prev)}
-          >
+        {/* --- 장르 필터 --- */}
+        <s.PerformanceListDropdownWrapper ref={genreRef}>
+          <s.PerformanceListGenreDropdownButton open={genreOpen} onClick={() => setGenreOpen(!genreOpen)}>
             장르
-          </s.GenreDropdownButton>
+          </s.PerformanceListGenreDropdownButton>
 
           {genreOpen && (
-            <s.DropdownList>
-              {GENRE_OPTIONS.map((genre) => (
-                <s.DropdownItem
+            <s.PerformanceListDropdownList>
+              {GENRE_OPTIONS.map(genre => (
+                <s.PerformanceListDropdownItem
                   key={genre}
                   onClick={() => {
                     handleGenreChange(genre);
@@ -298,179 +227,156 @@ function PerformanceList() {
                   }}
                 >
                   {genre}
-                </s.DropdownItem>
+                </s.PerformanceListDropdownItem>
               ))}
-            </s.DropdownList>
+            </s.PerformanceListDropdownList>
           )}
-        </s.DropdownWrapper>
+        </s.PerformanceListDropdownWrapper>
 
-        {/* 내한 공연 필터 */}
-        <s.PerformancePlace>
-          <s.PlaceInner>
-            <s.PlaceLabel>
-              <input
-                type="checkbox"
-                checked={vtFilter}
-                onChange={(e) => setVtFilter(e.target.checked)}
-              />
+        {/* --- 내한 공연 필터 --- */}
+        <s.PerformanceListPlaceFilter>
+          <s.PerformanceListPlaceInner>
+            <s.PerformanceListPlaceLabel>
+              <input type='checkbox' checked={vtFilter} onChange={e => setVtFilter(e.target.checked)} />
               내한 공연
-            </s.PlaceLabel>
-          </s.PlaceInner>
-        </s.PerformancePlace>
+            </s.PerformanceListPlaceLabel>
+          </s.PerformanceListPlaceInner>
+        </s.PerformanceListPlaceFilter>
 
-        {/* 전체 필터 초기화 */}
-        <s.ResetButton
+        {/* --- 전체 필터 초기화 --- */}
+        <s.PerformanceListResetButton
           onClick={() => {
-            setSort("name_asc");
+            setSort('name_asc');
             setArFilter([]);
             setGeFilter([]);
-            setStFilter("공연중");
+            setStFilter('공연중');
             setVtFilter(false);
-            setQuery("");
+            setQuery('');
             setPage(0);
-            getPerformance("", false, 0);
+            getPerformance('', false, 0);
           }}
         >
           <GrPowerReset />
-        </s.ResetButton>
+        </s.PerformanceListResetButton>
 
-        {/* 검색창 */}
-        <s.SearchWrapper>
-          <s.SearchInput
-            type="text"
-            placeholder="공연명 검색"
+        {/* --- 검색 영역 --- */}
+        <s.PerformanceListSearchWrapper>
+          <s.PerformanceListSearchInput
+            type='text'
+            placeholder='공연명 검색'
             value={query}
             open={searchOpen || !!query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") getPerformance(query, false, 0);
-            }}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0)}
           />
-
-          <s.SearchIcon
+          <s.PerformanceListSearchIcon
             size={18}
             onClick={() => {
-              if (!query) setSearchOpen((prev) => !prev);
+              if (!query) setSearchOpen(!searchOpen);
               else {
                 setPage(0);
                 getPerformance(query, false, 0);
               }
             }}
           />
-
           {searchOpen && query && (
-            <s.ClearIcon
+            <s.PerformanceListClearIcon
               size={12}
               onClick={() => {
-                setQuery("");
-                getPerformance("", false, 0);
+                setQuery('');
+                getPerformance('', false, 0);
               }}
             />
           )}
-        </s.SearchWrapper>
-      </s.SubBox>
+        </s.PerformanceListSearchWrapper>
+      </s.PerformanceListSubBox>
 
-      {/* 지역 필터 태그 */}
-      <s.FilterContainerWithTop>
-        {arfilter.map((item) => (
-          <s.AreaFilterItem key={`area-${item}`}>
+      {/* --- 지역 태그 --- */}
+      <s.PerformanceListAreaFilter>
+        {arfilter.map(item => (
+          <s.PerformanceListAreaFilterItem key={`area-${item}`}>
             <span>{item}</span>
-            <s.AreaFilterRemove
-              size={16}
-              onClick={() => removeFilter("area", item)}
-            />
-          </s.AreaFilterItem>
+            <s.PerformanceListAreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
+          </s.PerformanceListAreaFilterItem>
         ))}
-      </s.FilterContainerWithTop>
+      </s.PerformanceListAreaFilter>
 
-      {/* 장르 필터 태그 */}
-      <s.FilterContainer>
-        {gefilter.map((item) => (
-          <s.GenreFilterItem key={`genre-${item}`}>
+      {/* --- 장르 태그 --- */}
+      <s.PerformanceListGenreFilter>
+        {gefilter.map(item => (
+          <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
             <span>{item}</span>
-            <s.GenreFilterRemove
-              size={14}
-              onClick={() => removeFilter("genre", item)}
-            />
-          </s.GenreFilterItem>
+            <s.PerformanceListGenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
+          </s.PerformanceListGenreFilterItem>
         ))}
-      </s.FilterContainer>
+      </s.PerformanceListGenreFilter>
 
-      {/* 결과 없음 메시지 */}
+      {/* --- 결과 없음 --- */}
       {performances.length === 0 && !loading && (
-        <s.ErrorMessage className="detail-error">
-          공연 정보를 찾을 수 없습니다.
-        </s.ErrorMessage>
+        <s.PerformanceListErrorMessage className='detail-error'>공연 정보를 찾을 수 없습니다.</s.PerformanceListErrorMessage>
       )}
 
-      {/* 스켈레톤 or 공연 목록 */}
+      {/* --- 공연 목록 또는 스켈레톤 --- */}
       {loading && page === 0 ? (
         <PrfList24Skeleton />
       ) : (
-        <s.PerformanceGrid>
+        <s.PerformanceListGrid>
           {performances
-            .filter((p) => new Date(p.prfEndDt) >= new Date())
-            .map((p) => (
-              <s.PerformanceCard key={p.prfId}>
-                <s.ClickableWrapper onClick={() => navigate(`/performance/${p.prfId}`)}>
-
-                  {/* 장르명 */}
-                  <s.GenreNm>
+            .filter(p => new Date(p.prfEndDt) >= new Date())
+            .map(p => (
+              <s.PerformanceListCard key={p.prfId}>
+                <s.PerformanceListClickableWrapper onClick={() => navigate(`/performance/${p.prfId}`)}>
+                  <s.PerformanceListGenreNm>
                     <div>{p.genreNm}</div>
-                  </s.GenreNm>
+                  </s.PerformanceListGenreNm>
 
-                  {/* 포스터 */}
-                  <s.PosterImg>
+                  <s.PerformanceListPosterImg>
                     <img src={p.posterImgUrl} alt={p.prfNm} />
-                  </s.PosterImg>
+                  </s.PerformanceListPosterImg>
 
-                  {/* 제목 (지역 태그 제거 버전) */}
-                  <s.PerformanceDetail1>{removeRegionTag(p.prfNm)}</s.PerformanceDetail1>
+                  <s.PerformanceListName>{removeRegionTag(p.prfNm)}</s.PerformanceListName>
 
                   {/* 공연 장소 (중복 괄호 제거 로직 적용 버전) */}
                   <s.PerformancePlace2>
+                    <p>
                       {(() => {
                         const original = p.prfPlcNm;
                         let result = "";
                         const seen = new Set<string>();
 
-                        original.split(/\s*(\([^)]+\))/).forEach((part) => {
-                          if (!part) return;
-                          if (!part.startsWith("(")) {
-                            result += part;
-                            return;
-                          }
+                      original.split(/\s*(\([^)]+\))/).forEach(part => {
+                        if (!part) return;
+                        if (!part.startsWith('(')) {
+                          result += part;
+                          return;
+                        }
 
-                          const content = part.slice(1, -1).trim();
-                          const normalizedContent = content.replace(/\s+/g, "");
-                          const normalizedResult = result.replace(/\s+/g, "");
+                        const content = part.slice(1, -1).trim();
+                        const normalized = content.replace(/\s+/g, '');
+                        const normalizedResult = result.replace(/\s+/g, '');
 
-                          if (
-                            seen.has(normalizedContent) ||
-                            normalizedResult.includes(normalizedContent)
-                          ) {
-                            return;
-                          }
+                        if (seen.has(normalized) || normalizedResult.includes(normalized)) return;
 
-                          seen.add(normalizedContent);
-                          result += `(${content})`;
-                        });
+                        seen.add(normalized);
+                        result += `(${content})`;
+                      });
 
                         return result.trim();
                       })()}
+                    </p>
                   </s.PerformancePlace2>
 
                   {/* 공연 기간 */}
-                  <s.PerformancePeriod>
-                    {formatDateRange(formatDateDot(p.prfStartDt), formatDateDot(p.prfEndDt))}   
-                  </s.PerformancePeriod>
-                </s.ClickableWrapper>
-              </s.PerformanceCard>
+                  <s.PerformanceListPeriod>
+                    <p>{formatDateRange(formatDateDot(p.prfStartDt), formatDateDot(p.prfEndDt))}</p>
+                  </s.PerformanceListPeriod>
+                </s.PerformanceListClickableWrapper>
+              </s.PerformanceListCard>
             ))}
-        </s.PerformanceGrid>
+        </s.PerformanceListGrid>
       )}
-    </s.FullBox>
+    </s.PerformanceListFullBox>
   );
 }
 
-export default PerformanceList; 
+export default PerformanceList;

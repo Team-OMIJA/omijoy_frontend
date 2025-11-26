@@ -2,20 +2,20 @@ import styled from "@emotion/styled";
 import { PiMagnifyingGlass, PiXCircle } from "react-icons/pi";
 import { GrClose } from "react-icons/gr";
 
-export const FullBox = styled.div`
+export const PerformanceListFullBox = styled.div`
   width: 100%;
   padding: 40px 60px;
   box-sizing: border-box;
 `;
 
-export const SubBox = styled.div`
+export const PerformanceListSubBox = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: -10px;
 `;
 
-export const DropdownWrapper = styled.div<{ open?: boolean }>`
+export const PerformanceListDropdownWrapper = styled.div<{ open?: boolean }>`
   position: relative;
   display: inline-block;
   border-radius: 10px;
@@ -23,7 +23,7 @@ export const DropdownWrapper = styled.div<{ open?: boolean }>`
   min-width: 120px;
 `;
 
-export const DropdownButton = styled.div<{ open?: boolean }>`
+export const PerformanceListDropdownButton = styled.div<{ open?: boolean }>`
   background-color: #fbfbfb;
   color: #777;
   padding: 8px 12px;
@@ -47,11 +47,11 @@ export const DropdownButton = styled.div<{ open?: boolean }>`
   }
 `;
 
-  export const GenreDropdownButton = styled(DropdownButton)`
+  export const PerformanceListGenreDropdownButton = styled(PerformanceListDropdownButton)`
     width: 200px;
   `;
 
-export const DropdownList = styled.ul`
+export const PerformanceListDropdownList = styled.ul`
   position: absolute;
   top: 100%;
   left: 0;
@@ -68,7 +68,7 @@ export const DropdownList = styled.ul`
   overflow-y: auto;
 `;
 
-export const DropdownItem = styled.li`
+export const PerformanceListDropdownItem = styled.li`
   padding: 8px 12px;
   cursor: pointer;
   white-space: nowrap;
@@ -80,7 +80,7 @@ export const DropdownItem = styled.li`
   }
 `;
 
-export const ResetButton = styled.div`
+export const PerformanceListResetButton = styled.div`
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -96,12 +96,12 @@ export const ResetButton = styled.div`
   }
 `;
 
-export const SearchWrapper = styled.div`
+export const PerformanceListSearchWrapper = styled.div`
   position: relative;
   margin-left: auto;
 `;
 
-export const SearchInput = styled.input<{ open?: boolean }>`
+export const PerformanceListSearchInput = styled.input<{ open?: boolean }>`
   background-color: #fbfbfb;
   padding: 8px 36px 8px 24px;
   width: ${({ open }) => (open ? "250px" : "0")};
@@ -114,7 +114,7 @@ export const SearchInput = styled.input<{ open?: boolean }>`
   pointer-events: ${({ open }) => (open ? "auto" : "none")};
 `;
 
-export const SearchIcon = styled(PiMagnifyingGlass)`
+export const PerformanceListSearchIcon = styled(PiMagnifyingGlass)`
   position: absolute;
   right: 10px;
   top: 13px;
@@ -122,7 +122,7 @@ export const SearchIcon = styled(PiMagnifyingGlass)`
   cursor: pointer;
 `;
 
-export const ClearIcon = styled(GrClose)`
+export const PerformanceListClearIcon = styled(GrClose)`
   position: absolute;
   right: 40px;
   top: 16px;
@@ -130,66 +130,42 @@ export const ClearIcon = styled(GrClose)`
   cursor: pointer;
 `;
 
-export const ErrorMessage = styled.div`
+export const PerformanceListErrorMessage = styled.div`
   color: white;
   marginTop: 20px;
 `;
 
 
-export const PerformanceGrid = styled.div`
+export const PerformanceListGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 30px;
   margin-top: 30px;
 `;
 
-export const PerformanceCard = styled.div`
+export const PerformanceListCard = styled.div`
   text-align: left;
   padding: 5px;
   border-radius: 14px;
 `;
 
-export const ClickableWrapper = styled.div`
+export const PerformanceListClickableWrapper = styled.div`
   cursor: pointer;
   position: relative;
 `;
 
-/* 공연 제목 */
-export const PerformanceTitle = styled.div`
-  font-size: 17px;
-  font-weight: 600;
-  color: #e0e0e0;
-  margin-bottom: 6px;
-`;
-
-/* 포스터 이미지 */
-export const Poster = styled.img`
-  width: 100%;
-  height: 290px;
-  object-fit: cover;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-  }
-`;
-
 /* 공연장 */
-export const PerformancePlace = styled.div`
+export const PerformanceListPlaceFilter = styled.div`
   color: #dbdbdb;
   font-size: 14px;
   margin: 2px 0;
 `;
 
-export const PlaceInner = styled.div`
+export const PerformanceListPlaceInner = styled.div`
   margin-left: 10px;
 `;
 
-export const PlaceLabel = styled.label`
+export const PerformanceListPlaceLabel = styled.label`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -205,20 +181,13 @@ export const PerformancePlace2 = styled.div`
 `;
 
 /* 기간 */
-export const PerformancePeriod = styled.div`
+export const PerformanceListPeriod = styled.div`
   color: #a3a3a3;
   font-size: 13px;
   margin: 1px 0;
 `;
 
-/* 장르 */
-export const PerformanceGenre = styled.div`
-  color: #a3a3a3;
-  font-size: 13px;
-  margin: 3px 0;
-`;
-
-export const PosterImg = styled.div`
+export const PerformanceListPosterImg = styled.div`
   width: 100%;
   height: 260px;
   border-radius: 10px;
@@ -233,7 +202,7 @@ export const PosterImg = styled.div`
 `;
 
 /* 상세1 */
-export const PerformanceDetail1 = styled.h4`
+export const PerformanceListName = styled.h4`
   color: #dbdbdb;
   font-size: 15px;
   font-weight: 600;
@@ -247,20 +216,13 @@ export const PerformanceDetail1 = styled.h4`
 
 
 /* 상세2 */
-export const PerformanceDetail2 = styled.div`
+export const PerformanceListPlace = styled.div`
   color: #a3a3a3;
   font-size: 15px;
   margin: 3px 0;
 `;
 
-/* 상세3 */
-export const PerformanceDetail3 = styled.div`
-  color: #dbdbdb;
-  font-size: 15px;
-  margin: 3px 0;
-`;
-
-export const GenreNm = styled.div`
+export const PerformanceListGenreNm = styled.div`
   position: absolute;
   top: 8px;
   left: 8px;
@@ -273,18 +235,18 @@ export const GenreNm = styled.div`
   pointer-events: none;
 `;
 
-export const FilterContainer = styled.div`
+export const PerformanceListGenreFilter = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
 `;
 
-export const FilterContainerWithTop = styled(FilterContainer)`
+export const PerformanceListAreaFilter = styled(PerformanceListGenreFilter)`
   margin-top: 36px;
 `;
 
-export const AreaFilterItem = styled.div`
+export const PerformanceListAreaFilterItem = styled.div`
   color: #dbdbdb;
   display: flex;
   align-items: center;
@@ -293,12 +255,12 @@ export const AreaFilterItem = styled.div`
   padding: 4px 8px;
 `;
 
-export const AreaFilterRemove = styled(PiXCircle)`
+export const PerformanceListAreaFilterRemove = styled(PiXCircle)`
   margin-left: 6px;
   cursor: pointer;
 `;
 
-export const GenreFilterItem = styled.div`
+export const PerformanceListGenreFilterItem = styled.div`
   color: #dbdbdb;
   display: flex;
   align-items: center;
@@ -307,7 +269,7 @@ export const GenreFilterItem = styled.div`
   padding: 4px 8px;
 `;
 
-export const GenreFilterRemove = styled(PiXCircle)`
+export const PerformanceListGenreFilterRemove = styled(PiXCircle)`
   margin-left: 6px;
   cursor: pointer;
 `;
