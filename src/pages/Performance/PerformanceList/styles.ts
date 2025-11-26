@@ -223,6 +223,7 @@ export const PosterImg = styled.div`
   height: 260px;
   border-radius: 10px;
   overflow: hidden;
+  margin-bottom: 30px;
   img {
     width: 100%;
     height: 100%;

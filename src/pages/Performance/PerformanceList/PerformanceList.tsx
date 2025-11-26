@@ -429,7 +429,6 @@ function PerformanceList() {
 
                   {/* 공연 장소 (중복 괄호 제거 로직 적용 버전) */}
                   <s.PerformancePlace2>
-                    <p>
                       {(() => {
                         const original = p.prfPlcNm;
                         let result = "";
@@ -459,12 +458,11 @@ function PerformanceList() {
 
                         return result.trim();
                       })()}
-                    </p>
                   </s.PerformancePlace2>
 
                   {/* 공연 기간 */}
                   <s.PerformancePeriod>
-                    <p>{formatDateRange(formatDateDot(p.prfStartDt), formatDateDot(p.prfEndDt))}</p>
+                    {formatDateRange(formatDateDot(p.prfStartDt), formatDateDot(p.prfEndDt))}   
                   </s.PerformancePeriod>
                 </s.ClickableWrapper>
               </s.PerformanceCard>
