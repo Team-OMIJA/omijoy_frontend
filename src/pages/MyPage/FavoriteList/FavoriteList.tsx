@@ -54,7 +54,7 @@ function FavoriteList() {
           </ps.PerformanceTitle>
 
           <RxShare2
-            size={30}
+            size={27}
             onClick={() => {
               const stored = localStorage.getItem('principal-storage');
               const principal = stored ? JSON.parse(stored)?.state?.principal : null;
@@ -75,7 +75,7 @@ function FavoriteList() {
           />
 
           <IoArrowForward
-            size={30}
+            size={27}
             onClick={() => {
               if (!principal.id) {
                 alert('로그인 후 이동 가능합니다.');
