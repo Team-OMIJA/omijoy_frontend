@@ -1,20 +1,16 @@
-import { useState, useEffect } from "react";
-import {
-  PlaceMarker,
-  PrfPlcModal,
-  findPerformancesByPlaceId,
-} from "../../../apis/performanceplaceApi";
-import Slider from "react-slick";
-import * as S from "./PerformancePlaceModal.styles";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toggleFlagReq } from "../../../apis/flagApi";
+import { useState, useEffect } from 'react';
+import { PlaceMarker, PrfPlcModal, findPerformancesByPlaceId } from '../../../apis/performanceplaceApi';
+import Slider from 'react-slick';
+import * as S from './PerformancePlaceModal.styles';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { useMutation } from '@tanstack/react-query';
+import { toggleFlagReq } from '../../../apis/flagApi';
 
-import { usePrincipalState } from "../../../stores/usePrincipalState";
-import { useNavigate } from "react-router-dom";
-import { IoClose } from "react-icons/io5";
-import { FaFlagCheckered } from "react-icons/fa";
+import { usePrincipalState } from '../../../stores/usePrincipalState';
+import { useNavigate } from 'react-router-dom';
+import { IoClose } from 'react-icons/io5';
+import { FaFlagCheckered } from 'react-icons/fa';
 
 interface PerformancePlaceModalProps {
   place: PlaceMarker;
@@ -27,7 +23,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   // 처음 상태 기억 (모달이 닫힐 때 비교하기 위함)
   const initialFlagged = place.flagged;
   const [flagged, setFlagged] = useState(place.flagged || false);
-  const hasValidUrl = place.url && place.url.trim() !== "";
+  const hasValidUrl = place.url && place.url.trim() !== '';
   const [isLoading, setIsLoading] = useState(false);
   const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -49,8 +45,8 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   // 버튼 클릭 시에는 화면의 상태만 변경
   const handleToggleFlag = () => {
     if (!principal) {
-      alert("로그인 후 이용해주세요.");
-      navigate("/login");
+      alert('로그인 후 이용해주세요.');
+      navigate('/login');
       return;
     }
     setFlagged((prev) => !prev);
@@ -68,13 +64,11 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         return;
       }
       onClose();
-    } catch(err) {
-      console.error("플래그 업데이트 실패 : ", err)
+    } catch (err) {
+      console.error('플래그 업데이트 실패 : ', err);
       onClose();
     }
-  }
-
-
+  };
 
   useEffect(() => {
     if (!place.prfPlcId) return;
@@ -86,7 +80,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         const data = await findPerformancesByPlaceId(place.prfPlcId);
         setPerformances(data);
       } catch (err) {
-        setError("공연 목록을 불러오는 데 실패했습니다.");
+        setError('공연 목록을 불러오는 데 실패했습니다.');
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -99,7 +93,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const handleUrlClick = () => {
     if (hasValidUrl && place.url) {
       if (place.url) {
-        window.open(place.url, "_blank", "noopener,noreferrer");
+        window.open(place.url, '_blank', 'noopener,noreferrer');
       }
     }
   };
@@ -107,13 +101,13 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     if (isDragging) return;
 
     const url = `/performance/${prfId}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const handleGetDirections = () => {
     const toName = encodeURIComponent(place.prfPlcName);
     const url = `https://map.kakao.com/link/to/${toName},${place.latitude},${place.longitude}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const settings = {
@@ -138,7 +132,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   return (
     <S.ModalOverlay onClick={closeAndSave}>
       <S.ModalBody onClick={(e) => e.stopPropagation()}>
-        <S.ModalCloseXButton onClick={closeAndSave} aria-label="닫기">
+        <S.ModalCloseXButton onClick={closeAndSave} aria-label='닫기'>
           <IoClose />
         </S.ModalCloseXButton>
         <S.ModalFlagButton onClick={handleToggleFlag} flagged={flagged}>
@@ -146,55 +140,44 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         </S.ModalFlagButton>
         <S.ModalTitle>{place.prfPlcName}</S.ModalTitle>
         <S.ModalInfoItem>
-          <strong>주소:</strong> {place.address || "정보 없음"}
+          <strong>주소:</strong> {place.address || '정보 없음'}
         </S.ModalInfoItem>
         <S.ModalInfoItem>
-          <strong>주차장:</strong> {place.parkingLot === "Y" ? "⭕" : "❌"}
+          <strong>주차장:</strong> {place.parkingLot === 'Y' ? '⭕' : '❌'}
         </S.ModalInfoItem>
         <S.ModalInfoItem>
-          <strong>엘리베이터:</strong> {place.eleve === "Y" ? "⭕" : "❌"}
+          <strong>엘리베이터:</strong> {place.eleve === 'Y' ? '⭕' : '❌'}
         </S.ModalInfoItem>
         <S.ModalInfoItem>
-          <strong>장애인주차장:</strong>{" "}
-          {place.parkBarrier === "Y" ? "⭕" : "❌"}
+          <strong>장애인주차장:</strong> {place.parkBarrier === 'Y' ? '⭕' : '❌'}
         </S.ModalInfoItem>
         <S.ModalInfoItem>
-          <strong>전화번호:</strong> {place.tel?.trim() || "정보 없음"}
+          <strong>전화번호:</strong> {place.tel?.trim() || '정보 없음'}
         </S.ModalInfoItem>
         <S.ModalButtonGroup>
           <S.ModalUrlButton onClick={handleUrlClick} disabled={!hasValidUrl}>
-            {hasValidUrl ? "공연장 상세페이지" : "공연장 정보 없음"}
+            {hasValidUrl ? '공연장 상세페이지' : '공연장 정보 없음'}
           </S.ModalUrlButton>
-          <S.ModalKakaoDirectionsButton onClick={handleGetDirections}>
-            길찾기
-          </S.ModalKakaoDirectionsButton>
+          <S.ModalKakaoDirectionsButton onClick={handleGetDirections}>길찾기</S.ModalKakaoDirectionsButton>
         </S.ModalButtonGroup>
         <S.ModalPerformanceSection>
           <S.ModalSubTitle>공연 목록</S.ModalSubTitle>
           {isLoading ? (
-            <p style={{ color: "#ccc" }}>공연 목록 로딩 중...</p>
+            <p style={{ color: '#ccc' }}>공연 목록 로딩 중...</p>
           ) : error ? (
-            <p style={{ color: "#ff6b6b" }}>{error}</p>
+            <p style={{ color: '#ff6b6b' }}>{error}</p>
           ) : performances.length > 0 ? (
             <S.SliderContainer>
               <Slider {...settings}>
                 {performances.map((perf) => (
-                  <S.ModalPerformanceItem
-                    key={perf.prfId}
-                    onClick={() => handlePosterClick(perf.prfId)}
-                  >
-                    <S.ModalPosterImage
-                      src={perf.posterImgUrl || "/default_poster.png"}
-                      alt="공연 포스터"
-                    />
+                  <S.ModalPerformanceItem key={perf.prfId} onClick={() => handlePosterClick(perf.prfId)}>
+                    <S.ModalPosterImage src={perf.posterImgUrl || '/default_poster.png'} alt='공연 포스터' />
                   </S.ModalPerformanceItem>
                 ))}
               </Slider>
             </S.SliderContainer>
           ) : (
-            <p style={{ color: "#ccc", textAlign: "center", padding: "20px" }}>
-              현재 진행중인 공연이 없습니다.
-            </p>
+            <p style={{ color: '#ccc', textAlign: 'center', padding: '20px' }}>현재 진행중인 공연이 없습니다.</p>
           )}
         </S.ModalPerformanceSection>
       </S.ModalBody>

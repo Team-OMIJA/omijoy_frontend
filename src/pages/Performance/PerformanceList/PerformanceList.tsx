@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { GrPowerReset } from "react-icons/gr";
-import useInfiniteScroll from "../../../configs/useInfiniteScroll";
-import { useNavigate, useNavigationType } from "react-router-dom";
-import ScrollTop from "../../../components/common/Button/ScrollTopButton";
-import { formatDateDot, formatDateRange } from "../../../components/FormatDate/FormatDate";
-import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
-import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
-import { Performance } from "../../../types/performancePageTypes";
-import * as s from "./styles";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { GrPowerReset } from 'react-icons/gr';
+import useInfiniteScroll from '../../../configs/useInfiniteScroll';
+import { useNavigate, useNavigationType } from 'react-router-dom';
+import ScrollTop from '../../../components/common/Button/ScrollTopButton';
+import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
+import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
+import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
+import { Performance } from '../../../types/performancePageTypes';
+import * as s from './styles';
 
 function PerformanceList() {
   // 1) 네비게이션 타입 및 초기 마운트 체크
@@ -16,34 +16,28 @@ function PerformanceList() {
 
   // 2) sessionStorage 기반 초기 데이터 로드
   const [performances, setPerformances] = useState<Performance[]>(() => {
-    const storedData = sessionStorage.getItem("scroll-performance-data");
+    const storedData = sessionStorage.getItem('scroll-performance-data');
     return storedData ? JSON.parse(storedData) : [];
   });
   const [loading, setLoading] = useState(true);
 
   // 3) 정렬/검색/필터/page 상태값 (sessionStorage 초기값 포함)
-  const [sort, setSort] = useState(
-    () => sessionStorage.getItem("scroll-performance-sort") || "name_asc"
-  );
+  const [sort, setSort] = useState(() => sessionStorage.getItem('scroll-performance-sort') || 'name_asc');
   const navigate = useNavigate();
-  const [page, setPage] = useState(() =>
-    Number(sessionStorage.getItem("scroll-performance-page") || 0)
-  );
+  const [page, setPage] = useState(() => Number(sessionStorage.getItem('scroll-performance-page') || 0));
   const [hasMore, setHasMore] = useState(true);
-  const [query, setQuery] = useState(
-    () => sessionStorage.getItem("scroll-performance-query") || ""
-  );
+  const [query, setQuery] = useState(() => sessionStorage.getItem('scroll-performance-query') || '');
   const [stFilter, setStFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-stfilter") || '"공연중"')
+    JSON.parse(sessionStorage.getItem('scroll-performance-stfilter') || '"공연중"')
   );
   const [arfilter, setArFilter] = useState<string[]>(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-arfilter") || "[]")
+    JSON.parse(sessionStorage.getItem('scroll-performance-arfilter') || '[]')
   );
   const [gefilter, setGeFilter] = useState<string[]>(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-gefilter") || "[]")
+    JSON.parse(sessionStorage.getItem('scroll-performance-gefilter') || '[]')
   );
   const [vtFilter, setVtFilter] = useState(() =>
-    JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false")
+    JSON.parse(sessionStorage.getItem('scroll-performance-vtfilter') || 'false')
   );
 
   // 4) 공연 정보 불러오기 (검색/필터/정렬 적용)
@@ -51,20 +45,20 @@ function PerformanceList() {
     async (searchQuery: string, append = false, pageToLoad = 0) => {
       setLoading(true);
       try {
-        const baseUrl = "http://localhost:8080/prfDetails";
-        const isSearch = searchQuery.trim() !== "";
+        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
+        const isSearch = searchQuery.trim() !== '';
 
         const params = new URLSearchParams();
-        if (isSearch) params.append("search", searchQuery);
-        params.append("sort", sort);
-        params.append("page", String(pageToLoad));
-        params.append("size", "30");
-        if (stFilter) params.append("stFilter", stFilter);
-        if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
-        if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
-        if (vtFilter) params.append("vtFilter", "Y");
+        if (isSearch) params.append('search', searchQuery);
+        params.append('sort', sort);
+        params.append('page', String(pageToLoad));
+        params.append('size', '30');
+        if (stFilter) params.append('stFilter', stFilter);
+        if (arfilter.length > 0) params.append('arFilter', arfilter.join(','));
+        if (gefilter.length > 0) params.append('geFilter', gefilter.join(','));
+        if (vtFilter) params.append('vtFilter', 'Y');
 
-        const url = `${baseUrl}${isSearch ? "/search" : ""}?${params.toString()}`;
+        const url = `${baseUrl}${isSearch ? '/search' : ''}?${params.toString()}`;
         const response = await fetch(url);
         const json: Performance[] = await response.json();
 
@@ -74,7 +68,7 @@ function PerformanceList() {
 
         setHasMore(json.length > 0);
       } catch (err) {
-        console.log("공연 정보 불러오는 중 오류 발생", err);
+        console.log('공연 정보 불러오는 중 오류 발생', err);
       } finally {
         setLoading(false);
       }
@@ -84,14 +78,14 @@ function PerformanceList() {
 
   // 5) 모든 주요 상태값 → sessionStorage 자동 저장
   useEffect(() => {
-    sessionStorage.setItem("scroll-performance-sort", sort);
-    sessionStorage.setItem("scroll-performance-query", query);
-    sessionStorage.setItem("scroll-performance-stfilter", JSON.stringify(stFilter));
-    sessionStorage.setItem("scroll-performance-arfilter", JSON.stringify(arfilter));
-    sessionStorage.setItem("scroll-performance-gefilter", JSON.stringify(gefilter));
-    sessionStorage.setItem("scroll-performance-page", String(page));
-    sessionStorage.setItem("scroll-performance-data", JSON.stringify(performances));
-    sessionStorage.setItem("scroll-performance-vtfilter", JSON.stringify(vtFilter));
+    sessionStorage.setItem('scroll-performance-sort', sort);
+    sessionStorage.setItem('scroll-performance-query', query);
+    sessionStorage.setItem('scroll-performance-stfilter', JSON.stringify(stFilter));
+    sessionStorage.setItem('scroll-performance-arfilter', JSON.stringify(arfilter));
+    sessionStorage.setItem('scroll-performance-gefilter', JSON.stringify(gefilter));
+    sessionStorage.setItem('scroll-performance-page', String(page));
+    sessionStorage.setItem('scroll-performance-data', JSON.stringify(performances));
+    sessionStorage.setItem('scroll-performance-vtfilter', JSON.stringify(vtFilter));
   }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
 
   // 6) mount 또는 필터/정렬 변경 시 데이터 재요청
@@ -100,7 +94,7 @@ function PerformanceList() {
       isInitialMount.current = false;
 
       // 뒤로가기 시 → 새 fetch 없이 기존 데이터 사용
-      if (navigationType === "POP" && performances.length > 0) {
+      if (navigationType === 'POP' && performances.length > 0) {
         setLoading(false);
         return;
       }
@@ -125,8 +119,8 @@ function PerformanceList() {
     if (value && !gefilter.includes(value)) setGeFilter([...gefilter, value]);
   };
 
-  const removeFilter = (type: "area" | "genre", value: string) => {
-    if (type === "area") setArFilter(arfilter.filter((item) => item !== value));
+  const removeFilter = (type: 'area' | 'genre', value: string) => {
+    if (type === 'area') setArFilter(arfilter.filter((item) => item !== value));
     else setGeFilter(gefilter.filter((item) => item !== value));
   };
 
@@ -143,13 +137,35 @@ function PerformanceList() {
 
   // 9) 필터 옵션 목록
   const AREA_OPTIONS = [
-    "서울", "부산", "인천", "대구", "대전", "광주", "울산", "세종",
-    "경기", "강원", "경북", "경남", "충북", "충남", "전북", "전남", "제주"
+    '서울',
+    '부산',
+    '인천',
+    '대구',
+    '대전',
+    '광주',
+    '울산',
+    '세종',
+    '경기',
+    '강원',
+    '경북',
+    '경남',
+    '충북',
+    '충남',
+    '전북',
+    '전남',
+    '제주',
   ];
 
   const GENRE_OPTIONS = [
-    "대중무용", "대중음악", "무용(서양/한국무용)", "뮤지컬", "복합",
-    "서양음악(클래식)", "서커스/마술", "연극", "한국음악(국악)"
+    '대중무용',
+    '대중음악',
+    '무용(서양/한국무용)',
+    '뮤지컬',
+    '복합',
+    '서양음악(클래식)',
+    '서커스/마술',
+    '연극',
+    '한국음악(국악)',
   ];
 
   // 10) 드롭다운 열림/닫힘 관련 상태
@@ -161,9 +177,9 @@ function PerformanceList() {
 
   // 11) 정렬 옵션
   const sortOptions = [
-    { value: "name_asc", label: "이름순 ↑" },
-    { value: "name_desc", label: "이름순 ↓" },
-    { value: "date", label: "최신순" },
+    { value: 'name_asc', label: '이름순 ↑' },
+    { value: 'name_desc', label: '이름순 ↓' },
+    { value: 'date', label: '최신순' },
   ];
 
   // 12) 초기 query가 있으면 검색창 열기
@@ -173,12 +189,12 @@ function PerformanceList() {
 
   // 13) 정렬 변경 핸들러
   const handleSortChange = (value: string) => {
-    if (value === "name_asc" || value === "name_desc") {
+    if (value === 'name_asc' || value === 'name_desc') {
       setSort(value);
-    } else if (value === "name") {
-      setSort((prev) => (prev === "name_asc" ? "name_desc" : "name_asc"));
+    } else if (value === 'name') {
+      setSort((prev) => (prev === 'name_asc' ? 'name_desc' : 'name_asc'));
     } else {
-      setSort("date");
+      setSort('date');
     }
   };
 
@@ -197,8 +213,8 @@ function PerformanceList() {
       if (genreRef.current && !genreRef.current.contains(target)) setGenreOpen(false);
     };
 
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   // 15) UI 렌더링
@@ -210,13 +226,8 @@ function PerformanceList() {
 
         {/* 정렬 드롭다운 */}
         <s.DropdownWrapper ref={sortRef}>
-          <s.DropdownButton
-            open={sortOpen}
-            onClick={() => setSortOpen((prev) => !prev)}
-          >
-            {sortOptions.find(
-              (o) => o.value === (sort.startsWith("name") ? sort : "date")
-            )?.label || "정렬"}
+          <s.DropdownButton open={sortOpen} onClick={() => setSortOpen((prev) => !prev)}>
+            {sortOptions.find((o) => o.value === (sort.startsWith('name') ? sort : 'date'))?.label || '정렬'}
           </s.DropdownButton>
 
           {sortOpen && (
@@ -238,26 +249,20 @@ function PerformanceList() {
 
         {/* 상태 필터 */}
         <s.DropdownWrapper ref={statusRef}>
-          <s.DropdownButton
-            open={statusOpen}
-            onClick={() => setStatusOpen((prev) => !prev)}
-          >
+          <s.DropdownButton open={statusOpen} onClick={() => setStatusOpen((prev) => !prev)}>
             {stFilter}
           </s.DropdownButton>
           {statusOpen && (
             <s.DropdownList>
-              <s.DropdownItem onClick={() => handleStatusChange("공연중")}>공연중</s.DropdownItem>
-              <s.DropdownItem onClick={() => handleStatusChange("공연예정")}>공연예정</s.DropdownItem>
+              <s.DropdownItem onClick={() => handleStatusChange('공연중')}>공연중</s.DropdownItem>
+              <s.DropdownItem onClick={() => handleStatusChange('공연예정')}>공연예정</s.DropdownItem>
             </s.DropdownList>
           )}
         </s.DropdownWrapper>
 
         {/* 지역 필터 */}
         <s.DropdownWrapper ref={areaRef}>
-          <s.DropdownButton
-            open={areaOpen}
-            onClick={() => setAreaOpen((prev) => !prev)}
-          >
+          <s.DropdownButton open={areaOpen} onClick={() => setAreaOpen((prev) => !prev)}>
             지역
           </s.DropdownButton>
 
@@ -280,10 +285,7 @@ function PerformanceList() {
 
         {/* 장르 필터 */}
         <s.DropdownWrapper ref={genreRef}>
-          <s.GenreDropdownButton
-            open={genreOpen}
-            onClick={() => setGenreOpen((prev) => !prev)}
-          >
+          <s.GenreDropdownButton open={genreOpen} onClick={() => setGenreOpen((prev) => !prev)}>
             장르
           </s.GenreDropdownButton>
 
@@ -308,11 +310,7 @@ function PerformanceList() {
         <s.PerformancePlace>
           <s.PlaceInner>
             <s.PlaceLabel>
-              <input
-                type="checkbox"
-                checked={vtFilter}
-                onChange={(e) => setVtFilter(e.target.checked)}
-              />
+              <input type='checkbox' checked={vtFilter} onChange={(e) => setVtFilter(e.target.checked)} />
               내한 공연
             </s.PlaceLabel>
           </s.PlaceInner>
@@ -321,14 +319,14 @@ function PerformanceList() {
         {/* 전체 필터 초기화 */}
         <s.ResetButton
           onClick={() => {
-            setSort("name_asc");
+            setSort('name_asc');
             setArFilter([]);
             setGeFilter([]);
-            setStFilter("공연중");
+            setStFilter('공연중');
             setVtFilter(false);
-            setQuery("");
+            setQuery('');
             setPage(0);
-            getPerformance("", false, 0);
+            getPerformance('', false, 0);
           }}
         >
           <GrPowerReset />
@@ -337,13 +335,13 @@ function PerformanceList() {
         {/* 검색창 */}
         <s.SearchWrapper>
           <s.SearchInput
-            type="text"
-            placeholder="공연명 검색"
+            type='text'
+            placeholder='공연명 검색'
             value={query}
             open={searchOpen || !!query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") getPerformance(query, false, 0);
+              if (e.key === 'Enter') getPerformance(query, false, 0);
             }}
           />
 
@@ -362,8 +360,8 @@ function PerformanceList() {
             <s.ClearIcon
               size={12}
               onClick={() => {
-                setQuery("");
-                getPerformance("", false, 0);
+                setQuery('');
+                getPerformance('', false, 0);
               }}
             />
           )}
@@ -375,10 +373,7 @@ function PerformanceList() {
         {arfilter.map((item) => (
           <s.AreaFilterItem key={`area-${item}`}>
             <span>{item}</span>
-            <s.AreaFilterRemove
-              size={16}
-              onClick={() => removeFilter("area", item)}
-            />
+            <s.AreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
           </s.AreaFilterItem>
         ))}
       </s.FilterContainerWithTop>
@@ -388,19 +383,14 @@ function PerformanceList() {
         {gefilter.map((item) => (
           <s.GenreFilterItem key={`genre-${item}`}>
             <span>{item}</span>
-            <s.GenreFilterRemove
-              size={14}
-              onClick={() => removeFilter("genre", item)}
-            />
+            <s.GenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
           </s.GenreFilterItem>
         ))}
       </s.FilterContainer>
 
       {/* 결과 없음 메시지 */}
       {performances.length === 0 && !loading && (
-        <s.ErrorMessage className="detail-error">
-          공연 정보를 찾을 수 없습니다.
-        </s.ErrorMessage>
+        <s.ErrorMessage className='detail-error'>공연 정보를 찾을 수 없습니다.</s.ErrorMessage>
       )}
 
       {/* 스켈레톤 or 공연 목록 */}
@@ -413,7 +403,6 @@ function PerformanceList() {
             .map((p) => (
               <s.PerformanceCard key={p.prfId}>
                 <s.ClickableWrapper onClick={() => navigate(`/performance/${p.prfId}`)}>
-
                   {/* 장르명 */}
                   <s.GenreNm>
                     <div>{p.genreNm}</div>
@@ -432,24 +421,21 @@ function PerformanceList() {
                     <p>
                       {(() => {
                         const original = p.prfPlcNm;
-                        let result = "";
+                        let result = '';
                         const seen = new Set<string>();
 
                         original.split(/\s*(\([^)]+\))/).forEach((part) => {
                           if (!part) return;
-                          if (!part.startsWith("(")) {
+                          if (!part.startsWith('(')) {
                             result += part;
                             return;
                           }
 
                           const content = part.slice(1, -1).trim();
-                          const normalizedContent = content.replace(/\s+/g, "");
-                          const normalizedResult = result.replace(/\s+/g, "");
+                          const normalizedContent = content.replace(/\s+/g, '');
+                          const normalizedResult = result.replace(/\s+/g, '');
 
-                          if (
-                            seen.has(normalizedContent) ||
-                            normalizedResult.includes(normalizedContent)
-                          ) {
+                          if (seen.has(normalizedContent) || normalizedResult.includes(normalizedContent)) {
                             return;
                           }
 
@@ -475,4 +461,4 @@ function PerformanceList() {
   );
 }
 
-export default PerformanceList; 
+export default PerformanceList;

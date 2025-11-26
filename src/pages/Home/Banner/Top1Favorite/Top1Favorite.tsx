@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getTop1FavoriteForBanner } from "../../../../apis/adminApi";
-import { ScrapRank } from "../../../../types/adminPageTypes";
-import {
-  formatDateRange,
-  formatDateDot,
-} from "../../../../components/formatDate/formatDate";
-import { removeRegionTag } from "../../../../components/removeRegionTag/removeRegionTag";
-import * as s from "./styles";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getTop1FavoriteForBanner } from '../../../../apis/adminApi';
+import { ScrapRank } from '../../../../types/adminPageTypes';
+import { formatDateRange, formatDateDot } from '../../../../components/FormatDate/FormatDate';
+import { removeRegionTag } from '../../../../components/removeRegionTag/removeRegionTag';
+import * as s from './styles';
 
 function Top1Favorite() {
   const [data, setData] = useState<ScrapRank | null>(null);
@@ -29,17 +26,11 @@ function Top1Favorite() {
   if (loading || !data) return null;
 
   const title = removeRegionTag(data.prfName);
-  const dateRange = formatDateRange(
-    formatDateDot(data.prfStartDt),
-    formatDateDot(data.prfEndDt)
-  );
+  const dateRange = formatDateRange(formatDateDot(data.prfStartDt), formatDateDot(data.prfEndDt));
 
   return (
     <s.Container>
-      <s.BannerWrapper
-        onClick={() => navigate(`/performance/${data.prfId}`)}
-        style={{ cursor: "pointer" }}
-      >
+      <s.BannerWrapper onClick={() => navigate(`/performance/${data.prfId}`)} style={{ cursor: 'pointer' }}>
         {/* 흐린 배경 */}
         <s.BackgroundBlur img={data.posterImgUrl} />
 
