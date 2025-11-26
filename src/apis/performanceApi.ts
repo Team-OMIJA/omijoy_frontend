@@ -4,12 +4,10 @@ import { PerformanceDetailPage } from '../types/performancePageTypes';
 import { formatNewDate, formatPeriod } from '../components/FormatDate/FormatDate';
 import { removeRegionTag } from '../components/removeRegionTag/removeRegionTag';
 
-const KOPIS_PROXY_BASE = import.meta.env.VITE_KOPIS_PROXY_BASE ?? '/kopis';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // TopRankList
 export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> => {
-  const API_KEY = import.meta.env.VITE_KOPIS_API_KEY;
-
   const today = new Date();
   const pastDate = new Date();
   pastDate.setDate(pastDate.getDate() - 30);
@@ -17,12 +15,13 @@ export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> 
   const stDate = formatNewDate(pastDate);
   const edDate = formatNewDate(today);
 
-  const url = `${KOPIS_PROXY_BASE}/boxoffice?service=${API_KEY}&stdate=${stDate}&eddate=${edDate}&catecode=&area=`;
+  const url = `${BASE_URL}/kopis/boxoffice?&stdate=${stDate}&eddate=${edDate}&catecode=&area=`;
 
   try {
     const response = await axios.get(url, { responseType: 'text' });
     const parser = new DOMParser();
     const xmlData = parser.parseFromString(response.data, 'text/xml');
+    console.log(xmlData);
     const boxList = xmlData.getElementsByTagName('boxof');
 
     // XML → JS 객체 변환
@@ -45,8 +44,6 @@ export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> 
 
 // AwardRecommendList
 export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
-  const API_KEY = import.meta.env.VITE_KOPIS_API_KEY;
-
   try {
     const today = new Date();
     const futureDate = new Date();
@@ -55,7 +52,7 @@ export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
     const stDate = formatNewDate(today);
     const edDate = formatNewDate(futureDate);
 
-    const url = `${KOPIS_PROXY_BASE}/awards?service=${API_KEY}&stdate=${stDate}&eddate=${edDate}&cpage=1&rows=100`;
+    const url = `${BASE_URL}/kopis/awards?&stdate=${stDate}&eddate=${edDate}&cpage=1&rows=100`;
 
     const res = await axios.get(url, { responseType: 'text' });
     const parser = new DOMParser();
@@ -93,8 +90,6 @@ export const fetchAwardPerformances = async (): Promise<AwardPerformance[]> => {
 
 // UpcomingList
 export const getUpcomingPerformances = async (): Promise<UpcomingPerformance[]> => {
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   try {
     const response = await axios.get(`${BASE_URL}/performances/upcoming`);
 
@@ -123,8 +118,6 @@ export const fetchKidsPrfsThisMonth = async (): Promise<KidsNewPerformancs[]> =>
 
 // 공연 상세페이지 정보
 export const fetchPerformanceDetail = async (id: string) => {
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   try {
     const res = await fetch(`${BASE_URL}/prfDetails/${id}`);
     if (!res.ok) {
