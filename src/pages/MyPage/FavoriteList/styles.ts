@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Carousel } from "@mantine/carousel";
-import { styled } from "@mui/material";
+import styled from "@emotion/styled";
 
 export const container = css`
   width: 100%;
@@ -66,9 +66,7 @@ export const poster = css`
   }
 `;
 
-export const info = css`
-  text-align: left;
-`;
+
 
 /* 제목 */
 export const name = css`
@@ -80,6 +78,26 @@ export const name = css`
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
+`;
+
+// URL 복사 및 리스트 이동 아이콘 
+export const IconHover = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px); /* 살짝 위로 올라가기 */
+    opacity: 0.85; /* 살짝 어둡게(선택사항) */
+  }
+`;
+
+// 포스터 아래 정보
+export const info = css`
+  text-align: left;
 `;
 
 /* 장소 */

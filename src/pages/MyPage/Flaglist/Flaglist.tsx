@@ -8,6 +8,9 @@ import { PlaceMarker } from "../../../apis/performanceplaceApi";
 import { PerformancePlace } from "../../../types/myPageTypes";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import PerformancePlaceModal from "../../PerformancePlace/PerformancePlaceModal/PerformancePlaceModal";
+import { Carousel } from "@mantine/carousel";
+import { css } from "@emotion/react";
+import chunkArray from "../../../utils/myPageUtils";
 
 type FlagItem = {
   flagId: number;
@@ -60,6 +63,8 @@ function Flaglist() {
   }
 
   const flagList = data ?? [];
+  // 리스트 15개씩 보여줌 -> 넘치면 넘어감
+  const slides = chunkArray(flagList, 15);
 
   const openModal = (place: FlaggedPlace) => {
     setSelectedPlace(place);
@@ -78,11 +83,16 @@ function Flaglist() {
       </div>
 
       {flagList.length > 0 ? (
+
         <ul css={s.list}>
           {flagList.map((flag) => {
             const place = toFlaggedPlace(flag.prfPlcId);
             return (
-              <li key={flag.flagId} css={s.card} onClick={() => openModal(place)}>
+              <li
+                key={flag.flagId}
+                css={s.card}
+                onClick={() => openModal(place)}
+              >
                 <div css={s.placeName}>{place.prfPlcName}</div>
                 <div css={s.address}>{place.address}</div>
               </li>
@@ -97,6 +107,71 @@ function Flaglist() {
         <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
       )}
     </div>
+
+
+
+    // <div css={s.container}>
+    //   <div css={s.header}>
+    //     <h2 css={s.title}>PLACE</h2>
+    //   </div>
+
+    //   {flagList.length > 0 ? (
+    //     <Carousel
+    //       loop
+    //       slideGap="md"
+    //       transitionDuration={750}
+    //       emblaOptions={{
+    //         speed: 4,
+    //         loop: true,
+    //         align: "start",
+    //       }}
+    //       controlSize={45}
+    //       styles={{
+    //         control: {
+    //           background: "rgba(255,255,255,0.25)",
+    //           border: "none",
+    //           backdropFilter: "blur(6px)",
+    //           color: "#fff",
+    //         },
+    //       }}
+    //     >
+    //       {slides.map((group, idx) => (
+    //         <Carousel.Slide key={idx}>
+    //           <div
+    //             css={css`
+    //               display: grid;
+    //               grid-template-columns: repeat(5, 1fr);
+    //               grid-template-rows: repeat(3, auto);
+    //               gap: 20px;
+    //               padding: 10px 0;
+    //             `}
+    //           >
+    //             {group.map((flag) => {
+    //               const place = toFlaggedPlace(flag.prfPlcId);
+    //               return (
+    //                 <li
+    //                   key={flag.flagId}
+    //                   css={s.card}
+    //                   onClick={() => openModal(place)}
+    //                   style={{ listStyle: "none" }}
+    //                 >
+    //                   <div css={s.placeName}>{place.prfPlcName}</div>
+    //                   <div css={s.address}>{place.address}</div>
+    //                 </li>
+    //               );
+    //             })}
+    //           </div>
+    //         </Carousel.Slide>
+    //       ))}
+    //     </Carousel>
+    //   ) : (
+    //     <p css={s.empty}>플래그한 공연장이 없습니다.</p>
+    //   )}
+
+    //   {isModalOpen && selectedPlace && (
+    //     <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
+    //   )}
+    // </div>
   );
 }
 

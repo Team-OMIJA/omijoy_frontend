@@ -4,13 +4,14 @@ import Slider from 'react-slick';
 import * as S from './PerformancePlaceModal.styles';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toggleFlagReq } from '../../../apis/flagApi';
 
 import { usePrincipalState } from '../../../stores/usePrincipalState';
 import { useNavigate } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
 import { FaFlagCheckered } from 'react-icons/fa';
+import { queryClient } from '../../../configs/queryClient';
 
 interface PerformancePlaceModalProps {
   place: PlaceMarker;
@@ -29,15 +30,16 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     // 서버에 플래그 토글 요청
     mutationFn: () => toggleFlagReq(place.prfPlcId),
     // 요청 성공 후 flags quertKey 와 관련된 캐시된 데이터를 무효화
-    // 안써서 지움
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries(["flags"]);
-    // },
+    // myPage에서 사용함...
+    onSuccess: () => {
+      // queryClient.invalidateQueries(["flags"]);
+       queryClient.invalidateQueries({ queryKey: ['flags'] });
+    },
   });
 
   const navigate = useNavigate();
