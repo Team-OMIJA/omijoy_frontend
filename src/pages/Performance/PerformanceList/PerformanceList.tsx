@@ -134,6 +134,7 @@ function PerformanceList() {
     getPerformance(query, false, 0);
   }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (query) setSearchOpen(true); }, []);
 
   // 드롭다운 바깥 클릭 감지
@@ -337,7 +338,7 @@ function PerformanceList() {
                   <s.PerformanceListName>{removeRegionTag(p.prfNm)}</s.PerformanceListName>
 
                   {/* 공연 장소 (중복 괄호 제거 로직 적용 버전) */}
-                  <s.PerformancePlace2>
+                  <s.PerformanceListPlaceDetail>
                     <p>
                       {(() => {
                         const original = p.prfPlcNm;
@@ -364,7 +365,7 @@ function PerformanceList() {
                         return result.trim();
                       })()}
                     </p>
-                  </s.PerformancePlace2>
+                  </s.PerformanceListPlaceDetail>
 
                   {/* 공연 기간 */}
                   <s.PerformanceListPeriod>
