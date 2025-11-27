@@ -8,6 +8,11 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
   const { pathname } = useLocation();
   const storageKey = `scroll-performance-${pathname}`;
 
+  // 자체 롤백 기능 끄기
+  useEffect(() => {
+    history.scrollRestoration = "manual";
+  })
+
   // 새로고침 체크
   useEffect(() => {
     const handleBeforeUnload = () => {
