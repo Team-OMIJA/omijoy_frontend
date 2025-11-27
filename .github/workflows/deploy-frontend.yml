@@ -20,7 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
+      - name: Create .env file
+        run: |
+          cat << 'EOF' > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
       - name: Build frontend
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
@@ -49,4 +53,8 @@ jobs:
           script: |
             cd /srv/omijoy
             docker pull ohsanghyeon/frontend-app:latest
+            
+            docker stop frontend-app || true
+            docker rm frontend-app || true
+            
             docker compose up -d frontend
