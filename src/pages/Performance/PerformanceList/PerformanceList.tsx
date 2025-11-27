@@ -132,7 +132,7 @@ function PerformanceList() {
     }
     setPage(0);
     getPerformance(query, false, 0);
-  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType  ]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (query) setSearchOpen(true); }, []);
