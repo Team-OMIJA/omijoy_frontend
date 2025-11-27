@@ -60,8 +60,6 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
       if (now - lastCalled.current >= 100) { // 100ms 쓰로틀링
         lastCalled.current = now;
         sessionStorage.setItem(storageKey, String(percent));
-        // 디버깅용
-        console.log("Scroll percent saved:", percent);
       }
     };
 
