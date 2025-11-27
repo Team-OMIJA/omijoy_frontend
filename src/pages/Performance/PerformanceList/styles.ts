@@ -171,7 +171,7 @@ export const PerformanceListPlaceLabel = styled.label`
   gap: 6px;
 `;
 
-export const PerformancePlace2 = styled.div`
+export const PerformanceListPlaceDetail = styled.div`
   color: #dbdbdb;
   font-size: 13px;
   margin: 2px 0;
