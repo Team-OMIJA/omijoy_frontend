@@ -96,10 +96,10 @@ function FavoriteList() {
         ) : (
           <div css={s.sliderWrapper}>
             {/* 왼쪽 그라데이션 */}
-            <div css={s.gradientLeft} />
+            {/* <div css={s.gradientLeft} /> */}
 
             {/* 오른쪽 그라데이션 */}
-            <div css={s.gradientRight} />
+            {/* <div css={s.gradientRight} /> */}
 
             <Carousel
               slideSize="16.6%" // → 6개 보여주기 (100 / 6)

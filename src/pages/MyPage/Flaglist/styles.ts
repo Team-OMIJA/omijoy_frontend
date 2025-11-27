@@ -1,21 +1,22 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 
-export const container = css`
+export const Container = styled.div`
   width: 100%;
   margin-top: 50px;
   padding: 40px 0px;
   box-sizing: border-box;
 `;
 
-export const header = css`
+export const Header = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 30px;
 `;
 
-export const title = css`
+export const Title = styled.h2`
   font-size: 1.8em;
   font-weight: 700;
   margin-bottom: 25px;
@@ -23,7 +24,7 @@ export const title = css`
 `;
 
 // 공연 스크랩 없을 시
-export const empty = css`
+export const Empty = styled.div`
   font-size: 16px;
   text-align: center;
   padding: 40px 0;
@@ -31,22 +32,15 @@ export const empty = css`
 `;
 
 // 로딩 중
-export const loading = css`
+export const Loading = styled.div`
   font-size: 16px;
   text-align: center;
   padding: 40px 0;
 `;
 
-export const list = css`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-`;
 
-export const card = css`
+// 공연장 정보 리스트
+export const Card = styled.li`
   background: #737373ff;
   padding: 20px 18px;
   border-radius: 16px;
@@ -64,14 +58,24 @@ export const card = css`
   }
 `;
 
-export const placeName = css`
+export const PlaceName = styled.div`
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 6px;
   color: #ddddddff;
 `;
 
-export const address = css`
+export const Address = styled.div`
   font-size: 14px;
   color: #d0d0d0ff;
 `;
+
+// 5 * 3 그리드
+export const SlideGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 20px;
+  padding: 10px 0;
+`;
+

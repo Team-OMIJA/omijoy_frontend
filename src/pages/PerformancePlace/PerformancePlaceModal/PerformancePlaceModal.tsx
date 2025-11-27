@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PlaceMarker, PrfPlcModal, findPerformancesByPlaceId } from '../../../apis/performanceplaceApi';
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import * as S from './PerformancePlaceModal.styles';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -112,15 +112,15 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const settings = {
+  const settings: Settings = {
     dots: true,
     infinite: performances.length > 5,
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 5,
     arrows: true,
-    beforeChange: () => setIsDragging(true),
-    afterChange: () => setIsDragging(false),
+    beforeChange: (_current, _next) => setIsDragging(true),
+    afterChange: (_current) => setIsDragging(false),
     responsive: [
       {
         breakpoint: 600,
