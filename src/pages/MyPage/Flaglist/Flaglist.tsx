@@ -8,6 +8,8 @@ import { PlaceMarker } from "../../../apis/performanceplaceApi";
 import { PerformancePlace } from "../../../types/myPageTypes";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import PerformancePlaceModal from "../../PerformancePlace/PerformancePlaceModal/PerformancePlaceModal";
+import { Carousel } from "@mantine/carousel";
+import chunkArray from "../../../utils/myPageUtils";
 
 type FlagItem = {
   flagId: number;
@@ -53,13 +55,15 @@ function Flaglist() {
   const [selectedPlace, setSelectedPlace] = useState<FlaggedPlace | null>(null);
 
   if (!principal?.id) return null;
-  if (isLoading) return <div css={s.loading}>로딩중..</div>;
+  if (isLoading) return <s.Loading>로딩중..</s.Loading>;
   if (isError) {
     alert("에러가 발생했습니다.");
     return null;
   }
 
   const flagList = data ?? [];
+  // 리스트 15개씩 보여줌 -> 넘치면 넘어감
+  const slides = chunkArray(flagList, 15);
 
   const openModal = (place: FlaggedPlace) => {
     setSelectedPlace(place);
@@ -72,31 +76,61 @@ function Flaglist() {
   };
 
   return (
-    <div css={s.container}>
-      <div css={s.header}>
-        <h2 css={s.title}>PLACE</h2>
-      </div>
+    <s.Container>
+      <s.Header>
+        <s.Title>PLACE</s.Title>
+      </s.Header>
 
       {flagList.length > 0 ? (
-        <ul css={s.list}>
-          {flagList.map((flag) => {
-            const place = toFlaggedPlace(flag.prfPlcId);
-            return (
-              <li key={flag.flagId} css={s.card} onClick={() => openModal(place)}>
-                <div css={s.placeName}>{place.prfPlcName}</div>
-                <div css={s.address}>{place.address}</div>
-              </li>
-            );
-          })}
-        </ul>
+        <Carousel
+          slideGap="md"
+          emblaOptions={{
+            loop: false,
+            align: "start",
+          }}
+          controlSize={45}
+          styles={{
+            control: {
+              background: "rgba(255,255,255,0.25)",
+              border: "none",
+              backdropFilter: "blur(6px)",
+              color: "#fff",
+            },
+            viewport: {
+              scrollBehavior: "smooth",
+              transitionDuration: "750ms",
+            },
+          }}
+        >
+          {slides.map((group, idx) => (
+            <Carousel.Slide key={idx}>
+              <s.SlideGrid>
+                {group.map((flag) => {
+                  const place = toFlaggedPlace(flag.prfPlcId);
+
+                  return (
+                    <s.Card
+                      key={flag.flagId}
+                      onClick={() => openModal(place)}
+                      style={{ listStyle: "none" }}
+                    >
+                      <s.PlaceName>{place.prfPlcName}</s.PlaceName>
+                      <s.Address>{place.address}</s.Address>
+                    </s.Card>
+                  );
+                })}
+              </s.SlideGrid>
+            </Carousel.Slide>
+          ))}
+        </Carousel>
       ) : (
-        <p css={s.empty}>플래그한 공연장이 없습니다.</p>
+        <s.Empty>플래그한 공연장이 없습니다.</s.Empty>
       )}
 
       {isModalOpen && selectedPlace && (
         <PerformancePlaceModal place={selectedPlace} onClose={closeModal} />
       )}
-    </div>
+    </s.Container>
   );
 }
 

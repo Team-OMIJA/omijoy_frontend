@@ -8,13 +8,14 @@ export const ProfileContainer = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 2rem;
-  min-height: 160px;
+  min-height: 300px;
   width: 100%;
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem 2.5rem;
-    /* background-color: #121212; */
-    background-color: #8e8e8eff ;
+  max-width: 1450px;
+  border-radius: 20px;
+  margin-top: 5rem;
+  padding: 2rem 7rem;
+  /* background-color: #121212; */
+  background-color: #151515;
 `;
 
 // 프로필 이미지
@@ -58,35 +59,92 @@ export const UserInfo = styled.div`
 
 export const BtnContainer = styled.div`
   display: flex;
-  margin-top: 8px;
+  justify-content: end;
+  margin-top: 11px;
 `;
+
 export const SaveBtn = styled.button`
   margin-left: 3px;
+  width: 60px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2b2b2b;
+  border: none;
+  border-radius: 8px;
+  color: #dbdbdb;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 470;
+  transition: 0.2s ease;
+
+  &:hover {
+    background-color: #222222ff;
+  }
+
+  /* disabled 상태 스타일 */
+  &:disabled {
+    background-color: #565656; /* 비활성화 배경색 */
+    color: #cccccc; /* 비활성화 텍스트색 */
+    cursor: not-allowed; /* 마우스 커서 변경 */
+    opacity: 0.6; /* 조금 흐려보이게 */
+  }
 `;
 
-export const CancelBtn = styled.button``;
-
-export const textFieldStyle = css`
-  width: 200px;
-  background-color: #f5f5f5;
+// 취소버튼
+export const CancelBtn = styled.button`
+  width: 60px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b01c1c;
+  border: none;
   border-radius: 8px;
+  color: #dbdbdb;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 470;
+  transition: 0.2s ease;
+  margin-left: 0.5rem;
 
-  .MuiOutlinedInput-root {
-    fieldset {
-      border-color: #ccc;
-    }
-    &:hover fieldset {
-      border-color: #888;
-    }
-    &.Mui-focused fieldset {
-      border-color: #555;
-    }
+  &:hover {
+    background-color: #8f1515;
+  }
+`;
+
+
+export const inputWrapper = css`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const inputStyle = css`
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: #dbdbdb;
+  font-size: 1.6rem;
+  /* font-weight: 500; */
+  transition: 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #919191ff;
   }
 
-  .MuiInputBase-input {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #747474ff;
-    padding: 9px 12px;
+  &::placeholder {
+    color: #777;
   }
+
+  /* 비활성화, 에러 등 원하는 추가 스타일도 가능 */
+`;
+
+export const helperTextStyle = css`
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: 6px;
 `;
