@@ -8,6 +8,11 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
   const { pathname } = useLocation();
   const storageKey = `scroll-performance-${pathname}`;
 
+  // 자체 롤백 기능 끄기
+  useEffect(() => {
+    history.scrollRestoration = "manual";
+  })
+
   // 새로고침 체크
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -55,8 +60,6 @@ function useInfiniteScroll(callback: () => void, hasMore: boolean) {
       if (now - lastCalled.current >= 100) { // 100ms 쓰로틀링
         lastCalled.current = now;
         sessionStorage.setItem(storageKey, String(percent));
-        // 디버깅용
-        console.log("Scroll percent saved:", percent);
       }
     };
 
