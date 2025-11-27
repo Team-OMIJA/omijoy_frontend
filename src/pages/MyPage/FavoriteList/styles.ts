@@ -130,7 +130,6 @@ export const sliderWrapper = css`
   width: 100%; */
   position: relative;
   overflow: hidden;
-  padding: 0 20px; /* 좌우 여백 살짝 */
 `;
 
 /* 왼쪽 페이드 (투명 → 배경색) */

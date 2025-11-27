@@ -16,6 +16,7 @@ export interface PerformanceDetailPage {
   dtGuidance: string;
   detailImgUrl: string;
   providerUrl: string;
+  // scrapCount: number;
 }
 
 export interface Performance {

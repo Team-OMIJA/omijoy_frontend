@@ -32,3 +32,15 @@ export const getSharedFavoritePrfListReq = async (userId: string) => {
     throw error;
   }
 };
+
+
+// 해당 공연의 전체 스크랩 갯수 
+export const getFavoriteCountReq = async (prfId: string) => {
+  try {
+    const response = await instance.get(`/favorite/count/${prfId}`);
+    return response.data;
+  } catch (error) {
+    console.error("좋아요 갯수 불러오기 실패 : ", error);
+    throw error;
+  }
+}

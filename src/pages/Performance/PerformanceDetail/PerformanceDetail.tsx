@@ -66,6 +66,7 @@ function PerformanceDetail() {
 
   const HeartIcon = liked ? ImHeart : SlHeart;
 
+
   // 예매처 사이트 이름 추출
   const getSiteName = (url: string) => {
     const lower = url.toLowerCase();
