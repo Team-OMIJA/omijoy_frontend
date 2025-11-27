@@ -334,7 +334,7 @@ function PerformanceList() {
                   <s.PerformanceListPosterImg>
                     <img src={p.posterImgUrl} alt={p.prfNm} />
                   </s.PerformanceListPosterImg>
-
+                  
                   <s.PerformanceListName>{removeRegionTag(p.prfNm)}</s.PerformanceListName>
 
                   {/* 공연 장소 (중복 괄호 제거 로직 적용 버전) */}
