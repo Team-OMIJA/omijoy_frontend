@@ -1,24 +1,30 @@
 /** @jsxImportSource @emotion/react */
-import * as s from './styles';
-import { Avatar, TextField, Button } from '@mui/material';
-import React, { useRef, useState } from 'react';
-import { usePrincipalState } from '../../../stores/usePrincipalState';
-import { useFirebaseUpload } from '../../../hooks/useFirebaseUpload';
-import axios from 'axios';
-import ImageCropModal from './ImageCropModal/ImageCropModal';
-import { instance } from '../../../apis/instance';
-import { IoMdSettings } from 'react-icons/io';
+import * as s from "./styles";
+import { Avatar, TextField, Button } from "@mui/material";
+import React, { useRef, useState } from "react";
+import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { useFirebaseUpload } from "../../../hooks/useFirebaseUpload";
+import axios from "axios";
+import ImageCropModal from "./ImageCropModal/ImageCropModal";
+import { instance } from "../../../apis/instance";
+import { IoMdSettings } from "react-icons/io";
 
-function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () => void }) {
+function EditProfile({
+  onCancel,
+  onSave,
+}: {
+  onCancel: () => void;
+  onSave: () => void;
+}) {
   const { uploadFile } = useFirebaseUpload();
   // 기본 상태 로딩(현재 저장된 프로필)
   const { principal, login } = usePrincipalState();
-  const [username, setUsername] = useState(principal?.username || '');
-  const [previewImg, setPreviewImg] = useState(principal?.profileImg || '');
+  const [username, setUsername] = useState(principal?.username || "");
+  const [previewImg, setPreviewImg] = useState(principal?.profileImg || "");
   const [file, setFile] = useState<File | null>(null);
 
   const [isChanged, setIsChanged] = useState(false);
-  const [usernameError, setUsernameError] = useState('');
+  const [usernameError, setUsernameError] = useState("");
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,7 +51,7 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
     }
     // 동일한 파일을 다시 선택해도 onChange 일어나게 만들어줌
     if (inputRef.current) {
-      inputRef.current.value = '';
+      inputRef.current.value = "";
     }
   };
 
@@ -64,8 +70,8 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
 
     try {
       // username 비어있으면 저장 막음
-      if (!username || username.trim() === '') {
-        alert('이름은 공백일 수 없습니다.');
+      if (!username || username.trim() === "") {
+        alert("이름은 공백일 수 없습니다.");
         return;
       }
 
@@ -74,7 +80,7 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
 
       if (file) {
         // 파일 업로드 시작 - 사용자가 이미지 크롭한게 들어감
-        profileUrl = await uploadFile(file, 'omijoy_storage/profile-img');
+        profileUrl = await uploadFile(file, "omijoy_storage/profile-img");
       }
 
       // axios patch 요청 전송
@@ -86,8 +92,8 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
         },
         {
           headers: {
-            Authorization: localStorage.getItem('jwt'),
-            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem("jwt"),
+            "Content-Type": "application/json",
           },
         }
       );
@@ -99,18 +105,20 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
         profileImg: profileUrl,
       });
 
-      alert('프로필이 수정되었습니다.');
+      alert("프로필이 수정되었습니다.");
       onSave();
     } catch (error) {
-      console.error('❌ 에러 발생:', error);
-      alert('프로필 수정 실패');
+      console.error("❌ 에러 발생:", error);
+      alert("프로필 수정 실패");
     } finally {
       // 완료 이후 다시 버튼 활성화
       setIsLoading(false);
     }
   };
 
-  const usernameOnChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const usernameOnChangeHandler = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     let newUsername = e.target.value;
 
     // 앞뒤 공백 제거
@@ -120,22 +128,22 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
     // 중복여부 검사
     if (newUsername !== principal?.username) {
       try {
-        const response = await instance.get('/user/check-username', {
+        const response = await instance.get("/user/check-username", {
           params: { username: newUsername },
         });
 
         if (response.data === true) {
-          setUsernameError('이미 사용중인 이름입니다.');
+          setUsernameError("이미 사용중인 이름입니다.");
           setIsUsernameValid(false);
         } else {
-          setUsernameError('');
+          setUsernameError("");
           setIsUsernameValid(true);
         }
       } catch (err) {
-        console.error('중복 체크 실패 : ', err);
+        console.error("중복 체크 실패 : ", err);
       }
     } else {
-      setUsernameError('');
+      setUsernameError("");
       setIsUsernameValid(true);
     }
 
@@ -163,50 +171,69 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
         />
       )}
       <s.AvatarWrapper>
-        <Avatar src={previewImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG} sx={{ width: 100, height: 100 }} />
-        <s.EditLabel htmlFor='profile-upload'>
+        <Avatar
+          src={previewImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG}
+          sx={{ width: 100, height: 100 }}
+        />
+        <s.EditLabel htmlFor="profile-upload">
           <IoMdSettings />
         </s.EditLabel>
         <input
           ref={inputRef}
-          id='profile-upload'
-          type='file'
-          accept='image/*'
+          id="profile-upload"
+          type="file"
+          accept="image/*"
           onChange={fileOnChangeHandler}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
         />
       </s.AvatarWrapper>
 
       <s.UserInfo>
-        <TextField
-          variant='outlined'
+        {/* <TextField
+          variant="outlined"
           value={username}
           placeholder={principal?.username}
           // helperText에 조건 걺
-          helperText={!isUsernameValid ? usernameError : ''}
-          onFocus={() => {
-            if (isFirstFocus) {
-              setUsername('');
-              setIsFirstFocus(false);
-            }
-          }}
+          helperText={!isUsernameValid ? usernameError : ""}
+          // onFocus={() => {
+          //   if (isFirstFocus) {
+          //     setUsername("");
+          //     setIsFirstFocus(false);
+          //   }
+          // }}
           onChange={usernameOnChangeHandler}
           css={s.textFieldStyle}
-        />
+        /> */}
+        <div css={s.inputWrapper}>
+          <input
+            type="text"
+            value={username}
+            placeholder={principal?.username}
+            onChange={usernameOnChangeHandler}
+            css={s.inputStyle}
+          />
+          {!isUsernameValid && (
+            <span css={s.helperTextStyle}>{usernameError}</span>
+          )}
+        </div>
         <s.BtnContainer>
-          <Button
-            variant='outlined'
-            size='small'
+          <s.SaveBtn
+            // variant='outlined'
+            // size='small'
             // 변경 내용이 없음 / 이름 중복됨 / 저장중일때
             disabled={!isChanged || !isUsernameValid || isLoading}
             onClick={onSaveHandler}
-            sx={{ marginRight: '3px' }}
+            // sx={{ marginRight: '3px' }}
           >
-            {isLoading ? '저장 중...' : '저장'}
-          </Button>
-          <Button variant='outlined' size='small' onClick={onCancel}>
+            {isLoading ? "저장" : "저장"}
+          </s.SaveBtn>
+          <s.CancelBtn
+            // variant="outlined"
+            // size="small"
+            onClick={onCancel}
+          >
             취소
-          </Button>
+          </s.CancelBtn>
         </s.BtnContainer>
       </s.UserInfo>
     </s.ProfileContainer>
