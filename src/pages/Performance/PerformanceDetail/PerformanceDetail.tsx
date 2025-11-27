@@ -82,7 +82,9 @@ function PerformanceDetail() {
     if (lower.includes('clipservice')) return '클립서비스';
     if (lower.includes('timeticket')) return '타임 티켓';
     if (lower.includes('maketicket')) return '마켓 티켓';
+    if (lower.includes('playicket')) return '플레이 티켓';
     if (lower.includes('tmon')) return '티몬';
+    if (lower.includes('sejongpac')) return '세종문화회관';
     try {
       const hostname = new URL(url).hostname;
       const parts = hostname.replace('www.', '').split('.');
