@@ -49,4 +49,8 @@ jobs:
           script: |
             cd /srv/omijoy
             docker pull ohsanghyeon/frontend-app:latest
+            
+            docker stop frontend-app || true
+            docker rm frontend-app || true
+            
             docker compose up -d frontend
