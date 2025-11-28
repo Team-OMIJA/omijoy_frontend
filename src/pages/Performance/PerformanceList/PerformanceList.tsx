@@ -82,6 +82,7 @@ function PerformanceList() {
 
   // 데이터 fetch + 무한 스크롤
   const getPerformance = useCallback(async (searchQuery: string, append = false, pageToLoad = 0) => {
+    
     setLoading(true);
     try {
       const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
@@ -274,14 +275,7 @@ function PerformanceList() {
             value={query}
             open={searchOpen || !!query}
             onChange={e => setQuery(e.target.value)}
-            // onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0) }
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                setPage(0);
-                getPerformance(query, false, 0);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }
-            }}
+            onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0) }
           />
           <s.PerformanceListSearchIcon
             size={18}
@@ -290,7 +284,6 @@ function PerformanceList() {
               else {
                 setPage(0);
                 getPerformance(query, false, 0);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
           />
