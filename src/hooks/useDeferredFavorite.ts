@@ -31,17 +31,21 @@ export function useDeferredFavorite(prfId: string | undefined) {
     if (!prfId) return;
 
     const load = async () => {
+      // 서버 스크랩 상태 불러오기
       const serverLiked = await fetchFavoriteState(prfId);
       await fetchFavoriteCount(prfId);
 
+      // 서버 스크랩 카운트 불러오기
       const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
 
       setLocalLiked(serverLiked);
       setLocalSerapCount(count);
 
+      // 초기 서버값 저장
       initialLiked.current = serverLiked;
       initalScrapCount.current = count;
 
+      // UI 최신값 ref 저장
       likedRef.current = serverLiked;
       countRef.current = count;
     };
@@ -49,6 +53,46 @@ export function useDeferredFavorite(prfId: string | undefined) {
     load();
   }, [prfId]);
 
-  // UI 토글 반영 
-  // const handleToggleLocalFavorite = ()
+  // UI 토글 반영
+  // 스크랩 토글
+  const handleToggleLocalFavorite = () => {
+    setLocalLiked((prev) => {
+      // 현재 상태랑 다른 것
+      const next = !prev;
+      // cleanup 때 사용할 최신 값
+      likedRef.current = next;
+      return next;
+    });
+
+    // 카운트
+    setLocalSerapCount((prev) => {
+      const next = likedRef.current ? prev + 1 : Math.max(prev - 1, 0);
+      // 최신값 저장
+      countRef.current = next;
+      return next;
+    });
+  };
+
+  // 페이지 떠날 때 서버 1회 반영
+  useEffect(() => {
+    return () => {
+      if (!prfId) return;
+
+      // 좋아요 현재 값이 이전 값과 다름
+      const likedChanged = likedRef.current !== initialLiked.current;
+
+      // 라우터 path명이 이전과 다름
+      const pathnameChanged = prevLocation.current !== location.pathname;
+
+      if (likedChanged && pathnameChanged) {
+        toggleFavorite(prfId);
+      }
+    };
+  }, [prfId, location.pathname]);
+
+  return {
+    localLiked,
+    localScrapCount,
+    handleToggleLocalFavorite,
+  };
 }
