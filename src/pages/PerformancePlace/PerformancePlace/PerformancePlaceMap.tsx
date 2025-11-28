@@ -49,23 +49,19 @@ function PerformancePlaceMap() {
     if (!isKakaoMapLoaded && window.kakao && window.kakao.maps) {
       window.kakao.maps.load(() => {
         setIsKakaoMapLoaded(true);
+        // 지도 스크립트 로드 후 바로 초기 위치 가져오기
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setMapCenter({ lat: latitude, lng: longitude });
+            setMapLevel(LOCAL_LEVEL + 1);
+          },
+          (error) => {
+            console.error("초기 위치 로드 실패:", error.message);
+          },
+          { enableHighAccuracy: true, maximumAge: 10000 }
+        );
       });
-    }
-  }, [isKakaoMapLoaded]);
-
-  useEffect(() => {
-    if (isKakaoMapLoaded) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setMapCenter({ lat: latitude, lng: longitude });
-          setMapLevel(LOCAL_LEVEL + 1);
-        },
-        (error) => {
-          console.error("초기 위치 로드 실패:", error.message);
-        },
-        { enableHighAccuracy: true, maximumAge: 10000 }
-      );
     }
   }, [isKakaoMapLoaded]);
 
@@ -121,26 +117,27 @@ function PerformancePlaceMap() {
     setIsModalOpen(true);
   }, []);
 
-
   // 모달 닫힐 때 flag 값 ui 반영
-  const closeModal = useCallback((updatedFlag?: boolean) => {
-    // 업데이트 되었을 때(이전 값에서 변경이 일어났을 때)
-    if (updatedFlag !== undefined && selectedPlace) {
-      setPlaces((prev) =>
-        prev.map((p) =>
-          // prfPlcId가 현재 모달에서 보고있는 공연장과 같으면
-          p.prfPlcId === selectedPlace.prfPlcId
-          // 그 공연장의 flagged 값 업데이트
-            ? { ...p, flagged: updatedFlag }
-            // 아니면 그대로 반환
-            : p
-        )
-      );
-    }
-    setIsModalOpen(false);
-    setSelectedPlace(null);
-  }, [selectedPlace]);
-
+  const closeModal = useCallback(
+    (updatedFlag?: boolean) => {
+      // 업데이트 되었을 때(이전 값에서 변경이 일어났을 때)
+      if (updatedFlag !== undefined && selectedPlace) {
+        setPlaces((prev) =>
+          prev.map((p) =>
+            // prfPlcId가 현재 모달에서 보고있는 공연장과 같으면
+            p.prfPlcId === selectedPlace.prfPlcId
+              ? // 그 공연장의 flagged 값 업데이트
+                { ...p, flagged: updatedFlag }
+              : // 아니면 그대로 반환
+                p
+          )
+        );
+      }
+      setIsModalOpen(false);
+      setSelectedPlace(null);
+    },
+    [selectedPlace]
+  );
 
   const handleFilterApply = async () => {
     if (!tempSido) {
