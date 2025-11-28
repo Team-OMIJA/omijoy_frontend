@@ -130,7 +130,7 @@ function PerformanceDetail() {
       if (prevLocation.current !== location.pathname) {
         const likedChanged = localLiked !== initialLiked.current;
         if (likedChanged) {
-          toggleFavorite(iprfIdd!);
+          toggleFavorite(prfId!);
         }
       }
     };
