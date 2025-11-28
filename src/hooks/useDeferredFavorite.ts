@@ -48,4 +48,7 @@ export function useDeferredFavorite(prfId: string | undefined) {
 
     load();
   }, [prfId]);
+
+  // UI 토글 반영 
+  // const handleToggleLocalFavorite = ()
 }
