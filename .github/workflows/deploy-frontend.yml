@@ -3,7 +3,7 @@ name: Deploy Frontend to GCP
 on:
   push:
     branches:
-      - main
+      - release
 
 jobs:
   build-and-deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install dependencies
         run: npm ci
@@ -53,8 +53,8 @@ jobs:
           script: |
             cd /srv/omijoy
             docker pull ohsanghyeon/frontend-app:latest
-            
+
             docker stop frontend-app || true
             docker rm frontend-app || true
-            
+
             docker compose up -d frontend
