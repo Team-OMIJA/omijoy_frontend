@@ -53,5 +53,5 @@ export type PerformanceDetail = {
   ticketPrice: string;
   providerUrl: string;
   favorited: boolean;
-  scrapCount: number;
+  // scrapCount: number;
 };

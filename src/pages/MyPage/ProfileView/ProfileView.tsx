@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import * as s from "./styles";
-import { Avatar, Button } from "@mui/material";
+import { Avatar } from "@mui/material";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { IoMdSettings } from "react-icons/io";
 

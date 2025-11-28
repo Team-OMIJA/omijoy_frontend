@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import * as s from "./styles";
-import { Avatar, TextField, Button } from "@mui/material";
+import { Avatar } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useFirebaseUpload } from "../../../hooks/useFirebaseUpload";
@@ -31,7 +31,6 @@ function EditProfile({
   // 크롭 모달 상태
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
-  const [isFirstFocus, setIsFirstFocus] = useState(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // 이미지 변경 시
@@ -189,21 +188,6 @@ function EditProfile({
       </s.AvatarWrapper>
 
       <s.UserInfo>
-        {/* <TextField
-          variant="outlined"
-          value={username}
-          placeholder={principal?.username}
-          // helperText에 조건 걺
-          helperText={!isUsernameValid ? usernameError : ""}
-          // onFocus={() => {
-          //   if (isFirstFocus) {
-          //     setUsername("");
-          //     setIsFirstFocus(false);
-          //   }
-          // }}
-          onChange={usernameOnChangeHandler}
-          css={s.textFieldStyle}
-        /> */}
         <div css={s.inputWrapper}>
           <input
             type="text"
@@ -218,8 +202,6 @@ function EditProfile({
         </div>
         <s.BtnContainer>
           <s.SaveBtn
-            // variant='outlined'
-            // size='small'
             // 변경 내용이 없음 / 이름 중복됨 / 저장중일때
             disabled={!isChanged || !isUsernameValid || isLoading}
             onClick={onSaveHandler}
@@ -228,8 +210,6 @@ function EditProfile({
             {isLoading ? "저장" : "저장"}
           </s.SaveBtn>
           <s.CancelBtn
-            // variant="outlined"
-            // size="small"
             onClick={onCancel}
           >
             취소
