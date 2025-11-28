@@ -34,7 +34,7 @@ function OAuth2Redirect() {
 
     localStorage.setItem('jwt', `Bearer ${token}`);
 
-    const cleanPath = '/login/oauth2';
+    const cleanPath = '/login/callback';
     window.history.replaceState({}, document.title, cleanPath);
 
     navigate(next, { replace: true });
