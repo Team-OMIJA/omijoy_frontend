@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { keyframes } from "@emotion/react";
 
 export const MapWrapper = styled.div`
   height: 100vh;
@@ -19,6 +20,18 @@ export const MapContainer = styled.div`
   height: 100%;
 `;
 
+const fadeOut = keyframes`
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+`;
+
 export const ErrorMessage = styled.div`
   position: absolute;
   top: 20px;
@@ -35,6 +48,7 @@ export const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: ${fadeOut} 5s forwards; /* 5초 동안 fadeOut 애니메이션 실행 */
 
   span {
     margin: 0;
