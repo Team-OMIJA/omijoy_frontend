@@ -1,5 +1,4 @@
 // favorite 지연 처리 hook
-
 import { useEffect, useRef, useState } from "react";
 import { useFavoriteState } from "../stores/useFavoriteState";
 import { useLocation } from "react-router-dom";
@@ -10,7 +9,7 @@ export function useDeferredFavorite(prfId: string | undefined) {
 
   // 좋아요 UI 상태만 반영(DB저장X)
   const [localLiked, setLocalLiked] = useState(false);
-  const [localScrapCount, setLocalSerapCount] = useState(0);
+  const [localScrapCount, setLocalScrapCount] = useState(0);
 
   // 최초 서버 상태 기억 - 변했는가? 를 비교
   const initialLiked = useRef(false);
@@ -39,7 +38,7 @@ export function useDeferredFavorite(prfId: string | undefined) {
       const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
 
       setLocalLiked(serverLiked);
-      setLocalSerapCount(count);
+      setLocalScrapCount(count);
 
       // 초기 서버값 저장
       initialLiked.current = serverLiked;
@@ -65,7 +64,7 @@ export function useDeferredFavorite(prfId: string | undefined) {
     });
 
     // 카운트
-    setLocalSerapCount((prev) => {
+    setLocalScrapCount((prev) => {
       const next = likedRef.current ? prev + 1 : Math.max(prev - 1, 0);
       // 최신값 저장
       countRef.current = next;
@@ -81,12 +80,12 @@ export function useDeferredFavorite(prfId: string | undefined) {
       // 좋아요 현재 값이 이전 값과 다름
       const likedChanged = likedRef.current !== initialLiked.current;
 
-      // 라우터 path명이 이전과 다름
-      const pathnameChanged = prevLocation.current !== location.pathname;
-
-      if (likedChanged && pathnameChanged) {
+      if (likedChanged) {
         toggleFavorite(prfId);
       }
+
+      // 이동 후 현재 path를 새로운 prev 값으로 갱신
+      prevLocation.current = location.pathname;
     };
   }, [prfId, location.pathname]);
 
