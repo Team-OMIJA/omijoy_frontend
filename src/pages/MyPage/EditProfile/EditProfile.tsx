@@ -177,21 +177,6 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
       </s.AvatarWrapper>
 
       <s.UserInfo>
-        {/* <TextField
-          variant="outlined"
-          value={username}
-          placeholder={principal?.username}
-          // helperText에 조건 걺
-          helperText={!isUsernameValid ? usernameError : ""}
-          // onFocus={() => {
-          //   if (isFirstFocus) {
-          //     setUsername("");
-          //     setIsFirstFocus(false);
-          //   }
-          // }}
-          onChange={usernameOnChangeHandler}
-          css={s.textFieldStyle}
-        /> */}
         <div css={s.inputWrapper}>
           <input
             type='text'
@@ -204,8 +189,6 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
         </div>
         <s.BtnContainer>
           <s.SaveBtn
-            // variant='outlined'
-            // size='small'
             // 변경 내용이 없음 / 이름 중복됨 / 저장중일때
             disabled={!isChanged || !isUsernameValid || isLoading}
             onClick={onSaveHandler}
@@ -214,8 +197,6 @@ function EditProfile({ onCancel, onSave }: { onCancel: () => void; onSave: () =>
             {isLoading ? '저장' : '저장'}
           </s.SaveBtn>
           <s.CancelBtn
-            // variant="outlined"
-            // size="small"
             onClick={onCancel}
           >
             취소
