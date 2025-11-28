@@ -125,6 +125,7 @@ function PerformanceList() {
   }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
 
   // mount + 필터 변경 + query 검색창
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -132,7 +133,7 @@ function PerformanceList() {
     }
     setPage(0);
     getPerformance(query, false, 0);
-  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType  ]);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (query) setSearchOpen(true); }, []);
@@ -334,7 +335,7 @@ function PerformanceList() {
                   <s.PerformanceListPosterImg>
                     <img src={p.posterImgUrl} alt={p.prfNm} />
                   </s.PerformanceListPosterImg>
-                  
+
                   <s.PerformanceListName>{removeRegionTag(p.prfNm)}</s.PerformanceListName>
 
                   {/* 공연 장소 (중복 괄호 제거 로직 적용 버전) */}
