@@ -7,7 +7,7 @@ import { removeRegionTag } from '../components/removeRegionTag/removeRegionTag';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // TopRankList
-export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> => {
+export const fetchTopRankPerformances = async (genreCode = ''): Promise<TopRankPerformance[]> => {  // genreCode = '' 추가
   const today = new Date();
   const pastDate = new Date();
   pastDate.setDate(pastDate.getDate() - 30);
@@ -15,7 +15,7 @@ export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> 
   const stDate = formatNewDate(pastDate);
   const edDate = formatNewDate(today);
 
-  const url = `${BASE_URL}/kopis/boxoffice?&stdate=${stDate}&eddate=${edDate}&catecode=&area=`;
+  const url = `${BASE_URL}/kopis/boxoffice?stdate=${stDate}&eddate=${edDate}&catecode=${genreCode}&area=`;  // ${genreCode} 추가
 
   try {
     const response = await axios.get(url, { responseType: 'text' });
@@ -23,7 +23,6 @@ export const fetchTopRankPerformances = async (): Promise<TopRankPerformance[]> 
     const xmlData = parser.parseFromString(response.data, 'text/xml');
     const boxList = xmlData.getElementsByTagName('boxof');
 
-    // XML → JS 객체 변환
     const result = Array.from(boxList).map((box) => ({
       id: box.getElementsByTagName('mt20id')[0]?.textContent || '',
       title: removeRegionTag(box.getElementsByTagName('prfnm')[0]?.textContent || ''),
