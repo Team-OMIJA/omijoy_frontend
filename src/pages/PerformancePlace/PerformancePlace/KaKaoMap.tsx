@@ -1,13 +1,6 @@
-﻿import { useEffect, useRef, useState } from 'react';
-import { PlaceMarker } from '../../../apis/performanceplaceApi';
-import * as S from './KaKaoMap.styles';
-
-declare global {
-  interface Window {
-    //eslint-disable-next-line
-    kakao: any;
-  }
-}
+﻿﻿import { useEffect, useRef, useState } from "react";
+import { PlaceMarker } from "../../../apis/performanceplaceApi";
+import * as S from "./KaKaoMap.styles";
 
 interface KakaoMapProps {
   latitude: number;
@@ -31,15 +24,11 @@ function KaKaoMap({
   onMyLocationClick,
 }: KakaoMapProps) {
   const mapContainer = useRef(null);
-  //eslint-disable-next-line
-  const mapRef = useRef<any>(null); // kakao.maps.Map
-  //eslint-disable-next-line
-  const clustererRef = useRef<any>(null); // kakao.maps.MarkerClusterer
-  //useRef의 타입설정을 지움
-  // const myLocationMarkerRef = useRef<kakao.maps.Marker | null>(null);
-  const myLocationMarkerRef = useRef(null);
+  const mapRef = useRef<kakao.maps.Map | null>(null);
+  const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
+  const myLocationMarkerRef = useRef<kakao.maps.Marker | null>(null);
 
-  const [mapType, setMapType] = useState<'ROADMAP' | 'HYBRID'>('ROADMAP');
+  const [mapType, setMapType] = useState<"ROADMAP" | "HYBRID">("ROADMAP");
   const [currentMapLevel, setCurrentMapLevel] = useState(level);
 
   const MIN_MAP_LEVEL = 1;
@@ -67,7 +56,7 @@ function KaKaoMap({
       const updateZoomUI = () => {
         setCurrentMapLevel(newMap.getLevel());
       };
-      window.kakao.maps.event.addListener(newMap, 'zoom_changed', updateZoomUI);
+      window.kakao.maps.event.addListener(newMap, "zoom_changed", updateZoomUI);
       updateZoomUI();
     }
   }, [isKakaoMapLoaded]);
@@ -82,46 +71,85 @@ function KaKaoMap({
     }
     map.setCenter(newCenter);
     clustererRef.current?.redraw();
-  }, [latitude, longitude, level]);
+  }, [latitude, longitude, level, mapRef]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !window.kakao) return;
 
-    const newMapType = mapType === 'HYBRID' ? window.kakao.maps.MapTypeId.HYBRID : window.kakao.maps.MapTypeId.ROADMAP;
+    const newMapType =
+      mapType === "HYBRID"
+        ? window.kakao.maps.MapTypeId.HYBRID
+        : window.kakao.maps.MapTypeId.ROADMAP;
     map.setMapTypeId(newMapType);
-  }, [mapType]);
+  }, [mapType, mapRef]);
 
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao) return;
     const map = mapRef.current;
 
     if (currentLocation && map) {
-      const currentPosition = new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng);
+      const currentPosition = new window.kakao.maps.LatLng(
+        currentLocation.lat,
+        currentLocation.lng
+      );
       if (myLocationMarkerRef.current) {
-        //eslint-disable-next-line
-        (myLocationMarkerRef.current as any)?.setPosition(currentPosition);
+        myLocationMarkerRef.current.setPosition(currentPosition);
       } else {
-        const myPinIconUrl = '/my_pin.svg';
+        const myPinIconUrl = "/my_pin.svg";
         const myPinImageSize = new window.kakao.maps.Size(50, 62);
         const myPinImageOption = {
           offset: new window.kakao.maps.Point(15, 42),
         };
-        const myLocationMarkerImage = new window.kakao.maps.MarkerImage(myPinIconUrl, myPinImageSize, myPinImageOption);
+        const myLocationMarkerImage = new window.kakao.maps.MarkerImage(
+          myPinIconUrl,
+          myPinImageSize,
+          myPinImageOption
+        );
 
         myLocationMarkerRef.current = new window.kakao.maps.Marker({
           position: currentPosition,
           map: map,
-          title: '내 위치',
+          title: "내 위치",
           image: myLocationMarkerImage,
         });
       }
     } else if (!currentLocation && myLocationMarkerRef.current) {
-      //eslint-disable-next-line
-      (myLocationMarkerRef.current as any)?.setMap(null);
+      myLocationMarkerRef.current.setMap(null);
       myLocationMarkerRef.current = null;
     }
-  }, [currentLocation, isKakaoMapLoaded]);
+  }, [currentLocation, isKakaoMapLoaded, mapRef]);
+
+  
+  const createPlaceMarker = ( // 마커 이미지 설정
+    place: PlaceMarker,
+    markerImage: kakao.maps.MarkerImage,
+    hoverImage: kakao.maps.MarkerImage
+  ) => {
+    const markerPosition = new window.kakao.maps.LatLng( // 마커 위치 
+      place.latitude,
+      place.longitude
+    );
+    const marker = new window.kakao.maps.Marker({ // 마커 생성
+      position: markerPosition,
+      title: place.prfPlcName,
+      image: markerImage,
+    });
+
+    window.kakao.maps.event.addListener(marker, "click", () =>
+      onMarkerClick(place)
+    );
+    window.kakao.maps.event.addListener(marker, "mouseover", () => { // 호버상태일 때 마커
+      marker.setImage(hoverImage);
+      marker.setZIndex(10);
+    });
+    window.kakao.maps.event.addListener(marker, "mouseout", () => { // 일반상태 마커
+      marker.setImage(markerImage);
+      marker.setZIndex(0);
+    });
+
+    return marker;
+  };
 
   useEffect(() => {
     const clusterer = clustererRef.current;
@@ -129,73 +157,67 @@ function KaKaoMap({
 
     clusterer.clear();
 
-    const imageSrc = '/crimson_marker.svg';
-    // 일반 마커
-    const imageSize = new window.kakao.maps.Size(32, 80);
-    const imageOption = { offset: new window.kakao.maps.Point(16, 55) };
-    // 호버 마커
-    const hoverSize = new window.kakao.maps.Size(34, 100);
-    const hoverOption = { offset: new window.kakao.maps.Point(16, 65) };
-    // 호버 마커 생성
-    const hoverImage = new window.kakao.maps.MarkerImage(imageSrc, hoverSize, hoverOption);
-    // 일반 마커 생성
-    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+    // 마커 이미지를 한 번만 생성하여 재사용
+    const imageSrc = "/crimson_marker.svg";
+    const markerImage = new window.kakao.maps.MarkerImage(
+      imageSrc,
+      new window.kakao.maps.Size(32, 80),
+      { offset: new window.kakao.maps.Point(16, 55) }
+    );
+    const hoverImage = new window.kakao.maps.MarkerImage(
+      imageSrc,
+      new window.kakao.maps.Size(34, 100),
+      { offset: new window.kakao.maps.Point(16, 65) }
+    );
 
-    const newMarkers = places.map((place) => {
-      const markerPosition = new window.kakao.maps.LatLng(place.latitude, place.longitude);
-      const marker = new window.kakao.maps.Marker({
-        position: markerPosition,
-        title: place.prfPlcName,
-        image: markerImage,
-      });
-      window.kakao.maps.event.addListener(marker, 'click', function () {
-        onMarkerClick(place);
-      });
-
-      // 호버 상태
-      window.kakao.maps.event.addListener(marker, 'mouseover', function () {
-        marker.setImage(hoverImage);
-        marker.setZIndex(10);
-      });
-      // 호버 상태 해제
-      window.kakao.maps.event.addListener(marker, 'mouseout', function () {
-        marker.setImage(markerImage);
-        marker.setZIndex(0);
-      });
-      return marker;
-    });
+    const newMarkers = places.map((place) =>
+      createPlaceMarker(place, markerImage, hoverImage)
+    );
 
     clusterer.addMarkers(newMarkers);
-  }, [places, onMarkerClick]);
+  }, [places, onMarkerClick, clustererRef]);
 
   const handleZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const map = mapRef.current;
     if (!map) return;
-    const newLevel = MAX_MAP_LEVEL - parseInt(e.target.value, 10) + MIN_MAP_LEVEL;
+    const newLevel =
+      MAX_MAP_LEVEL - parseInt(e.target.value, 10) + MIN_MAP_LEVEL;
     map.setLevel(newLevel);
   };
 
   return (
     <S.KakaoMapContainer>
-      <S.KakaoMapDiv id='map' ref={mapContainer} />
+      <S.KakaoMapDiv id="map" ref={mapContainer} />
 
       <S.MapTypeContainer>
-        <S.MapTypeButton active={mapType === 'ROADMAP'} onClick={() => setMapType('ROADMAP')}>
+        <S.MapTypeButton
+          active={mapType === "ROADMAP"}
+          onClick={() => setMapType("ROADMAP")}
+        >
           지도
         </S.MapTypeButton>
-        <S.MapTypeButton active={mapType === 'HYBRID'} onClick={() => setMapType('HYBRID')}>
+        <S.MapTypeButton
+          active={mapType === "HYBRID"}
+          onClick={() => setMapType("HYBRID")}
+        >
           스카이뷰
         </S.MapTypeButton>
       </S.MapTypeContainer>
 
       <S.MyLocationButton onClick={onMyLocationClick}>
-        <img src='/my_location.svg' alt='내 위치' width={24} height={24} />
+        <img
+          src="/my_location.svg"
+          alt="내 위치"
+          width={24}
+          height={24}
+          style={{ filter: "brightness(0)" }}
+        />
       </S.MyLocationButton>
 
       <S.MapZoomControlContainer>
         <S.MapLevelLabel>레벨: {currentMapLevel}</S.MapLevelLabel>
         <S.CustomVSlider
-          type='range'
+          type="range"
           min={MIN_MAP_LEVEL}
           max={MAX_MAP_LEVEL}
           value={MAX_MAP_LEVEL - currentMapLevel + MIN_MAP_LEVEL}

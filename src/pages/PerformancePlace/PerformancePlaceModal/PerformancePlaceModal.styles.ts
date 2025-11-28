@@ -47,6 +47,21 @@ export const ModalInfoItem = styled.p`
   line-height: 1.5;
 `;
 
+export const AmenityIconsWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+  color: #cccccc;
+
+  svg {
+    font-size: 2rem; 
+  }
+`;
+
+export const AmenityIcon = styled.span<{ color?: string }>`
+  color: ${(props) => props.color || "inherit"};
+`;
+
 export const ModalButtonGroup = styled.div`
   display: flex;
   gap: 10px;
@@ -78,7 +93,7 @@ export const ModalUrlButton = styled.button`
     background-color: #252525;
     color: #555555;
     cursor: not-allowed;
-    transform: scale(1.00);
+    transform: scale(1);
   }
 `;
 
@@ -120,19 +135,18 @@ export const ModalCloseXButton = styled.button`
   transition: color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    color: #ffffff;
+    color: #b40505ff;
     transform: scale(1.1);
   }
 `;
 
 export const ModalFlagButton = styled.button<{ flagged: boolean }>`
   position: absolute;
-  top: 60px;
-  right: 16px;
-  background: ${(props) => (props.flagged ? "#e3002a" : "#333333")};
-  color: #ffffff;
+  top: 15px;
+  right: 65px;
+  background: transparent;
+  color: ${(props) => (props.flagged ? "#02c83dff" : "#aaaaaa")};
   border: none;
-  border-radius: 50%;
   width: 40px;
   height: 40px;
   padding: 0;
@@ -141,15 +155,15 @@ export const ModalFlagButton = styled.button<{ flagged: boolean }>`
   align-items: center;
   justify-content: center;
   z-index: 10001;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    background-color: ${(props) => (props.flagged ? "#c70025" : "#444444")};
-    transform: scale(1.05);
+    color: ${(props) => (props.flagged ? "#02c83dff" : "#ffffffff")};
+    transform: scale(1.1);
   }
 
   svg {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
   }
 `;
 
