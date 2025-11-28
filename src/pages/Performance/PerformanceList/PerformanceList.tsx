@@ -11,10 +11,12 @@ import * as s from './styles';
 
 function PerformanceList() {
 
+  // 기본 라우팅 / 초기 Ref
   const navigate = useNavigate();
   const navigationType = useNavigationType();
   const isInitialMount = useRef(true);
 
+  // 데이터 / 필터 / 페이지
   const [performances, setPerformances] = useState<Performance[]>(() =>
     JSON.parse(sessionStorage.getItem('scroll-performance-data') || '[]')
   );
@@ -40,9 +42,11 @@ function PerformanceList() {
     () => JSON.parse(sessionStorage.getItem('scroll-performance-vtfilter') || 'false')
   );
 
+   // 로딩 / 스크롤
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
 
+  // 드롭다운 UI & ref
   const [searchOpen, setSearchOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
@@ -157,7 +161,7 @@ function PerformanceList() {
       <s.PerformanceListSubBox>
         <ScrollTop />
 
-        {/* --- 정렬 드롭다운 --- */}
+        {/* 정렬 드롭다운 */}
         <s.PerformanceListDropdownWrapper ref={sortRef}>
           <s.PerformanceListDropdownButton open={sortOpen} onClick={() => setSortOpen(!sortOpen)}>
             {sortOptions.find(o => o.value === (sort.startsWith('name') ? sort : 'date'))?.label}
@@ -179,7 +183,7 @@ function PerformanceList() {
           )}
         </s.PerformanceListDropdownWrapper>
 
-        {/* --- 상태 필터 --- */}
+        {/* 공연 상태 */}
         <s.PerformanceListDropdownWrapper ref={statusRef}>
           <s.PerformanceListDropdownButton open={statusOpen} onClick={() => setStatusOpen(!statusOpen)}>
             {stFilter}
@@ -192,7 +196,7 @@ function PerformanceList() {
           )}
         </s.PerformanceListDropdownWrapper>
 
-        {/* --- 지역 필터 --- */}
+        {/* 지역 */}
         <s.PerformanceListDropdownWrapper ref={areaRef}>
           <s.PerformanceListDropdownButton open={areaOpen} onClick={() => setAreaOpen(!areaOpen)}>지역</s.PerformanceListDropdownButton>
           {areaOpen && (
@@ -212,7 +216,7 @@ function PerformanceList() {
           )}
         </s.PerformanceListDropdownWrapper>
 
-        {/* --- 장르 필터 --- */}
+        {/* 장르 */}
         <s.PerformanceListDropdownWrapper ref={genreRef}>
           <s.PerformanceListGenreDropdownButton open={genreOpen} onClick={() => setGenreOpen(!genreOpen)}>
             장르
@@ -235,7 +239,7 @@ function PerformanceList() {
           )}
         </s.PerformanceListDropdownWrapper>
 
-        {/* --- 내한 공연 필터 --- */}
+        {/* 내한 */}
         <s.PerformanceListPlaceFilter>
           <s.PerformanceListPlaceInner>
             <s.PerformanceListPlaceLabel>
@@ -245,7 +249,7 @@ function PerformanceList() {
           </s.PerformanceListPlaceInner>
         </s.PerformanceListPlaceFilter>
 
-        {/* --- 전체 필터 초기화 --- */}
+        {/* 리셋 */}
         <s.PerformanceListResetButton
           onClick={() => {
             setSort('name_asc');
@@ -261,7 +265,7 @@ function PerformanceList() {
           <GrPowerReset />
         </s.PerformanceListResetButton>
 
-        {/* --- 검색 영역 --- */}
+        {/* 검색 */}
         <s.PerformanceListSearchWrapper>
           <s.PerformanceListSearchInput
             type='text'
@@ -293,7 +297,7 @@ function PerformanceList() {
         </s.PerformanceListSearchWrapper>
       </s.PerformanceListSubBox>
 
-      {/* --- 지역 태그 --- */}
+      {/* 지역 칩 */}
       <s.PerformanceListAreaFilter>
         {arfilter.map(item => (
           <s.PerformanceListAreaFilterItem key={`area-${item}`}>
@@ -303,7 +307,7 @@ function PerformanceList() {
         ))}
       </s.PerformanceListAreaFilter>
 
-      {/* --- 장르 태그 --- */}
+      {/* 장르 칩 */}
       <s.PerformanceListGenreFilter>
         {gefilter.map(item => (
           <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
@@ -313,12 +317,12 @@ function PerformanceList() {
         ))}
       </s.PerformanceListGenreFilter>
 
-      {/* --- 결과 없음 --- */}
+      {/* if 결과 없음 */}
       {performances.length === 0 && !loading && (
         <s.PerformanceListErrorMessage className='detail-error'>공연 정보를 찾을 수 없습니다.</s.PerformanceListErrorMessage>
       )}
 
-      {/* --- 공연 목록 또는 스켈레톤 --- */}
+      {/* 공연 리스트 */}
       {loading && page === 0 ? (
         <PrfList24Skeleton />
       ) : (
@@ -338,7 +342,7 @@ function PerformanceList() {
 
                   <s.PerformanceListName>{removeRegionTag(p.prfNm)}</s.PerformanceListName>
 
-                  {/* 공연 장소 (중복 괄호 제거 로직 적용 버전) */}
+                  {/* 공연 장소*/}
                   <s.PerformanceListPlaceDetail>
                     <p>
                       {(() => {
