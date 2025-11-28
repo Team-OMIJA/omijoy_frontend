@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
 import { useFavoriteState } from "../../../stores/useFavoriteState";
@@ -8,9 +8,11 @@ import CheckIcon from "@mui/icons-material/Check";
 import { PerformanceDetailPage } from "../../../types/performancePageTypes";
 import { fetchPerformanceDetail } from "../../../apis/performanceApi";
 import * as s from "./styles";
+import { usePrincipalState } from "../../../stores/usePrincipalState";
 
 function PerformanceDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { id: prfId } = useParams<{ id: string }>();
+  const { principal } = usePrincipalState();
   const [performance, setPerformance] = useState<PerformanceDetailPage | null>(
     null
   );
@@ -36,6 +38,8 @@ function PerformanceDetail() {
   const location = useLocation();
   const prevLocation = useRef(location.pathname);
 
+  const navigate = useNavigate();
+
   // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -57,16 +61,16 @@ function PerformanceDetail() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        if (!id) return;
-        const data = await fetchPerformanceDetail(id);
+        if (!prfId) return;
+        const data = await fetchPerformanceDetail(prfId);
         setPerformance(data);
 
         // 서버 좋아요 여부 가져오기
-        const serverLiked = await fetchFavoriteState(id);
+        const serverLiked = await fetchFavoriteState(prfId);
 
         // 서버 카운트 가져오기 null 이면 0
-        await fetchFavoriteCount(id);
-        const count = useFavoriteState.getState().favoriteCount[id] ?? 0;
+        await fetchFavoriteCount(prfId);
+        const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
 
         setLocalLiked(serverLiked);
         setLocalScrapCount(count);
@@ -83,37 +87,39 @@ function PerformanceDetail() {
     };
 
     loadData();
-  }, [id]);
+  }, [prfId]);
 
   // UI 즉시 토글
   const handleToggleLocalFavorite = () => {
+    if (!principal) {
+      alert("로그인 후 이용 가능합니다.");
+      navigate("/login");
+      return;
+    }
     setLocalLiked((prev) => !prev);
     setLocalScrapCount((prev) =>
       localLiked ? Math.max(prev - 1, 0) : prev + 1
     );
   };
-  
 
   // 아래 useEffect 로직 2개 중에 하나라도 없으면 반영 안됨
   // 컴포넌트 기반 / 라우팅 pathname 기반이라서...
   // 커스텀 훅 도입도 생각해볼 것
 
-  // 반영이 늦다? 아닌듯 - 뭔가 지금 
+  // 반영이 늦다? 아닌듯 - 뭔가 지금
   // 공연 -> 마이페이지 흐름에서 이상한 부분 있는지 확인할 것 - 상태 바로 못받는듯
 
   // 페이지 떠날 때 서버에 딱 1번만 반영
   // 페이지 이동 감지 못해서 다른 로직 사용
   useEffect(() => {
     return () => {
-      if (!id) return;
-
       const likedChanged = localLiked !== initialLiked.current;
 
       if (likedChanged) {
-        toggleFavorite(id);
+        toggleFavorite(prfId!);
       }
     };
-  }, [id, localLiked]);
+  }, [prfId, localLiked]);
 
   // cleanUp 함수 - 이전 페이지에서 벗어날 때 무조건 호출됨
   // 페이지 떠날 때만 DB 저장
@@ -124,13 +130,11 @@ function PerformanceDetail() {
       if (prevLocation.current !== location.pathname) {
         const likedChanged = localLiked !== initialLiked.current;
         if (likedChanged) {
-          toggleFavorite(id!);
+          toggleFavorite(iprfIdd!);
         }
       }
     };
-  }, [location.pathname, id, localLiked]);
-
-
+  }, [location.pathname, prfId, localLiked]);
 
   if (loading) return <div>로딩 중...</div>;
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;

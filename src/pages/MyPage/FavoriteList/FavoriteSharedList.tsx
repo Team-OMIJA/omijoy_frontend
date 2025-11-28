@@ -11,7 +11,7 @@ function FavoriteSharedList() {
   const { userId } = useParams<{ userId: string }>();
   const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
 
   useEffect(() => {
     const fetchFavorites = async () => {

@@ -16,7 +16,7 @@ function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
 
   // 추가
   const [selectedGenre, setSelectedGenre] = useState<string>("");

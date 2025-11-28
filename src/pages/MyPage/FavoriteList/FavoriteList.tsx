@@ -13,7 +13,7 @@ import * as ps from "../../Home/PerformanceStyles";
 function FavoriteList() {
   const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
   const navigate = useNavigate();
   const stored = localStorage.getItem("principal-storage");
   const principal = stored ? JSON.parse(stored)?.state?.principal : null;
