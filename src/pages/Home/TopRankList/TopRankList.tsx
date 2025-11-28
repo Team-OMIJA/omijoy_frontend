@@ -52,7 +52,6 @@ function TopRankList() {
         </ts.MoreButton>
       </s.SectionHeader>
 
-      // 장르 버튼 추가
       <ts.GenreFilter>
         <ts.GenreButton selected={selectedGenre === ""}onClick={() => handleGenreChange("")}>전체</ts.GenreButton>
         <ts.GenreButton selected={selectedGenre === "BBBE"}onClick={() => handleGenreChange("BBBE")}>대중무용</ts.GenreButton>
