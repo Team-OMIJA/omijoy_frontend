@@ -89,6 +89,5 @@ export const GenreButton = styled.button<GenreButtonProps>`
 export const GenreFilter = styled.div`
   display: flex;
   gap: 10px;
-  margin-top: -30px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 `;
