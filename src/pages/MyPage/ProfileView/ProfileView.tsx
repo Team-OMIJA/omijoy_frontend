@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import * as s from "./styles";
-import { Avatar } from "@mui/material";
-import { usePrincipalState } from "../../../stores/usePrincipalState";
-import { IoMdSettings } from "react-icons/io";
+import * as s from './styles';
+import { Avatar } from '@mui/material';
+import { usePrincipalState } from '../../../stores/usePrincipalState';
+import { IoMdSettings } from 'react-icons/io';
 
 interface ProfileViewProps {
   onEdit: () => void;
@@ -16,9 +16,7 @@ function ProfileView({ onEdit }: ProfileViewProps) {
     <s.ProfileContainer>
       <s.AvatarWrapper>
         <Avatar
-          src={
-            principal?.profileImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG
-          }
+          src={principal?.profileImg || import.meta.env.VITE_PROFILE_DEFAULT_IMG}
           sx={{ width: 100, height: 100 }}
         />
       </s.AvatarWrapper>

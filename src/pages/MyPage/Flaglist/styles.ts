@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 export const Container = styled.div`
   width: 100%;
@@ -37,23 +37,20 @@ export const Loading = styled.div`
   padding: 40px 0;
 `;
 
-
 // 공연장 정보 리스트
 export const Card = styled.li`
   background: #737373ff;
   padding: 20px 18px;
   border-radius: 16px;
   cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     background-color: #a4a4a4ff; /* 약간 더 밝아지는 느낌 유지 */
     transform: translateY(-4px);
 
     /* 화이트 톤 그림자 */
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.25),
-      0 0 16px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1); /* 깊이감 살짝 */
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.25), 0 0 16px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1); /* 깊이감 살짝 */
   }
 `;
 
@@ -77,4 +74,3 @@ export const SlideGrid = styled.div`
   gap: 20px;
   padding: 10px 0;
 `;
-

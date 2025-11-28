@@ -11,7 +11,6 @@ import { usePrincipalState } from '../../../stores/usePrincipalState';
 import { useNavigate } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
 import { FaFlagCheckered } from 'react-icons/fa';
-import { queryClient } from '../../../configs/queryClient';
 
 interface PerformancePlaceModalProps {
   place: PlaceMarker;
@@ -38,7 +37,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     // myPage에서 사용함...
     onSuccess: () => {
       // queryClient.invalidateQueries(["flags"]);
-       queryClient.invalidateQueries({ queryKey: ['flags'] });
+      queryClient.invalidateQueries({ queryKey: ['flags'] });
     },
   });
 
@@ -119,8 +118,8 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     slidesToShow: 5,
     slidesToScroll: 5,
     arrows: true,
-    beforeChange: (_current, _next) => setIsDragging(true),
-    afterChange: (_current) => setIsDragging(false),
+    beforeChange: () => setIsDragging(true),
+    afterChange: () => setIsDragging(false),
     responsive: [
       {
         breakpoint: 600,
