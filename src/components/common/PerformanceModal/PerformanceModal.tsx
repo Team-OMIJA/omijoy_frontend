@@ -46,7 +46,6 @@ function CommonModal({
   const [localLiked, setLocalLiked] = useState(false);
   const [localScrapCount, setLocalScrapCount] = useState(0);
 
-
   // 모달이 열릴 때 공연 정보 + 좋아요 상태 불러옴
   useEffect(() => {
     if (!open || !prfId) return;
@@ -71,19 +70,29 @@ function CommonModal({
   }, [open, prfId]);
 
   // UI에서 하트를 누를 때 서버 요청 없이 UI 상태만 변경
-  const handleToggleLocalFavorite = () => {
+  const handleToggleLocalFavorite = async () => {
     // 반전시켜야 토글됨
     const newLiked = !localLiked;
     setLocalLiked(newLiked);
 
     // 카운트 UI 즉시 반영
     setLocalScrapCount((prev) => (newLiked ? prev + 1 : Math.max(prev - 1, 0)));
+
+    // 마이페이지에서 스크랩 취소 시 
+    // 서버 반영 + 리스트 제거 + 모달 닫기
+    if (source === "mypage" && newLiked === false) {
+      await toggleFavorite(prfId);
+      removeFromFavoriteList(prfId);
+      setOpen(false);
+    }
   };
 
   // 모달 닫힐 대 변경된 좋아요 상태만 최종 DB 반영
   const handleClose = async () => {
-    if (prfId && localLiked !== favorites[prfId]) {
+    if (source !== "mypage") {
+      if (prfId && localLiked !== favorites[prfId]) {
       await toggleFavorite(prfId); // 서버 요청 1회
+    }
     }
 
     // MyPage에서 스크랩 취소 시 리스트에서 제거 - 모달 닫음

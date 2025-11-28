@@ -11,7 +11,7 @@ import * as ts from './styles';
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

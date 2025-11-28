@@ -12,7 +12,7 @@ function AwardRecommendList() {
     []
   );
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   const autoplay = useRef(
