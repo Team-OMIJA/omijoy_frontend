@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SlHeart } from "react-icons/sl";
 import { ImHeart } from "react-icons/im";
-import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
 import CheckIcon from "@mui/icons-material/Check";
 import { PerformanceDetailPage } from "../../../types/performancePageTypes";
