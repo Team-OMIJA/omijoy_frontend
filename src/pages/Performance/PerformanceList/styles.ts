@@ -10,9 +10,20 @@ export const PerformanceListFullBox = styled.div`
 
 export const PerformanceListSubBox = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
-  margin-bottom: -10px;
+  position: sticky;
+  top: 65px;
+  background-color: #121212;
+  z-index: 100;
+  padding: 10px 0;
+`;
+
+export const PerformanceListTopRow = styled.div`
+  display: flex;
+  flex-wrap: wrap; /* 화면 좁으면 줄바꿈 */
+  gap: 10px;
+  align-items: center;
 `;
 
 export const PerformanceListDropdownWrapper = styled.div<{ open?: boolean }>`

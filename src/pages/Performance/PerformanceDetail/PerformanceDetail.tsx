@@ -52,6 +52,7 @@ function PerformanceDetail() {
   }, []);
 
   // 상세 정보 + 좋아요 여부 + 스크랩 count 불러오기
+  
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -103,6 +104,7 @@ function PerformanceDetail() {
 
   // 페이지 떠날 때 서버에 딱 1번만 반영
   // 페이지 이동 감지 못해서 다른 로직 사용
+  
   useEffect(() => {
     return () => {
       const likedChanged = localLiked !== initialLiked.current;
@@ -190,7 +192,32 @@ function PerformanceDetail() {
             <s.InfoGroup>
               <s.InfoItem>
                 <s.Label>공연 장소</s.Label>
-                <s.Value>{performance.prfPlcNm}</s.Value>
+                <s.Value>
+                  {(() => {
+                    const original = performance.prfPlcNm;
+                    let result = "";
+                    const seen = new Set<string>();
+
+                  original.split(/\s*(\([^)]+\))/).forEach(part => {
+                    if (!part) return;
+                    if (!part.startsWith('(')) {
+                      result += part;
+                      return;
+                    }
+
+                    const content = part.slice(1, -1).trim();
+                    const normalized = content.replace(/\s+/g, '');
+                    const normalizedResult = result.replace(/\s+/g, '');
+
+                    if (seen.has(normalized) || normalizedResult.includes(normalized)) return;
+
+                    seen.add(normalized);
+                    result += `(${content})`;
+                  });
+
+                    return result.trim();
+                  })()}
+                </s.Value>
               </s.InfoItem>
 
               <s.InfoItem>

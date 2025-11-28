@@ -159,6 +159,7 @@ function PerformanceList() {
   return (
     <s.PerformanceListFullBox>
       <s.PerformanceListSubBox>
+        <s.PerformanceListTopRow>
         <ScrollTop />
 
         {/* 정렬 드롭다운 */}
@@ -273,7 +274,14 @@ function PerformanceList() {
             value={query}
             open={searchOpen || !!query}
             onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0)}
+            // onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0) }
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                setPage(0);
+                getPerformance(query, false, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
           />
           <s.PerformanceListSearchIcon
             size={18}
@@ -282,6 +290,7 @@ function PerformanceList() {
               else {
                 setPage(0);
                 getPerformance(query, false, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
           />
@@ -295,27 +304,28 @@ function PerformanceList() {
             />
           )}
         </s.PerformanceListSearchWrapper>
+        </s.PerformanceListTopRow>
+
+        {/* 지역 칩 */}
+        <s.PerformanceListAreaFilter>
+          {arfilter.map(item => (
+            <s.PerformanceListAreaFilterItem key={`area-${item}`}>
+              <span>{item}</span>
+              <s.PerformanceListAreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
+            </s.PerformanceListAreaFilterItem>
+          ))}
+        </s.PerformanceListAreaFilter>
+
+        {/* 장르 칩 */}
+        <s.PerformanceListGenreFilter>
+          {gefilter.map(item => (
+            <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
+              <span>{item}</span>
+              <s.PerformanceListGenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
+            </s.PerformanceListGenreFilterItem>
+          ))}
+        </s.PerformanceListGenreFilter>
       </s.PerformanceListSubBox>
-
-      {/* 지역 칩 */}
-      <s.PerformanceListAreaFilter>
-        {arfilter.map(item => (
-          <s.PerformanceListAreaFilterItem key={`area-${item}`}>
-            <span>{item}</span>
-            <s.PerformanceListAreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
-          </s.PerformanceListAreaFilterItem>
-        ))}
-      </s.PerformanceListAreaFilter>
-
-      {/* 장르 칩 */}
-      <s.PerformanceListGenreFilter>
-        {gefilter.map(item => (
-          <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
-            <span>{item}</span>
-            <s.PerformanceListGenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
-          </s.PerformanceListGenreFilterItem>
-        ))}
-      </s.PerformanceListGenreFilter>
 
       {/* if 결과 없음 */}
       {performances.length === 0 && !loading && (
