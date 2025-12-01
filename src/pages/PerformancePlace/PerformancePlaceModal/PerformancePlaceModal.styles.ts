@@ -147,8 +147,8 @@ export const ModalFlagButton = styled.button<{ flagged: boolean }>`
   background: transparent;
   color: ${(props) => (props.flagged ? "#02c83dff" : "#aaaaaa")};
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 35px;
   padding: 0;
   cursor: pointer;
   display: flex;
