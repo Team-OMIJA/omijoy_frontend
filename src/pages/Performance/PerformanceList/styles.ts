@@ -251,19 +251,25 @@ export const PerformanceListGenreNm = styled.div`
   pointer-events: none;
 `;
 
-export const PerformanceListAreaFilter = styled.div`
+export const PerformanceListAreaFilter = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'hasChips',
+})<{ hasChips?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
 `;
 
-export const PerformanceListGenreFilter = styled.div`
+
+export const PerformanceListGenreFilter = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'hasChips',
+})<{ hasChips?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 25px;
+  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`
