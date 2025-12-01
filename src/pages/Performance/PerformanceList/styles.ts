@@ -4,8 +4,9 @@ import { GrClose } from "react-icons/gr";
 
 export const PerformanceListFullBox = styled.div`
   width: 100%;
-  padding: 40px 60px;
+  padding: 0px 60px;
   box-sizing: border-box;
+  background: #121212; 
 `;
 
 export const PerformanceListSubBox = styled.div`
@@ -14,8 +15,15 @@ export const PerformanceListSubBox = styled.div`
   gap: 0;
   position: sticky;
   top: 65px;
-  background-color: #121212;
+  background: #121212;
   z-index: 100;
+
+  &::before {
+    content: "";
+    display: block;
+    height: 30px; 
+    background: #121212;
+  }
 `;
 
 export const PerformanceListTopRow = styled.div`
@@ -243,19 +251,25 @@ export const PerformanceListGenreNm = styled.div`
   pointer-events: none;
 `;
 
-export const PerformanceListAreaFilter = styled.div`
+export const PerformanceListAreaFilter = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'hasChips',
+})<{ hasChips?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 18px;
-  margin-bottom: 15px;
+  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
 `;
 
-export const PerformanceListGenreFilter = styled.div`
+
+export const PerformanceListGenreFilter = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'hasChips',
+})<{ hasChips?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`
