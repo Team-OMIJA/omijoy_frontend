@@ -4,7 +4,7 @@ import { Carousel } from "@mantine/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
 import * as s from "../PerformanceStyles";
-import * as ts from "./styles";
+import * as ts from "./TopRankListStyles";
 
 import PerformanceModal from "../../../components/common/PerformanceModal/PerformanceModal";
 import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
@@ -39,6 +39,11 @@ function TopRankList() {
   // 추가
   const handleGenreChange = (genreCode: string) => {
     setSelectedGenre(genreCode);
+  };
+
+  const handelModalOpen = (prfId: string) => {
+    setSelectedPrfId(prfId);
+    setOpen(true);
   };
 
   return (
@@ -129,8 +134,7 @@ function TopRankList() {
               <s.PerformanceCard>
                 <ts.RankCard
                   onClick={() => {
-                    setSelectedPrfId(p.id);
-                    setOpen(true);
+                    handelModalOpen(p.id);
                   }}
                 >
                   <ts.RankImage src={p.poster} alt={p.title} />
@@ -138,7 +142,13 @@ function TopRankList() {
                   <ts.RankNumber>{p.rank}</ts.RankNumber>
                 </ts.RankCard>
 
-                <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                <s.PerformanceTitle
+                  onClick={() => {
+                    handelModalOpen(p.id);
+                  }}
+                >
+                  {p.title}
+                </s.PerformanceTitle>
                 <s.PerformancePlace>{p.place}</s.PerformancePlace>
                 <s.PerformancePeriod>{p.period}</s.PerformancePeriod>
                 <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>

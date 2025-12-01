@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import * as s from "./styles";
+import * as s from "./FavoriteListStyles";
+import * as ps from "../../Home/PerformanceStyles";
 import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,6 @@ import PerformanceModal from "../../../components/common/PerformanceModal/Perfor
 import { useFavoriteState } from "../../../stores/useFavoriteState";
 import { RxShare2 } from "react-icons/rx";
 import { IoArrowForward } from "react-icons/io5";
-import * as ps from "../../Home/PerformanceStyles";
 
 function FavoriteList() {
   const { favoriteList, setFavoriteList } = useFavoriteState();
@@ -33,7 +33,7 @@ function FavoriteList() {
   }, [setFavoriteList]);
 
   // 공연 id 기반으로 해당 공연 모달 열어줌
-  const openModalHandler = (prfId: string) => {
+  const handleModalOpen = (prfId: string) => {
     setSelectedPrfId(prfId);
     setOpen(true);
   };
@@ -123,10 +123,7 @@ function FavoriteList() {
             >
               {favoriteList.map((item) => (
                 <Carousel.Slide key={item.prfId}>
-                  <div
-                    css={s.card}
-                    onClick={() => openModalHandler(item.prfId)}
-                  >
+                  <div css={s.card} onClick={() => handleModalOpen(item.prfId)}>
                     <img
                       src={item.posterImgUrl}
                       alt={item.prfNm}
@@ -134,7 +131,11 @@ function FavoriteList() {
                     />
 
                     <div css={s.info}>
-                      <ps.PerformanceTitle>{item.prfNm}</ps.PerformanceTitle>
+                      <ps.PerformanceTitle
+                        onClick={() => handleModalOpen(item.prfId)}
+                      >
+                        {item.prfNm}
+                      </ps.PerformanceTitle>
                       <ps.PerformancePlace>{item.prfPlcNm}</ps.PerformancePlace>
 
                       <ps.PerformancePeriod>
