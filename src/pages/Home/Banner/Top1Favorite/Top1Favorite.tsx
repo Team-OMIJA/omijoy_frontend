@@ -5,7 +5,7 @@ import { ScrapRank } from "../../../../types/adminPageTypes";
 import {
   formatDateRange,
   formatDateDot,
-} from "../../../../components/FormatDate/FormatDate";
+} from "../../../../components/format/formatDate";
 import { removeRegionTag } from "../../../../components/removeRegionTag/removeRegionTag";
 import * as s from "./styles";
 

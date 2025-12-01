@@ -6,13 +6,13 @@ import { removeRegionTag } from "../../../components/removeRegionTag/removeRegio
 import CheckIcon from "@mui/icons-material/Check";
 import { PerformanceDetailPage } from "../../../types/performancePageTypes";
 import { fetchPerformanceDetail } from "../../../apis/performanceApi";
+import * as s from "./styles";
+import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { useDeferredFavorite } from "../../../hooks/useDeferredFavorite";
 import { formatTime } from "../../../components/format/formatDate";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
 import { formatSiteName } from "../../../components/format/formatSiteName";
 import { formatTicketProvider } from "../../../components/format/formatTicketProvider";
-import * as s from "./styles";
-import { usePrincipalState } from "../../../stores/usePrincipalState";
-import { useDeferredFavorite } from "../../../hooks/useDeferredFavorite";
 
 function PerformanceDetail() {
   const { id: prfId } = useParams<{ id: string }>();
@@ -64,20 +64,6 @@ function PerformanceDetail() {
         if (!prfId) return;
         const data = await fetchPerformanceDetail(prfId);
         setPerformance(data);
-
-        // // 서버 좋아요 여부 가져오기
-        // const serverLiked = await fetchFavoriteState(prfId);
-
-        // // 서버 카운트 가져오기 null 이면 0
-        // await fetchFavoriteCount(prfId);
-        // const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
-
-        // setLocalLiked(serverLiked);
-        // setLocalScrapCount(count);
-
-        // // 최초 상태 저장
-        // initialLiked.current = serverLiked;
-        // initialScrapCount.current = count;
       } catch (err) {
         setPerformance(null);
         alert("공연 정보를 불러올 수 없습니다.");
@@ -89,40 +75,6 @@ function PerformanceDetail() {
 
     loadData();
   }, [prfId]);
-
-  // 아래 useEffect 로직 2개 중에 하나라도 없으면 반영 안됨
-  // 컴포넌트 기반 / 라우팅 pathname 기반이라서...
-  // 커스텀 훅 도입도 생각해볼 것
-
-  // 반영이 늦다? 아닌듯 - 뭔가 지금
-  // 공연 -> 마이페이지 흐름에서 이상한 부분 있는지 확인할 것 - 상태 바로 못받는듯
-
-  // 페이지 떠날 때 서버에 딱 1번만 반영
-  // 페이지 이동 감지 못해서 다른 로직 사용
-  // useEffect(() => {
-  //   return () => {
-  //     const likedChanged = localLiked !== initialLiked.current;
-
-  //     if (likedChanged) {
-  //       toggleFavorite(prfId!);
-  //     }
-  //   };
-  // }, [prfId, localLiked]);
-
-  // cleanUp 함수 - 이전 페이지에서 벗어날 때 무조건 호출됨
-  // 페이지 떠날 때만 DB 저장
-  // React Router 이동 시 cleanup 실행이 보장되지 않아서 사용
-  // useEffect(() => {
-  //   return () => {
-  //     // 페이지 이동했을 때
-  //     if (prevLocation.current !== location.pathname) {
-  //       const likedChanged = localLiked !== initialLiked.current;
-  //       if (likedChanged) {
-  //         toggleFavorite(prfId!);
-  //       }
-  //     }
-  //   };
-  // }, [location.pathname, prfId, localLiked]);
 
   if (loading) return <div>로딩 중...</div>;
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
@@ -208,7 +160,12 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>공연 시간</s.Label>
-                <s.Value>{formatTime(performance.dtGuidance)}</s.Value>
+                <s.Value>
+                  {performance.dtGuidance
+                    ?.split("),")
+                    .map((t) => (t.endsWith(")") ? t : t + ")"))
+                    .join("\n")}
+                </s.Value>
               </s.InfoItem>
 
               {performance.child === "Y" && (
@@ -248,11 +205,7 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>관람시간</s.Label>
-                <s.Value>
-                  {performance.runtime?.trim()
-                    ? performance.runtime
-                    : "예매처 참고"}
-                </s.Value>
+                <s.Value>{performance.runtime}</s.Value>
               </s.InfoItem>
 
               <s.InfoItem>
@@ -279,11 +232,21 @@ function PerformanceDetail() {
 
         {showLinks && (
           <s.TicketDropdown>
-            {providerUrls.map((url, i) => (
-              <s.TicketLink key={i} onClick={() => window.open(url, "_blank")}>
-                {formatSiteName(url)}
-              </s.TicketLink>
-            ))}
+            {performance.providerUrl?.split(",").map((raw, i) => {
+              const url = raw.trim();
+              if (!url) return null;
+
+              const validUrl = url.startsWith("http") ? url : `https://${url}`;
+
+              return (
+                <s.TicketLink
+                  key={i}
+                  onClick={() => window.open(validUrl, "_blank")}
+                >
+                  {getSiteName(validUrl)}
+                </s.TicketLink>
+              );
+            })}
           </s.TicketDropdown>
         )}
       </s.TicketWrapper>

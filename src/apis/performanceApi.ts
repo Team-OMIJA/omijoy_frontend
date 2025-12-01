@@ -6,10 +6,7 @@ import {
   KidsNewPerformancs,
 } from "../types/homePageTypes";
 import { PerformanceDetailPage } from "../types/performancePageTypes";
-import {
-  formatNewDate,
-  formatPeriod,
-} from "../components/FormatDate/FormatDate";
+import { formatNewDate, formatPeriod } from "../components/format/formatDate";
 import { removeRegionTag } from "../components/removeRegionTag/removeRegionTag";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;

@@ -6,7 +6,7 @@ import ScrollTop from "../../../components/common/Button/ScrollTopButton";
 import {
   formatDateDot,
   formatDateRange,
-} from "../../../components/FormatDate/FormatDate";
+} from "../../../components/format/formatDate";
 import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
 import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
 import { Performance } from "../../../types/performancePageTypes";
