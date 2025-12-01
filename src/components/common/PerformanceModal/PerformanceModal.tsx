@@ -74,7 +74,7 @@ function CommonModal({
 
   // UI에서 하트를 누를 때 서버 요청 없이 UI 상태만 변경
   const handleToggleLocalFavorite = async () => {
-     if (!principal) {
+    if (!principal) {
       alert("로그인 후 이용 가능합니다.");
       navigate("/login");
       return;
