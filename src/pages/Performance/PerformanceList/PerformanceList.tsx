@@ -70,9 +70,8 @@ function PerformanceList() {
 
   // 핸들러
   const handleStatusChange = (v: string) => { setStFilter(v); setStatusOpen(false); };
-  const handleMultiFilterChange = (value: string, filter: string[], setFilter: typeof setArFilter) => {
-    if (!filter.includes(value)) setFilter([...filter, value]);
-  };
+  const handleAreaChange = (v: string) => { if (!arfilter.includes(v)) setArFilter([...arfilter, v]); };
+  const handleGenreChange = (v: string) => { if (!gefilter.includes(v)) setGeFilter([...gefilter, v]); };
   const removeFilter = (type: 'area' | 'genre', value: string) =>
     type === 'area' ? setArFilter(arfilter.filter(i => i !== value)) : setGeFilter(gefilter.filter(i => i !== value));
   const handleSortChange = (value: string) => {
@@ -208,7 +207,7 @@ function PerformanceList() {
                 <s.PerformanceListDropdownItem
                   key={area}
                   onClick={() => {
-                    handleMultiFilterChange(area, arfilter, setArFilter);
+                    handleAreaChange(area);
                     setAreaOpen(false);
                   }}
                 >
@@ -231,7 +230,7 @@ function PerformanceList() {
                 <s.PerformanceListDropdownItem
                   key={genre}
                   onClick={() => {
-                    handleMultiFilterChange(genre, gefilter, setGeFilter);
+                    handleGenreChange(genre);
                     setGenreOpen(false);
                   }}
                 >
