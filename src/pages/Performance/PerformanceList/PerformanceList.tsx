@@ -3,7 +3,7 @@ import { GrPowerReset } from 'react-icons/gr';
 import useInfiniteScroll from '../../../configs/useInfiniteScroll';
 import { useNavigate, useNavigationType } from 'react-router-dom';
 import ScrollTop from '../../../components/common/Button/ScrollTopButton';
-import { formatDateDot, formatDateRange } from '../../../components/FormatDate/FormatDate';
+import { formatDateDot, formatDateRange } from '../../../components/format/formatDate';
 import { removeRegionTag } from '../../../components/removeRegionTag/removeRegionTag';
 import PrfList24Skeleton from '../../../components/skeleton/PrfList24Skeleton';
 import { Performance } from '../../../types/performancePageTypes';
@@ -300,21 +300,27 @@ function PerformanceList() {
         </s.PerformanceListTopRow>
 
         {/* 지역 칩 */}
-        <s.PerformanceListAreaFilter>
-          {arfilter.map(item => (
+        <s.PerformanceListAreaFilter hasChips={arfilter.length > 0}>
+          {arfilter.map((item) => (
             <s.PerformanceListAreaFilterItem key={`area-${item}`}>
               <span>{item}</span>
-              <s.PerformanceListAreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
+              <s.PerformanceListAreaFilterRemove
+                size={14}
+                onClick={() => removeFilter("area", item)}
+              />
             </s.PerformanceListAreaFilterItem>
           ))}
         </s.PerformanceListAreaFilter>
 
         {/* 장르 칩 */}
-        <s.PerformanceListGenreFilter>
-          {gefilter.map(item => (
+        <s.PerformanceListGenreFilter hasChips={gefilter.length > 0}>
+          {gefilter.map((item) => (
             <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
               <span>{item}</span>
-              <s.PerformanceListGenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
+              <s.PerformanceListGenreFilterRemove
+                size={14}
+                onClick={() => removeFilter("genre", item)}
+              />
             </s.PerformanceListGenreFilterItem>
           ))}
         </s.PerformanceListGenreFilter>

@@ -24,7 +24,7 @@ function TopRankList() {
   const navigate = useNavigate();
 
   // 추가
-  const autoplay = useRef(Autoplay({ delay: 4000 })); 
+  const autoplay = useRef(Autoplay({ delay: 4000 }));
 
   useEffect(() => {
     const load = async () => {
@@ -39,7 +39,7 @@ function TopRankList() {
   // 추가
   const handleGenreChange = (genreCode: string) => {
     setSelectedGenre(genreCode);
-  };  
+  };
 
   return (
     <s.SectionContainer>
@@ -53,56 +53,99 @@ function TopRankList() {
       </s.SectionHeader>
 
       <ts.GenreFilter>
-        <ts.GenreButton selected={selectedGenre === ""}onClick={() => handleGenreChange("")}>전체</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "BBBE"}onClick={() => handleGenreChange("BBBE")}>대중무용</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "CCCD"}onClick={() => handleGenreChange("CCCD")}>대중음악</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "BBBC"}onClick={() => handleGenreChange("BBBC")}>무용(서양/한국무용)</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "GGGA"}onClick={() => handleGenreChange("GGGA")}>뮤지컬</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "CCCA"}onClick={() => handleGenreChange("CCCA")}>서양음악(클래식)</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "EEEB"}onClick={() => handleGenreChange("EEEB")}>서커스/마술</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "AAAA"}onClick={() => handleGenreChange("AAAA")}>연극</ts.GenreButton>
-        <ts.GenreButton selected={selectedGenre === "CCCC"}onClick={() => handleGenreChange("CCCC")}>한국음악(국악)</ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === ""}
+          onClick={() => handleGenreChange("")}
+        >
+          전체
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "BBBE"}
+          onClick={() => handleGenreChange("BBBE")}
+        >
+          대중무용
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "CCCD"}
+          onClick={() => handleGenreChange("CCCD")}
+        >
+          대중음악
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "BBBC"}
+          onClick={() => handleGenreChange("BBBC")}
+        >
+          무용(서양/한국무용)
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "GGGA"}
+          onClick={() => handleGenreChange("GGGA")}
+        >
+          뮤지컬
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "CCCA"}
+          onClick={() => handleGenreChange("CCCA")}
+        >
+          서양음악(클래식)
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "EEEB"}
+          onClick={() => handleGenreChange("EEEB")}
+        >
+          서커스/마술
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "AAAA"}
+          onClick={() => handleGenreChange("AAAA")}
+        >
+          연극
+        </ts.GenreButton>
+        <ts.GenreButton
+          selected={selectedGenre === "CCCC"}
+          onClick={() => handleGenreChange("CCCC")}
+        >
+          한국음악(국악)
+        </ts.GenreButton>
       </ts.GenreFilter>
 
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div style={{ width: "100%", position: "relative" }}>
-          <Carousel
-            slideSize="20%"
-            slideGap="30px"
-            height={470}
-            withControls={false}
-            plugins={[autoplay.current]}
-            emblaOptions={{
-              align: "start",
-              dragFree: true,
-              slidesToScroll: 1,
-            }}
-          >
-            {performances.map((p, i) => (
-              <Carousel.Slide key={i}>
-                <s.PerformanceCard>
-                  <ts.RankCard
-                    onClick={() => {
-                      setSelectedPrfId(p.id);
-                      setOpen(true);
-                    }}
-                  >
-                    <ts.RankImage src={p.poster} alt={p.title} />
-                    <ts.RankOverlay />
-                    <ts.RankNumber>{p.rank}</ts.RankNumber>
-                  </ts.RankCard>
+        <Carousel
+          slideSize="20%"
+          slideGap="30px"
+          height={470}
+          withControls={false}
+          plugins={[autoplay.current]}
+          emblaOptions={{
+            align: "start",
+            dragFree: true,
+            slidesToScroll: 1,
+          }}
+        >
+          {performances.map((p, i) => (
+            <Carousel.Slide key={i}>
+              <s.PerformanceCard>
+                <ts.RankCard
+                  onClick={() => {
+                    setSelectedPrfId(p.id);
+                    setOpen(true);
+                  }}
+                >
+                  <ts.RankImage src={p.poster} alt={p.title} />
+                  <ts.RankOverlay />
+                  <ts.RankNumber>{p.rank}</ts.RankNumber>
+                </ts.RankCard>
 
-                  <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
-                  <s.PerformancePlace>{p.place}</s.PerformancePlace>
-                  <s.PerformancePeriod>{p.period}</s.PerformancePeriod>
-                  <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
-                </s.PerformanceCard>
-              </Carousel.Slide>
-            ))}
-          </Carousel>
-        </div>
+                <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                <s.PerformancePlace>{p.place}</s.PerformancePlace>
+                <s.PerformancePeriod>{p.period}</s.PerformancePeriod>
+                <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
+              </s.PerformanceCard>
+            </Carousel.Slide>
+          ))}
+        </Carousel>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
