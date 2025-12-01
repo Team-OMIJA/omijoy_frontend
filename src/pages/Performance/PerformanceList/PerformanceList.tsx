@@ -241,201 +241,203 @@ function PerformanceList() {
   return (
     <s.PerformanceListFullBox>
       <s.PerformanceListSubBox>
-        <ScrollTop />
+        <s.PerformanceListTopRow>
+          <ScrollTop />
 
-        {/* 정렬 드롭다운 */}
-        <s.PerformanceListDropdownWrapper ref={sortRef}>
-          <s.PerformanceListDropdownButton
-            open={sortOpen}
-            onClick={() => setSortOpen(!sortOpen)}
-          >
-            {
-              sortOptions.find(
-                (o) => o.value === (sort.startsWith("name") ? sort : "date")
-              )?.label
-            }
-          </s.PerformanceListDropdownButton>
-          {sortOpen && (
-            <s.PerformanceListDropdownList>
-              {sortOptions.map((o) => (
-                <s.PerformanceListDropdownItem
-                  key={o.value}
-                  onClick={() => {
-                    handleSortChange(o.value);
-                    setSortOpen(false);
-                  }}
-                >
-                  {o.label}
-                </s.PerformanceListDropdownItem>
-              ))}
-            </s.PerformanceListDropdownList>
-          )}
-        </s.PerformanceListDropdownWrapper>
-
-        {/* 공연 상태 */}
-        <s.PerformanceListDropdownWrapper ref={statusRef}>
-          <s.PerformanceListDropdownButton
-            open={statusOpen}
-            onClick={() => setStatusOpen(!statusOpen)}
-          >
-            {stFilter}
-          </s.PerformanceListDropdownButton>
-          {statusOpen && (
-            <s.PerformanceListDropdownList>
-              <s.PerformanceListDropdownItem
-                onClick={() => handleStatusChange("공연중")}
-              >
-                공연중
-              </s.PerformanceListDropdownItem>
-              <s.PerformanceListDropdownItem
-                onClick={() => handleStatusChange("공연예정")}
-              >
-                공연예정
-              </s.PerformanceListDropdownItem>
-            </s.PerformanceListDropdownList>
-          )}
-        </s.PerformanceListDropdownWrapper>
-
-        {/* 지역 */}
-        <s.PerformanceListDropdownWrapper ref={areaRef}>
-          <s.PerformanceListDropdownButton
-            open={areaOpen}
-            onClick={() => setAreaOpen(!areaOpen)}
-          >
-            지역
-          </s.PerformanceListDropdownButton>
-          {areaOpen && (
-            <s.PerformanceListDropdownList>
-              {AREA_OPTIONS.map((area) => (
-                <s.PerformanceListDropdownItem
-                  key={area}
-                  onClick={() => {
-                    handleAreaChange(area);
-                    setAreaOpen(false);
-                  }}
-                >
-                  {area}
-                </s.PerformanceListDropdownItem>
-              ))}
-            </s.PerformanceListDropdownList>
-          )}
-        </s.PerformanceListDropdownWrapper>
-
-        {/* 장르 */}
-        <s.PerformanceListDropdownWrapper ref={genreRef}>
-          <s.PerformanceListGenreDropdownButton
-            open={genreOpen}
-            onClick={() => setGenreOpen(!genreOpen)}
-          >
-            장르
-          </s.PerformanceListGenreDropdownButton>
-
-          {genreOpen && (
-            <s.PerformanceListDropdownList>
-              {GENRE_OPTIONS.map((genre) => (
-                <s.PerformanceListDropdownItem
-                  key={genre}
-                  onClick={() => {
-                    handleGenreChange(genre);
-                    setGenreOpen(false);
-                  }}
-                >
-                  {genre}
-                </s.PerformanceListDropdownItem>
-              ))}
-            </s.PerformanceListDropdownList>
-          )}
-        </s.PerformanceListDropdownWrapper>
-
-        {/* 내한 */}
-        <s.PerformanceListPlaceFilter>
-          <s.PerformanceListPlaceInner>
-            <s.PerformanceListPlaceLabel>
-              <input
-                type="checkbox"
-                checked={vtFilter}
-                onChange={(e) => setVtFilter(e.target.checked)}
-              />
-              내한 공연
-            </s.PerformanceListPlaceLabel>
-          </s.PerformanceListPlaceInner>
-        </s.PerformanceListPlaceFilter>
-
-        {/* 리셋 */}
-        <s.PerformanceListResetButton
-          onClick={() => {
-            setSort("name_asc");
-            setArFilter([]);
-            setGeFilter([]);
-            setStFilter("공연중");
-            setVtFilter(false);
-            setQuery("");
-            setPage(0);
-            getPerformance("", false, 0);
-          }}
-        >
-          <GrPowerReset />
-        </s.PerformanceListResetButton>
-
-        {/* 검색 */}
-        <s.PerformanceListSearchWrapper>
-          <s.PerformanceListSearchInput
-            type="text"
-            placeholder="공연명 검색"
-            value={query}
-            open={searchOpen || !!query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && getPerformance(query, false, 0)
-            }
-          />
-          <s.PerformanceListSearchIcon
-            size={18}
-            onClick={() => {
-              if (!query) setSearchOpen(!searchOpen);
-              else {
-                setPage(0);
-                getPerformance(query, false, 0);
+          {/* 정렬 드롭다운 */}
+          <s.PerformanceListDropdownWrapper ref={sortRef}>
+            <s.PerformanceListDropdownButton
+              open={sortOpen}
+              onClick={() => setSortOpen(!sortOpen)}
+            >
+              {
+                sortOptions.find(
+                  (o) => o.value === (sort.startsWith("name") ? sort : "date")
+                )?.label
               }
+            </s.PerformanceListDropdownButton>
+            {sortOpen && (
+              <s.PerformanceListDropdownList>
+                {sortOptions.map((o) => (
+                  <s.PerformanceListDropdownItem
+                    key={o.value}
+                    onClick={() => {
+                      handleSortChange(o.value);
+                      setSortOpen(false);
+                    }}
+                  >
+                    {o.label}
+                  </s.PerformanceListDropdownItem>
+                ))}
+              </s.PerformanceListDropdownList>
+            )}
+          </s.PerformanceListDropdownWrapper>
+
+          {/* 공연 상태 */}
+          <s.PerformanceListDropdownWrapper ref={statusRef}>
+            <s.PerformanceListDropdownButton
+              open={statusOpen}
+              onClick={() => setStatusOpen(!statusOpen)}
+            >
+              {stFilter}
+            </s.PerformanceListDropdownButton>
+            {statusOpen && (
+              <s.PerformanceListDropdownList>
+                <s.PerformanceListDropdownItem
+                  onClick={() => handleStatusChange("공연중")}
+                >
+                  공연중
+                </s.PerformanceListDropdownItem>
+                <s.PerformanceListDropdownItem
+                  onClick={() => handleStatusChange("공연예정")}
+                >
+                  공연예정
+                </s.PerformanceListDropdownItem>
+              </s.PerformanceListDropdownList>
+            )}
+          </s.PerformanceListDropdownWrapper>
+
+          {/* 지역 */}
+          <s.PerformanceListDropdownWrapper ref={areaRef}>
+            <s.PerformanceListDropdownButton
+              open={areaOpen}
+              onClick={() => setAreaOpen(!areaOpen)}
+            >
+              지역
+            </s.PerformanceListDropdownButton>
+            {areaOpen && (
+              <s.PerformanceListDropdownList>
+                {AREA_OPTIONS.map((area) => (
+                  <s.PerformanceListDropdownItem
+                    key={area}
+                    onClick={() => {
+                      handleAreaChange(area);
+                      setAreaOpen(false);
+                    }}
+                  >
+                    {area}
+                  </s.PerformanceListDropdownItem>
+                ))}
+              </s.PerformanceListDropdownList>
+            )}
+          </s.PerformanceListDropdownWrapper>
+
+          {/* 장르 */}
+          <s.PerformanceListDropdownWrapper ref={genreRef}>
+            <s.PerformanceListGenreDropdownButton
+              open={genreOpen}
+              onClick={() => setGenreOpen(!genreOpen)}
+            >
+              장르
+            </s.PerformanceListGenreDropdownButton>
+
+            {genreOpen && (
+              <s.PerformanceListDropdownList>
+                {GENRE_OPTIONS.map((genre) => (
+                  <s.PerformanceListDropdownItem
+                    key={genre}
+                    onClick={() => {
+                      handleGenreChange(genre);
+                      setGenreOpen(false);
+                    }}
+                  >
+                    {genre}
+                  </s.PerformanceListDropdownItem>
+                ))}
+              </s.PerformanceListDropdownList>
+            )}
+          </s.PerformanceListDropdownWrapper>
+
+          {/* 내한 */}
+          <s.PerformanceListPlaceFilter>
+            <s.PerformanceListPlaceInner>
+              <s.PerformanceListPlaceLabel>
+                <input
+                  type="checkbox"
+                  checked={vtFilter}
+                  onChange={(e) => setVtFilter(e.target.checked)}
+                />
+                내한 공연
+              </s.PerformanceListPlaceLabel>
+            </s.PerformanceListPlaceInner>
+          </s.PerformanceListPlaceFilter>
+
+          {/* 리셋 */}
+          <s.PerformanceListResetButton
+            onClick={() => {
+              setSort("name_asc");
+              setArFilter([]);
+              setGeFilter([]);
+              setStFilter("공연중");
+              setVtFilter(false);
+              setQuery("");
+              setPage(0);
+              getPerformance("", false, 0);
             }}
-          />
-          {searchOpen && query && (
-            <s.PerformanceListClearIcon
-              size={12}
+          >
+            <GrPowerReset />
+          </s.PerformanceListResetButton>
+
+          {/* 검색 */}
+          <s.PerformanceListSearchWrapper>
+            <s.PerformanceListSearchInput
+              type="text"
+              placeholder="공연명 검색"
+              value={query}
+              open={searchOpen || !!query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && getPerformance(query, false, 0)
+              }
+            />
+            <s.PerformanceListSearchIcon
+              size={18}
               onClick={() => {
-                setQuery("");
-                getPerformance("", false, 0);
+                if (!query) setSearchOpen(!searchOpen);
+                else {
+                  setPage(0);
+                  getPerformance(query, false, 0);
+                }
               }}
             />
-          )}
-        </s.PerformanceListSearchWrapper>
+            {searchOpen && query && (
+              <s.PerformanceListClearIcon
+                size={12}
+                onClick={() => {
+                  setQuery("");
+                  getPerformance("", false, 0);
+                }}
+              />
+            )}
+          </s.PerformanceListSearchWrapper>
+        </s.PerformanceListTopRow>
+
+        {/* 지역 칩 */}
+        <s.PerformanceListAreaFilter>
+          {arfilter.map((item) => (
+            <s.PerformanceListAreaFilterItem key={`area-${item}`}>
+              <span>{item}</span>
+              <s.PerformanceListAreaFilterRemove
+                size={16}
+                onClick={() => removeFilter("area", item)}
+              />
+            </s.PerformanceListAreaFilterItem>
+          ))}
+        </s.PerformanceListAreaFilter>
+
+        {/* 장르 칩 */}
+        <s.PerformanceListGenreFilter>
+          {gefilter.map((item) => (
+            <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
+              <span>{item}</span>
+              <s.PerformanceListGenreFilterRemove
+                size={14}
+                onClick={() => removeFilter("genre", item)}
+              />
+            </s.PerformanceListGenreFilterItem>
+          ))}
+        </s.PerformanceListGenreFilter>
       </s.PerformanceListSubBox>
-
-      {/* 지역 칩 */}
-      <s.PerformanceListAreaFilter>
-        {arfilter.map((item) => (
-          <s.PerformanceListAreaFilterItem key={`area-${item}`}>
-            <span>{item}</span>
-            <s.PerformanceListAreaFilterRemove
-              size={16}
-              onClick={() => removeFilter("area", item)}
-            />
-          </s.PerformanceListAreaFilterItem>
-        ))}
-      </s.PerformanceListAreaFilter>
-
-      {/* 장르 칩 */}
-      <s.PerformanceListGenreFilter>
-        {gefilter.map((item) => (
-          <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
-            <span>{item}</span>
-            <s.PerformanceListGenreFilterRemove
-              size={14}
-              onClick={() => removeFilter("genre", item)}
-            />
-          </s.PerformanceListGenreFilterItem>
-        ))}
-      </s.PerformanceListGenreFilter>
 
       {/* if 결과 없음 */}
       {performances.length === 0 && !loading && (
