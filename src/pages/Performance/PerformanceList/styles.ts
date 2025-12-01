@@ -257,8 +257,8 @@ export const PerformanceListAreaFilter = styled('div', {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
-  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
+  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '7.5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '7.5px')};
 `;
 
 
@@ -268,8 +268,8 @@ export const PerformanceListGenreFilter = styled('div', {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
-  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
+  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '7.5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '7.5px')};
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`
