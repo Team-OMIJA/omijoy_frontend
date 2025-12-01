@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import * as s from "./styles";
+import * as s from "./FlagListStyles";
 import { getFlagListReq } from "../../../apis/flagApi";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
 import { PerformancePlace } from "../../../types/myPageTypes";

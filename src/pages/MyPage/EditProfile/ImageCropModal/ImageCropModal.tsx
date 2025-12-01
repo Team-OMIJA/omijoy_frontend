@@ -1,9 +1,9 @@
 ﻿/** @jsxImportSource @emotion/react */
-import * as s from './styles';
-import { useState } from 'react';
-import { getCroppedImg } from '../../../../utils/imageUtils';
-import { Modal } from '@mui/material';
-import Cropper, { Area } from 'react-easy-crop';
+import * as s from "./ImageCropModalStyles";
+import { useState } from "react";
+import { getCroppedImg } from "../../../../utils/imageUtils";
+import { Modal } from "@mui/material";
+import Cropper, { Area } from "react-easy-crop";
 
 type ImageCropModalProps = {
   open: boolean;
@@ -11,7 +11,12 @@ type ImageCropModalProps = {
   onComplete: (file: File) => void;
   onClose: () => void;
 };
-function ImageCropModal({ open, imgSrc, onComplete, onClose }: ImageCropModalProps) {
+function ImageCropModal({
+  open,
+  imgSrc,
+  onComplete,
+  onClose,
+}: ImageCropModalProps) {
   // crop 좌표
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   // zoom 배율
@@ -34,14 +39,14 @@ function ImageCropModal({ open, imgSrc, onComplete, onClose }: ImageCropModalPro
       open={open}
       onClose={onClose}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
           e.preventDefault();
           handleDone();
         }
       }}
     >
-      <div css={s.modalContainer}>
-        <div css={s.cropWrapper}>
+      <s.ModalContainer>
+        <s.CropWrapper>
           <Cropper
             image={imgSrc}
             crop={crop}
@@ -51,12 +56,10 @@ function ImageCropModal({ open, imgSrc, onComplete, onClose }: ImageCropModalPro
             onZoomChange={setZoom}
             onCropComplete={onCropComplete}
           />
-        </div>
+        </s.CropWrapper>
 
-        <button css={s.doneButton} onClick={handleDone}>
-          완료
-        </button>
-      </div>
+        <s.DoneButton onClick={handleDone}>완료</s.DoneButton>
+      </s.ModalContainer>
     </Modal>
   );
 }
