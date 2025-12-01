@@ -117,6 +117,12 @@ function PerformanceList() {
 
   useInfiniteScroll(loadMore, hasMore);
 
+  useEffect(() => {
+    if (!isInitialMount.current) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [sort, stFilter, arfilter, gefilter, vtFilter, query]);
+
   // sessionStorage 자동 저장
   useEffect(() => {
     sessionStorage.setItem('scroll-performance-sort', sort);
