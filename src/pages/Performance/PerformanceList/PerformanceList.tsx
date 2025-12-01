@@ -121,7 +121,7 @@ function PerformanceList() {
     if (!isInitialMount.current) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [sort, stFilter, arfilter, gefilter, vtFilter, query]);
+  }, [sort, stFilter, arfilter, gefilter, vtFilter]);
 
   // sessionStorage 자동 저장
   useEffect(() => {
@@ -281,7 +281,13 @@ function PerformanceList() {
             value={query}
             open={searchOpen || !!query}
             onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0) }
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                setPage(0);
+                getPerformance(query, false, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
           />
           <s.PerformanceListSearchIcon
             size={18}
@@ -290,6 +296,7 @@ function PerformanceList() {
               else {
                 setPage(0);
                 getPerformance(query, false, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
           />
@@ -299,6 +306,7 @@ function PerformanceList() {
               onClick={() => {
                 setQuery('');
                 getPerformance('', false, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
           )}
