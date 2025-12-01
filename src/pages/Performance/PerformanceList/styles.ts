@@ -163,6 +163,12 @@ export const PerformanceListCard = styled.div`
   text-align: left;
   padding: 5px;
   border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  }
 `;
 
 export const PerformanceListClickableWrapper = styled.div`
@@ -257,8 +263,8 @@ export const PerformanceListAreaFilter = styled('div', {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
-  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
+  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '7.5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '7.5px')};
 `;
 
 
@@ -268,8 +274,8 @@ export const PerformanceListGenreFilter = styled('div', {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '5px')};
-  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '5px')};
+  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '7.5px')};
+  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '7.5px')};
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`
