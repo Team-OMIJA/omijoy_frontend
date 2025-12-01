@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
-import { fetchKidsPrfsThisMonth } from '../../../../apis/performanceApi';
-import { KidsNewPerformancs } from '../../../../types/homePageTypes';
-import { removeRegionTag } from '../../../../components/removeRegionTag/removeRegionTag';
-import { formatDateRange, formatDateDot } from '../../../../components/FormatDate/FormatDate';
-import { useNavigate } from 'react-router-dom';
-import * as s from './styles';
+import { useEffect, useState } from "react";
+import { fetchKidsPrfsThisMonth } from "../../../../apis/performanceApi";
+import { KidsNewPerformancs } from "../../../../types/homePageTypes";
+import { removeRegionTag } from "../../../../components/removeRegionTag/removeRegionTag";
+import {
+  formatDateRange,
+  formatDateDot,
+} from "../../../../components/format/formatDate";
+import { useNavigate } from "react-router-dom";
+import * as s from "./styles";
 
 function KidsNewPerformances() {
   //eslint-disable-next-line
@@ -43,12 +46,17 @@ function KidsNewPerformances() {
         <s.BackgroundBlur img={backgroundPoster} />
         <s.DarkOverlay />
 
-        <s.HeaderText>이번 달 아이들이랑 보러가기 좋은 신규 공연 추천</s.HeaderText>
+        <s.HeaderText>
+          이번 달 아이들이랑 보러가기 좋은 신규 공연 추천
+        </s.HeaderText>
 
         <s.CardContainer>
           {visibleData.map((item, i) => {
             const title = removeRegionTag(item.prfNm);
-            const dateRange = formatDateRange(formatDateDot(item.prfStartDt), formatDateDot(item.prfEndDt));
+            const dateRange = formatDateRange(
+              formatDateDot(item.prfStartDt),
+              formatDateDot(item.prfEndDt)
+            );
 
             return (
               <s.Card key={i}>

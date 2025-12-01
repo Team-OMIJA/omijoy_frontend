@@ -78,7 +78,7 @@ function CommonModal({
     // 카운트 UI 즉시 반영
     setLocalScrapCount((prev) => (newLiked ? prev + 1 : Math.max(prev - 1, 0)));
 
-    // 마이페이지에서 스크랩 취소 시 
+    // 마이페이지에서 스크랩 취소 시
     // 서버 반영 + 리스트 제거 + 모달 닫기
     if (source === "mypage" && newLiked === false) {
       await toggleFavorite(prfId);
@@ -91,8 +91,8 @@ function CommonModal({
   const handleClose = async () => {
     if (source !== "mypage") {
       if (prfId && localLiked !== favorites[prfId]) {
-      await toggleFavorite(prfId); // 서버 요청 1회
-    }
+        await toggleFavorite(prfId); // 서버 요청 1회
+      }
     }
 
     // MyPage에서 스크랩 취소 시 리스트에서 제거 - 모달 닫음
@@ -177,13 +177,22 @@ function CommonModal({
           {/* 장소 */}
           <Typography sx={{ color: "#dbdbdb" }}>{data.prfPlcNm}</Typography>
           {/* 지역 */}
-          <Typography sx={{ color: "#a3a3a3", fontSize: "0.9rem" }}>
+          <Typography
+            sx={{ color: "#a3a3a3", fontSize: "0.9rem", marginTop: "3px" }}
+          >
             {data.area}
           </Typography>
 
           <Box sx={{ height: 8 }} />
           {/* 기간 */}
-          <Typography sx={{ color: "#dbdbdb", fontSize: "0.9rem" }}>
+          <Typography
+            sx={{
+              color: "#a3a3a3",
+              fontSize: "0.9rem",
+              marginTop: "3px",
+              marginBottom: "8px",
+            }}
+          >
             {data.prfStartDt} ~ {data.prfEndDt}
           </Typography>
 
@@ -211,7 +220,7 @@ function CommonModal({
               display: "flex",
               alignItems: "center",
               color: "#a3a3a3",
-              marginTop: "6px",
+              marginTop: "8px",
             }}
           >
             <ConfirmationNumberIcon sx={{ fontSize: 18, marginRight: "6px" }} />

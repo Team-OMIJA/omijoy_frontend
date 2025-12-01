@@ -9,6 +9,10 @@ import { fetchPerformanceDetail } from "../../../apis/performanceApi";
 import * as s from "./styles";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useDeferredFavorite } from "../../../hooks/useDeferredFavorite";
+import { formatTime } from "../../../components/format/formatDate";
+import { useOutsideClick } from "../../../hooks/useOutsideClick";
+import { formatSiteName } from "../../../components/format/formatSiteName";
+import { formatTicketProvider } from "../../../components/format/formatTicketProvider";
 
 function PerformanceDetail() {
   const { id: prfId } = useParams<{ id: string }>();
@@ -37,21 +41,9 @@ function PerformanceDetail() {
   };
 
   // 외부 클릭 감지
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
-        setShowLinks(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useOutsideClick(wrapperRef, () => {
+    setShowLinks(false);
+  });
 
   // 공연 상세 정보 로드
   useEffect(() => {
@@ -60,20 +52,6 @@ function PerformanceDetail() {
         if (!prfId) return;
         const data = await fetchPerformanceDetail(prfId);
         setPerformance(data);
-
-        // // 서버 좋아요 여부 가져오기
-        // const serverLiked = await fetchFavoriteState(prfId);
-
-        // // 서버 카운트 가져오기 null 이면 0
-        // await fetchFavoriteCount(prfId);
-        // const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
-
-        // setLocalLiked(serverLiked);
-        // setLocalScrapCount(count);
-
-        // // 최초 상태 저장
-        // initialLiked.current = serverLiked;
-        // initialScrapCount.current = count;
       } catch (err) {
         setPerformance(null);
         alert("공연 정보를 불러올 수 없습니다.");
@@ -86,74 +64,10 @@ function PerformanceDetail() {
     loadData();
   }, [prfId]);
 
-  // 아래 useEffect 로직 2개 중에 하나라도 없으면 반영 안됨
-  // 컴포넌트 기반 / 라우팅 pathname 기반이라서...
-  // 커스텀 훅 도입도 생각해볼 것
-
-  // 반영이 늦다? 아닌듯 - 뭔가 지금
-  // 공연 -> 마이페이지 흐름에서 이상한 부분 있는지 확인할 것 - 상태 바로 못받는듯
-
-  // 페이지 떠날 때 서버에 딱 1번만 반영
-  // 페이지 이동 감지 못해서 다른 로직 사용
-  // useEffect(() => {
-  //   return () => {
-  //     const likedChanged = localLiked !== initialLiked.current;
-
-  //     if (likedChanged) {
-  //       toggleFavorite(prfId!);
-  //     }
-  //   };
-  // }, [prfId, localLiked]);
-
-  // cleanUp 함수 - 이전 페이지에서 벗어날 때 무조건 호출됨
-  // 페이지 떠날 때만 DB 저장
-  // React Router 이동 시 cleanup 실행이 보장되지 않아서 사용
-  // useEffect(() => {
-  //   return () => {
-  //     // 페이지 이동했을 때
-  //     if (prevLocation.current !== location.pathname) {
-  //       const likedChanged = localLiked !== initialLiked.current;
-  //       if (likedChanged) {
-  //         toggleFavorite(prfId!);
-  //       }
-  //     }
-  //   };
-  // }, [location.pathname, prfId, localLiked]);
-
   if (loading) return <div>로딩 중...</div>;
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
 
   const HeartIcon = localLiked ? ImHeart : SlHeart;
-
-  // 예매처 사이트 이름 추출
-  const getSiteName = (url: string) => {
-    const lower = url.toLowerCase();
-    if (lower.includes("interpark")) return "인터파크";
-    if (lower.includes("ticketlink")) return "티켓링크";
-    if (lower.includes("yes24")) return "YES24";
-    if (lower.includes("naver")) return "네이버 예매";
-    if (lower.includes("wemakeprice")) return "위메프";
-    if (lower.includes("melon")) return "멜론티켓";
-    if (lower.includes("lotte")) return "롯데콘서트홀";
-    if (lower.includes("coffee")) return "커넥티브 티켓";
-    if (lower.includes("nanumticket")) return "나눔 티켓";
-    if (lower.includes("coupang")) return "쿠팡";
-    if (lower.includes("clipservice")) return "클립서비스";
-    if (lower.includes("timeticket")) return "타임 티켓";
-    if (lower.includes("maketicket")) return "마켓 티켓";
-    if (lower.includes("playicket")) return "플레이 티켓";
-    if (lower.includes("tmon")) return "티몬";
-    if (lower.includes("sejongpac")) return "세종문화회관";
-    try {
-      const hostname = new URL(url).hostname;
-      const parts = hostname.replace("www.", "").split(".");
-      const mainDomain = parts[0];
-
-      return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1);
-    } catch {
-      return "예매처";
-    }
-  };
 
   return (
     <s.PageBackground>
@@ -204,12 +118,7 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>공연 시간</s.Label>
-                <s.Value>
-                  {performance.dtGuidance
-                    ?.split("),")
-                    .map((t) => (t.endsWith(")") ? t : t + ")"))
-                    .join("\n")}
-                </s.Value>
+                <s.Value>{formatTime(performance.dtGuidance)}</s.Value>
               </s.InfoItem>
 
               {performance.child === "Y" && (
@@ -245,26 +154,30 @@ function PerformanceDetail() {
                     let result = "";
                     const seen = new Set<string>();
 
-                  original.split(/\s*(\([^)]+\))/).forEach(part => {
-                    if (!part) return;
-                    if (!part.startsWith('(')) {
-                      result += part;
-                      return;
-                    }
+                    original.split(/\s*(\([^)]+\))/).forEach((part) => {
+                      if (!part) return;
+                      if (!part.startsWith("(")) {
+                        result += part;
+                        return;
+                      }
 
-                    const content = part.slice(1, -1).trim();
-                    const normalized = content.replace(/\s+/g, '');
-                    const normalizedResult = result.replace(/\s+/g, '');
+                      const content = part.slice(1, -1).trim();
+                      const normalized = content.replace(/\s+/g, "");
+                      const normalizedResult = result.replace(/\s+/g, "");
 
-                    if (seen.has(normalized) || normalizedResult.includes(normalized)) return;
+                      if (
+                        seen.has(normalized) ||
+                        normalizedResult.includes(normalized)
+                      )
+                        return;
 
-                    seen.add(normalized);
-                    result += `(${content})`;
-                  });
+                      seen.add(normalized);
+                      result += `(${content})`;
+                    });
 
                     return result.trim();
                   })()}
-              </s.Value>
+                </s.Value>
               </s.InfoItem>
 
               <s.InfoItem>
@@ -301,21 +214,16 @@ function PerformanceDetail() {
 
         {showLinks && (
           <s.TicketDropdown>
-            {performance.providerUrl?.split(",").map((raw, i) => {
-              const url = raw.trim();
-              if (!url) return null;
-
-              const validUrl = url.startsWith("http") ? url : `https://${url}`;
-
-              return (
+            {formatTicketProvider(performance.providerUrl).map(
+              (validUrl, i) => (
                 <s.TicketLink
                   key={i}
                   onClick={() => window.open(validUrl, "_blank")}
                 >
-                  {getSiteName(validUrl)}
+                  {formatSiteName(validUrl)}
                 </s.TicketLink>
-              );
-            })}
+              )
+            )}
           </s.TicketDropdown>
         )}
       </s.TicketWrapper>
