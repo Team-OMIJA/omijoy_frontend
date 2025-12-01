@@ -8,9 +8,9 @@ export default function Footer() {
         <s.Item>Performance data provided by KOPIS API</s.Item>
         <s.Item>Contact: omijoy.contact@gmail.com</s.Item>
 
-        <div style={{ marginTop: "12px", opacity: 0.7 }}>
+        <s.Copyright>
           © {new Date().getFullYear()} OMIJOY. All Rights Reserved.
-        </div>
+        </s.Copyright>
       </s.Container>
     </s.Wrapper>
   );

@@ -20,6 +20,9 @@ function KidsNewPerformances() {
   const pickRandomThree = (arr: KidsNewPerformancs[]) => {
     return [...arr].sort(() => Math.random() - 0.5).slice(0, 3);
   };
+  // [...arr] 한 후 sort() -> 복사본을 만들어서 정렬
+  // sort의 공식 규칙 -> 음수(a가 b보다 앞), 양수(b가 a보다 앞), 0(순서 유지)
+  //  Math.random() - 0.5 -> -0.5 ~ 0.5 사이의 값이 나오므로 랜덤하게 섞임
 
   useEffect(() => {
     const loadData = async () => {
