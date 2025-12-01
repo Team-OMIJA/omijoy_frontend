@@ -41,21 +41,9 @@ function PerformanceDetail() {
   };
 
   // 외부 클릭 감지
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
-        setShowLinks(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useOutsideClick(wrapperRef, () => {
+    setShowLinks(false);
+  });
 
   // 공연 상세 정보 로드
   useEffect(() => {
@@ -80,36 +68,6 @@ function PerformanceDetail() {
   if (!performance) return <div>공연 정보를 찾을 수 없습니다.</div>;
 
   const HeartIcon = localLiked ? ImHeart : SlHeart;
-
-  // 예매처 사이트 이름 추출
-  const getSiteName = (url: string) => {
-    const lower = url.toLowerCase();
-    if (lower.includes("interpark")) return "인터파크";
-    if (lower.includes("ticketlink")) return "티켓링크";
-    if (lower.includes("yes24")) return "YES24";
-    if (lower.includes("naver")) return "네이버 예매";
-    if (lower.includes("wemakeprice")) return "위메프";
-    if (lower.includes("melon")) return "멜론티켓";
-    if (lower.includes("lotte")) return "롯데콘서트홀";
-    if (lower.includes("coffee")) return "커넥티브 티켓";
-    if (lower.includes("nanumticket")) return "나눔 티켓";
-    if (lower.includes("coupang")) return "쿠팡";
-    if (lower.includes("clipservice")) return "클립서비스";
-    if (lower.includes("timeticket")) return "타임 티켓";
-    if (lower.includes("maketicket")) return "마켓 티켓";
-    if (lower.includes("playicket")) return "플레이 티켓";
-    if (lower.includes("tmon")) return "티몬";
-    if (lower.includes("sejongpac")) return "세종문화회관";
-    try {
-      const hostname = new URL(url).hostname;
-      const parts = hostname.replace("www.", "").split(".");
-      const mainDomain = parts[0];
-
-      return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1);
-    } catch {
-      return "예매처";
-    }
-  };
 
   return (
     <s.PageBackground>
@@ -160,12 +118,7 @@ function PerformanceDetail() {
 
               <s.InfoItem>
                 <s.Label>공연 시간</s.Label>
-                <s.Value>
-                  {performance.dtGuidance
-                    ?.split("),")
-                    .map((t) => (t.endsWith(")") ? t : t + ")"))
-                    .join("\n")}
-                </s.Value>
+                <s.Value>{formatTime(performance.dtGuidance)}</s.Value>
               </s.InfoItem>
 
               {performance.child === "Y" && (
@@ -201,26 +154,30 @@ function PerformanceDetail() {
                     let result = "";
                     const seen = new Set<string>();
 
-                  original.split(/\s*(\([^)]+\))/).forEach(part => {
-                    if (!part) return;
-                    if (!part.startsWith('(')) {
-                      result += part;
-                      return;
-                    }
+                    original.split(/\s*(\([^)]+\))/).forEach((part) => {
+                      if (!part) return;
+                      if (!part.startsWith("(")) {
+                        result += part;
+                        return;
+                      }
 
-                    const content = part.slice(1, -1).trim();
-                    const normalized = content.replace(/\s+/g, '');
-                    const normalizedResult = result.replace(/\s+/g, '');
+                      const content = part.slice(1, -1).trim();
+                      const normalized = content.replace(/\s+/g, "");
+                      const normalizedResult = result.replace(/\s+/g, "");
 
-                    if (seen.has(normalized) || normalizedResult.includes(normalized)) return;
+                      if (
+                        seen.has(normalized) ||
+                        normalizedResult.includes(normalized)
+                      )
+                        return;
 
-                    seen.add(normalized);
-                    result += `(${content})`;
-                  });
+                      seen.add(normalized);
+                      result += `(${content})`;
+                    });
 
                     return result.trim();
                   })()}
-              </s.Value>
+                </s.Value>
               </s.InfoItem>
 
               <s.InfoItem>
@@ -257,21 +214,16 @@ function PerformanceDetail() {
 
         {showLinks && (
           <s.TicketDropdown>
-            {performance.providerUrl?.split(",").map((raw, i) => {
-              const url = raw.trim();
-              if (!url) return null;
-
-              const validUrl = url.startsWith("http") ? url : `https://${url}`;
-
-              return (
+            {formatTicketProvider(performance.providerUrl).map(
+              (validUrl, i) => (
                 <s.TicketLink
                   key={i}
                   onClick={() => window.open(validUrl, "_blank")}
                 >
-                  {getSiteName(validUrl)}
+                  {formatSiteName(validUrl)}
                 </s.TicketLink>
-              );
-            })}
+              )
+            )}
           </s.TicketDropdown>
         )}
       </s.TicketWrapper>
