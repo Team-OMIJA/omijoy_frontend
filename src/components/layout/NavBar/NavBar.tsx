@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import * as s from "./styles";
+import * as s from "./NavBarStyles";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import React, { useState } from "react";
@@ -55,31 +55,30 @@ function NavBar() {
   };
 
   return (
-    <nav css={s.navStyle}>
+    <s.NavBar>
       {/* 로고 왼쪽 */}
-      <div css={s.logo} onClick={() => navigate("/")}>
+      <s.Logo onClick={() => navigate("/")}>
         OMIJOY
-      </div>
+      </s.Logo>
 
-      <div css={s.navListStyle}>
+      <s.NavList>
         {navItems.map((item) => (
-          <li key={item.path}>
-            <Link
-              to={item.path}
-              css={s.linkStyle(location.pathname === item.path)}
-            >
+        <li key={item.path}>
+          <Link to={item.path}>
+            <s.StyledLink active={location.pathname === item.path}>
               {item.label}
-            </Link>
-          </li>
+            </s.StyledLink>
+          </Link>
+        </li>
         ))}
-      </div>
+      </s.NavList>
 
       {/* 프로필 클릭 시 드롭다운 */}
-      <div css={s.profileContainer}>
+      <s.ProfileContainer>
         <Avatar
           alt="user-profile"
           src={userProfileImg || defaultProfileImg} //  기본 이미지 적용
-          css={s.profileStyle(userProfileImg)}
+          sx={{ cursor: "pointer" }}
           onClick={menuOpenHandler}
         />
         <Menu
@@ -132,8 +131,8 @@ function NavBar() {
             </>
           )}
         </Menu>
-      </div>
-    </nav>
+      </s.ProfileContainer>
+    </s.NavBar>
   );
 }
 
