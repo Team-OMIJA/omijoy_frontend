@@ -69,7 +69,6 @@ export const Email = styled.p`
   padding-bottom: 5px;
 `;
 
-
 // 유저명 - 수정버튼 컨테이너
 export const UsernameRow = styled.div`
   display: flex;

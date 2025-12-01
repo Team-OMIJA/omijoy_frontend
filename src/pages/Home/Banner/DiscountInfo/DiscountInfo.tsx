@@ -1,4 +1,4 @@
-import { Wrapper, ContentBox, InfoImage } from "./styles";
+import { Wrapper, ContentBox, InfoImage } from "./DiscountInfoStyles";
 
 function DiscountInfo() {
   return (

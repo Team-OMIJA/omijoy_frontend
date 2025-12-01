@@ -32,6 +32,11 @@ function AwardRecommendList() {
     loadData();
   }, []);
 
+  const handelModalOpen = (prfId: string) => {
+    setSelectedPrfId(prfId);
+    setOpen(true);
+  };
+
   return (
     <s.SectionContainer>
       <s.SectionHeader>
@@ -62,12 +67,17 @@ function AwardRecommendList() {
                   src={p.poster}
                   alt={p.title}
                   onClick={() => {
-                    setSelectedPrfId(p.id);
-                    setOpen(true);
+                    handelModalOpen(p.id);
                   }}
                 />
 
-                <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                <s.PerformanceTitle
+                  onClick={() => {
+                    handelModalOpen(p.id);
+                  }}
+                >
+                  {p.title}
+                </s.PerformanceTitle>
                 <s.PerformancePlace>{p.place}</s.PerformancePlace>
                 <s.PerformancePeriod>
                   {p.stDate} - {p.edDate}

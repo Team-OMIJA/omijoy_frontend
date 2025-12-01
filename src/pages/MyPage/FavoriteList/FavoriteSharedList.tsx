@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import * as s from "./styles";
+import * as s from "./FavoriteListStyles";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getSharedFavoritePrfListReq } from "../../../apis/favoriteApi";
@@ -35,7 +35,7 @@ function FavoriteSharedList() {
     <>
       <div css={s.container}>
         <ps.PerformanceTitle>
-        <h2 css={s.title}>FAVORITES</h2>
+          <h2 css={s.title}>FAVORITES</h2>
         </ps.PerformanceTitle>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>
@@ -50,18 +50,18 @@ function FavoriteSharedList() {
                 <img src={item.posterImgUrl} alt={item.prfNm} css={s.poster} />
                 <div css={s.info}>
                   <ps.PerformanceTitle>
-                  <div>{item.prfNm}</div>
+                    <div>{item.prfNm}</div>
                   </ps.PerformanceTitle>
                   <ps.PerformancePlace>
-                  <div>{item.prfPlcNm}</div>
+                    <div>{item.prfPlcNm}</div>
                   </ps.PerformancePlace>
                   <ps.PerformancePeriod>
-                  <div>
-                    {item.prfStartDt} ~ {item.prfEndDt}
-                  </div>
+                    <div>
+                      {item.prfStartDt} ~ {item.prfEndDt}
+                    </div>
                   </ps.PerformancePeriod>
                   <ps.PerformanceGenre>
-                  <div>{item.genreNm}</div>
+                    <div>{item.genreNm}</div>
                   </ps.PerformanceGenre>
                 </div>
               </li>

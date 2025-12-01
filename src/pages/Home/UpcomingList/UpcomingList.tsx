@@ -9,7 +9,7 @@ import {
 } from "../../../components/format/formatDate";
 import { Carousel } from "@mantine/carousel";
 import * as s from "../PerformanceStyles";
-import * as ts from "./styles";
+import * as ts from "./UpcomingListStyles";
 
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
@@ -25,6 +25,11 @@ function UpcomingList() {
     };
     getData();
   }, []);
+
+  const handelModalOpen = (prfId: string) => {
+    setSelectedPrfId(prfId);
+    setOpen(true);
+  };
 
   return (
     <s.SectionContainer>
@@ -56,11 +61,16 @@ function UpcomingList() {
                   src={p.posterImgUrl}
                   alt={p.prfNm}
                   onClick={() => {
-                    setSelectedPrfId(p.prfId);
-                    setOpen(true);
+                    handelModalOpen(p.prfId);
                   }}
                 />
-                <s.PerformanceTitle>{p.prfNm}</s.PerformanceTitle>
+                <s.PerformanceTitle
+                  onClick={() => {
+                    handelModalOpen(p.prfId);
+                  }}
+                >
+                  {p.prfNm}
+                </s.PerformanceTitle>
                 <s.PerformancePlace>{p.prfPlcNm}</s.PerformancePlace>
 
                 <s.PerformancePeriod>
