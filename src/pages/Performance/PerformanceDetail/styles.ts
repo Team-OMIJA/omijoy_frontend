@@ -177,11 +177,13 @@ export const ScrapCountText = styled.p`
   /* position: absolute; */
   /* right: -4px;       */
   /* bottom: -6px;       */
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #a3a3a3;
   line-height: 1;
   white-space: nowrap;
   pointer-events: none;
+  margin-top: 6px;
+  font-weight: 500;
 `;
 
 export const HeartIconButton = styled.div<{ liked: boolean }>`
