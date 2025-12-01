@@ -158,7 +158,7 @@ export const ModalFlagButton = styled.button<{ flagged: boolean }>`
   transition: color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    color: ${(props) => (props.flagged ? "#02c83dff" : "#ffffffff")};
+    color: ${(props) => (props.flagged ? "#05e648ff" : "#ffffffff")};
     transform: scale(1.1);
   }
 
