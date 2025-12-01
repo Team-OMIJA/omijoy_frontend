@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
 // 전체 영역: 가로 배치, 그림자 없음
@@ -114,13 +113,12 @@ export const CancelBtn = styled.button`
   }
 `;
 
-
-export const inputWrapper = css`
+export const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-export const inputStyle = css`
+export const InputStyle = styled.input`
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #444;
@@ -140,10 +138,9 @@ export const inputStyle = css`
     color: #777;
   }
 
-  /* 비활성화, 에러 등 원하는 추가 스타일도 가능 */
 `;
 
-export const helperTextStyle = css`
+export const HelperTextStyle = styled.span`
   color: #ff6b6b;
   font-size: 13px;
   margin-top: 6px;

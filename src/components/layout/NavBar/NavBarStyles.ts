@@ -1,6 +1,7 @@
-import { css } from '@emotion/react';
+import styled from "@emotion/styled";
 
-export const navStyle = css`
+// 전체 Nav
+export const NavBar = styled.nav`
   position: sticky;
   top: 0;
   background: #0f0f0f;
@@ -9,11 +10,11 @@ export const navStyle = css`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-
   z-index: 100;
 `;
 
-export const logo = css`
+// 로고
+export const Logo = styled.div`
   font-weight: bolder;
   font-size: 1.3em;
   margin-left: 100px;
@@ -22,25 +23,27 @@ export const logo = css`
   color: crimson;
 `;
 
-export const navListStyle = css`
+// 네비 리스트
+export const NavList = styled.ul`
   font-size: 1em;
   list-style: none;
   display: flex;
   gap: 50px;
-
   padding: 0;
   margin: 0;
 `;
 
-export const linkStyle = (active: boolean) => css`
+// 링크 스타일
+export const StyledLink = styled.div<{ active: boolean }>`
   position: relative;
   text-decoration: none;
-  color: ${active ? '#e0e0e0' : '#cfcfcf'};
-  font-weight: ${active ? 'bold' : 'normal'};
+  color: ${({ active }) => (active ? "#e0e0e0" : "#cfcfcf")};
+  font-weight: ${({ active }) => (active ? "bold" : "normal")};
   transition: color 0.2s ease;
+  cursor: pointer;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 50%;
     bottom: -18px;
@@ -57,22 +60,19 @@ export const linkStyle = (active: boolean) => css`
   }
 `;
 
-export const profileContainer = css`
+// 프로필 컨테이너
+export const ProfileContainer = styled.div`
   margin-right: 100px;
   display: flex;
   align-items: center;
   margin-left: auto;
 `;
 
-// 유저가 가지고있는() 이미지에 적용시킴
-export const profileStyle = (hasImg: unknown) => css`
+// 프로필 아바타 스타일
+export const ProfileAvatar = styled.div<{ hasImg: boolean }>`
   width: 40px;
   height: 40px;
-  background-color: ${hasImg ? 'transparent' : 'ccc'};
+  background-color: ${({ hasImg }) => (hasImg ? "transparent" : "#ccc")};
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  &:hover {
-    transform: scale(1.05);
-  }
 `;

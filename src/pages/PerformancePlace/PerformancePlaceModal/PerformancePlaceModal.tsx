@@ -18,12 +18,8 @@ import { FaFlagCheckered } from "react-icons/fa";
 import { FaParking } from "react-icons/fa";
 import { GrElevator } from "react-icons/gr";
 import { TbDisabled } from "react-icons/tb";
+import { PerformancePlaceModalProps } from "../../../types/performancePlace";
 
-interface PerformancePlaceModalProps {
-  place: PlaceMarker;
-  // 모달 닫을 때 flag 값 전달하기 위함
-  onClose: (updatedFlag?: boolean) => void;
-}
 
 function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const { principal } = usePrincipalState.getState();

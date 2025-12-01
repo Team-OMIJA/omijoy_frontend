@@ -7,7 +7,7 @@ import {
   formatDateDot,
 } from "../../../../components/format/formatDate";
 import { useNavigate } from "react-router-dom";
-import * as s from "./styles";
+import * as s from "./KidsNewPerformancesStyles";
 
 function KidsNewPerformances() {
   //eslint-disable-next-line

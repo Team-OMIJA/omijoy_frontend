@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useFavoriteState } from "../stores/useFavoriteState";
 import { useLocation } from "react-router-dom";
+import { getFavoriteCountReq } from "../apis/favoriteApi";
 
 export function useDeferredFavorite(prfId: string | undefined) {
   const { fetchFavoriteState, fetchFavoriteCount, toggleFavorite } =
@@ -35,7 +36,8 @@ export function useDeferredFavorite(prfId: string | undefined) {
       await fetchFavoriteCount(prfId);
 
       // 서버 스크랩 카운트 불러오기
-      const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
+      // const count = useFavoriteState.getState().favoriteCount[prfId] ?? 0;
+      const count = await getFavoriteCountReq(prfId);
 
       setLocalLiked(serverLiked);
       setLocalScrapCount(count);
