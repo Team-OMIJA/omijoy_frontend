@@ -63,10 +63,10 @@ export const Title = styled(Typography)`
   margin-bottom: 8px;
   font-size: 1.5rem;
   font-weight: bold;
-  padding-right: 60px;
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
+  max-width: calc(100% - 100px);
 `;
 
 export const InfoText = styled(Typography)`
