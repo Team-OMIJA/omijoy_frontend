@@ -10,9 +10,18 @@ export const PerformanceListFullBox = styled.div`
 
 export const PerformanceListSubBox = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 0;
+  position: sticky;
+  top: 65px;
+  background-color: #121212;
+  z-index: 100;
+`;
+
+export const PerformanceListTopRow = styled.div`
+  display: flex;
   gap: 10px;
-  margin-bottom: -10px;
+  align-items: center;
 `;
 
 export const PerformanceListDropdownWrapper = styled.div<{ open?: boolean }>`
@@ -140,7 +149,6 @@ export const PerformanceListGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 30px;
-  margin-top: 30px;
 `;
 
 export const PerformanceListCard = styled.div`
@@ -235,15 +243,19 @@ export const PerformanceListGenreNm = styled.div`
   pointer-events: none;
 `;
 
+export const PerformanceListAreaFilter = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+  margin-bottom: 15px;
+`;
+
 export const PerformanceListGenreFilter = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
-`;
-
-export const PerformanceListAreaFilter = styled(PerformanceListGenreFilter)`
-  margin-top: 36px;
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`

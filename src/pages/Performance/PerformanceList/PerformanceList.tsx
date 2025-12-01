@@ -82,6 +82,7 @@ function PerformanceList() {
 
   // 데이터 fetch + 무한 스크롤
   const getPerformance = useCallback(async (searchQuery: string, append = false, pageToLoad = 0) => {
+    
     setLoading(true);
     try {
       const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
@@ -159,6 +160,7 @@ function PerformanceList() {
   return (
     <s.PerformanceListFullBox>
       <s.PerformanceListSubBox>
+        <s.PerformanceListTopRow>
         <ScrollTop />
 
         {/* 정렬 드롭다운 */}
@@ -273,7 +275,7 @@ function PerformanceList() {
             value={query}
             open={searchOpen || !!query}
             onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0)}
+            onKeyDown={e => e.key === 'Enter' && getPerformance(query, false, 0) }
           />
           <s.PerformanceListSearchIcon
             size={18}
@@ -295,27 +297,28 @@ function PerformanceList() {
             />
           )}
         </s.PerformanceListSearchWrapper>
+        </s.PerformanceListTopRow>
+
+        {/* 지역 칩 */}
+        <s.PerformanceListAreaFilter>
+          {arfilter.map(item => (
+            <s.PerformanceListAreaFilterItem key={`area-${item}`}>
+              <span>{item}</span>
+              <s.PerformanceListAreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
+            </s.PerformanceListAreaFilterItem>
+          ))}
+        </s.PerformanceListAreaFilter>
+
+        {/* 장르 칩 */}
+        <s.PerformanceListGenreFilter>
+          {gefilter.map(item => (
+            <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
+              <span>{item}</span>
+              <s.PerformanceListGenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
+            </s.PerformanceListGenreFilterItem>
+          ))}
+        </s.PerformanceListGenreFilter>
       </s.PerformanceListSubBox>
-
-      {/* 지역 칩 */}
-      <s.PerformanceListAreaFilter>
-        {arfilter.map(item => (
-          <s.PerformanceListAreaFilterItem key={`area-${item}`}>
-            <span>{item}</span>
-            <s.PerformanceListAreaFilterRemove size={16} onClick={() => removeFilter('area', item)} />
-          </s.PerformanceListAreaFilterItem>
-        ))}
-      </s.PerformanceListAreaFilter>
-
-      {/* 장르 칩 */}
-      <s.PerformanceListGenreFilter>
-        {gefilter.map(item => (
-          <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
-            <span>{item}</span>
-            <s.PerformanceListGenreFilterRemove size={14} onClick={() => removeFilter('genre', item)} />
-          </s.PerformanceListGenreFilterItem>
-        ))}
-      </s.PerformanceListGenreFilter>
 
       {/* if 결과 없음 */}
       {performances.length === 0 && !loading && (

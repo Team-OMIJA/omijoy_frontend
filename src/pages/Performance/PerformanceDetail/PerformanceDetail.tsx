@@ -239,7 +239,32 @@ function PerformanceDetail() {
             <s.InfoGroup>
               <s.InfoItem>
                 <s.Label>장르</s.Label>
-                <s.Value>{performance.genreNm}</s.Value>
+                <s.Value>
+                  {(() => {
+                    const original = performance.prfPlcNm;
+                    let result = "";
+                    const seen = new Set<string>();
+
+                  original.split(/\s*(\([^)]+\))/).forEach(part => {
+                    if (!part) return;
+                    if (!part.startsWith('(')) {
+                      result += part;
+                      return;
+                    }
+
+                    const content = part.slice(1, -1).trim();
+                    const normalized = content.replace(/\s+/g, '');
+                    const normalizedResult = result.replace(/\s+/g, '');
+
+                    if (seen.has(normalized) || normalizedResult.includes(normalized)) return;
+
+                    seen.add(normalized);
+                    result += `(${content})`;
+                  });
+
+                    return result.trim();
+                  })()}
+              </s.Value>
               </s.InfoItem>
 
               <s.InfoItem>
