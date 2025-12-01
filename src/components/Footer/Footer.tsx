@@ -1,4 +1,5 @@
-import * as s from "./styles";
+/** @jsxImportSource @emotion/react */
+import * as s from "./FooterStyles";
 
 export default function Footer() {
   return (

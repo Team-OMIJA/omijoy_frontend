@@ -2,7 +2,7 @@ import MonthlyNewSignUps from "../AdminDashboard/MonthlyNewSignUps/MonthlyNewSig
 import ScrapTop10List from "../AdminDashboard/ScrapTop10List/ScrapTop10List";
 import WeeklySiteViews from "../AdminDashboard/SiteViews/WeeklySiteViews";
 import AdminSidebar from "./AdminSideBar/AdminSideBar";
-import * as s from "./AdminSideBar/styles";
+import * as s from "./AdminSideBar/AdminSideBarStyles";
 
 function AdminDashboard() {
   return (
