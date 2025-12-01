@@ -2,16 +2,8 @@ import { useState } from "react";
 import { KOREA_REGIONS } from "../../../utils/regions";
 import { FiChevronLeft, FiChevronRight, FiMapPin } from "react-icons/fi";
 import * as S from "./RegionFilterSidebarModal.styles";
-
-type SidoKey = keyof typeof KOREA_REGIONS;
-
-interface RegionFilterSidebarProps {
-  selectedSido: SidoKey | "";
-  selectedGugun: string;
-  onSidoChange: (sido: SidoKey | "") => void;
-  onGugunChange: (gugun: string) => void;
-  onApply: () => void;
-}
+import { SidoKey } from "../../../types/performancePlace";
+import { RegionFilterSidebarProps } from "../../../types/performancePlace";
 
 function RegionFilterSidebar({
   selectedSido,
