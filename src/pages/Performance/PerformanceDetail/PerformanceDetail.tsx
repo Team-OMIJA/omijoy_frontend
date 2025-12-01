@@ -6,7 +6,7 @@ import { removeRegionTag } from "../../../components/removeRegionTag/removeRegio
 import CheckIcon from "@mui/icons-material/Check";
 import { PerformanceDetailPage } from "../../../types/performancePageTypes";
 import { fetchPerformanceDetail } from "../../../apis/performanceApi";
-import * as s from "./styles";
+import * as s from "./PerformanceDetailStyles";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useDeferredFavorite } from "../../../hooks/useDeferredFavorite";
 import { formatTime } from "../../../components/format/formatDate";
