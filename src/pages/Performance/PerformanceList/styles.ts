@@ -6,6 +6,7 @@ export const PerformanceListFullBox = styled.div`
   width: 100%;
   padding: 40px 60px;
   box-sizing: border-box;
+  background: #121212; 
 `;
 
 export const PerformanceListSubBox = styled.div`
@@ -13,8 +14,8 @@ export const PerformanceListSubBox = styled.div`
   flex-direction: column;
   gap: 0;
   position: sticky;
-  top: 65px;
-  background-color: #121212;
+  top: 105px;
+  background: #121212;
   z-index: 100;
 `;
 
