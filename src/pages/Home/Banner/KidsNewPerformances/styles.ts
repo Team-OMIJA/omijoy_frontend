@@ -39,7 +39,7 @@ export const DarkOverlay = styled.div`
 /* 상단 제목 */
 export const HeaderText = styled.div`
   position: absolute;
-  top: 22px;
+  top: 25px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
@@ -96,9 +96,12 @@ export const Title = styled.div`
   text-align: center;
   margin-bottom: 6px;
   text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
-  word-break: keep-all;
-  overflow-wrap: break-word;
-  white-space: normal;
+
+  white-space: nowrap; /* 한 줄만 */
+  overflow: hidden; /* 넘치면 숨김 */
+  text-overflow: ellipsis; /* ... 표시 */
+  width: 90%;
+  display: block;
   color: #e0e0e0;
 `;
 

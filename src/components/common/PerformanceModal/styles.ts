@@ -53,6 +53,7 @@ export const ScrapCountText = styled(Typography)`
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.75rem;
+  font-weight: 600;
   color: #a3a3a3;
   white-space: nowrap;
 `;
