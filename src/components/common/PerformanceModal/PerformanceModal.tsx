@@ -13,6 +13,7 @@ import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import { PerformanceDetail } from "../../../types/homePageTypes";
 import { removeRegionTag } from "../../removeRegionTag/removeRegionTag";
 import * as s from "./styles";
+import { usePrincipalState } from "../../../stores/usePrincipalState";
 
 type CommonModalProps = {
   open: boolean;
@@ -41,6 +42,8 @@ function CommonModal({
   } = useFavoriteState();
 
   const navigate = useNavigate();
+  
+    const { principal } = usePrincipalState();
 
   // 모달 UI 전용 좋아요 상태 (하트 / 카운트)(DB요청 안감)
   const [localLiked, setLocalLiked] = useState(false);
@@ -71,6 +74,11 @@ function CommonModal({
 
   // UI에서 하트를 누를 때 서버 요청 없이 UI 상태만 변경
   const handleToggleLocalFavorite = async () => {
+     if (!principal) {
+      alert("로그인 후 이용 가능합니다.");
+      navigate("/login");
+      return;
+    }
     // 반전시켜야 토글됨
     const newLiked = !localLiked;
     setLocalLiked(newLiked);

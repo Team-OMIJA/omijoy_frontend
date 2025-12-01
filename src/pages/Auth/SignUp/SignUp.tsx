@@ -1,8 +1,9 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import { Button, Snackbar, Stack, TextField, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { instance } from '../../../apis/instance';
-import './SignUp.css';
+/** @jsxImportSource @emotion/react */
+import * as s from "./SignUpStyles";
+import { ChangeEvent, useEffect, useState } from "react";
+import { Snackbar, Stack, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { instance } from "../../../apis/instance";
 
 type SignUpForm = {
   email: string;
@@ -14,9 +15,9 @@ function SignUp() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState<SignUpForm>({
-    email: '',
-    password: '',
-    confirm: '',
+    email: "",
+    password: "",
+    confirm: "",
   });
 
   const [errorMessage, setErrorMessage] = useState<{
@@ -24,14 +25,14 @@ function SignUp() {
     password: string;
     confirm: string;
   }>({
-    email: '',
-    password: '',
-    confirm: '',
+    email: "",
+    password: "",
+    confirm: "",
   });
 
   const [snack, setSnack] = useState<{ open: boolean; message: string }>({
     open: false,
-    message: '',
+    message: "",
   });
 
   // 정규식: 기본 이메일 형식, 비밀번호는 영문/숫자/특수문자 포함 8~15자
@@ -40,21 +41,21 @@ function SignUp() {
 
   useEffect(() => {
     const nextErrors: { email: string; password: string; confirm: string } = {
-      email: '',
-      password: '',
-      confirm: '',
+      email: "",
+      password: "",
+      confirm: "",
     };
 
     if (form.email.length > 0 && !emailRegex.test(form.email)) {
-      nextErrors.email = '올바른 이메일 형식이 아닙니다.';
+      nextErrors.email = "올바른 이메일 형식이 아닙니다.";
     }
 
     if (form.password.length > 0 && !pwRegex.test(form.password)) {
-      nextErrors.password = '영문/숫자/특수문자 조합 8~15자';
+      nextErrors.password = "영문/숫자/특수문자 조합 8~15자";
     }
 
     if (form.confirm.length > 0 && form.confirm !== form.password) {
-      nextErrors.confirm = '비밀번호가 일치하지 않습니다.';
+      nextErrors.confirm = "비밀번호가 일치하지 않습니다.";
     }
 
     setErrorMessage(nextErrors);
@@ -66,32 +67,34 @@ function SignUp() {
 
   const signUpHandler = () => {
     if (!form.email || !form.password) {
-      setSnack({ open: true, message: '이메일과 비밀번호를 입력해 주세요.' });
+      setSnack({ open: true, message: "이메일과 비밀번호를 입력해 주세요." });
       return;
     }
 
     if (!emailRegex.test(form.email)) {
-      setSnack({ open: true, message: '올바른 이메일 형식이 아닙니다.' });
+      setSnack({ open: true, message: "올바른 이메일 형식이 아닙니다." });
       return;
     }
 
     if (!pwRegex.test(form.password)) {
-      setSnack({ open: true, message: '영문/숫자/특수문자 조합 8~15자' });
+      setSnack({ open: true, message: "영문/숫자/특수문자 조합 8~15자" });
       return;
     }
 
     if (form.password !== form.confirm) {
-      setSnack({ open: true, message: '비밀번호가 일치하지 않습니다.' });
+      setSnack({ open: true, message: "비밀번호가 일치하지 않습니다." });
       return;
     }
 
     instance
-      .post('/signup', { email: form.email, password: form.password })
+      .post("/signup", { email: form.email, password: form.password })
       .then(() => {
-        setSnack({ open: true, message: '회원가입이 완료되었습니다.' });
-        navigate('/login', { replace: true });
+        setSnack({ open: true, message: "회원가입이 완료되었습니다." });
+        navigate("/login", { replace: true });
       })
-      .catch(() => setSnack({ open: true, message: '회원가입에 실패했습니다.' }));
+      .catch(() =>
+        setSnack({ open: true, message: "회원가입에 실패했습니다." })
+      );
   };
 
   const isDisabled =
@@ -104,66 +107,64 @@ function SignUp() {
 
   return (
     <>
-      <div className='signup-page'>
-        <div className='signup-panel'>
-          <Typography className='signup-title' component='h1' variant='h5'>
+      <s.SignupPage>
+        <s.SignupPanel>
+          <s.SignupTitle component="h1" variant="h5">
             회원가입
-          </Typography>
-          <p className='signup-caption'>
+          </s.SignupTitle>
+          <s.SignupCaption>
             새로운 계정을 만들어
             <br /> 오미조이 커뮤니티와 혜택을 즐겨보세요.
-          </p>
+          </s.SignupCaption>
 
-          <Stack spacing={2} className='signup-form'>
-            <TextField
-              label='이메일'
-              name='email'
-              type='email'
-              value={form.email}
-              onChange={changeHandler}
-              error={!!errorMessage.email}
-              helperText={errorMessage.email || ' '}
-            />
-            <TextField
-              label='비밀번호'
-              name='password'
-              type='password'
-              value={form.password}
-              onChange={changeHandler}
-              error={!!errorMessage.password}
-              helperText={errorMessage.password || ' '}
-            />
-            <TextField
-              label='비밀번호 확인'
-              name='confirm'
-              type='password'
-              value={form.confirm}
-              onChange={changeHandler}
-              error={!!errorMessage.confirm}
-              helperText={errorMessage.confirm || ' '}
-            />
-            <Button
-              className='signup-submit-button'
-              variant='outlined'
-              color='primary'
-              onClick={signUpHandler}
-              disabled={isDisabled}
-            >
-              회원가입
-            </Button>
-          </Stack>
+          <s.SigupForm>
+            <Stack spacing={2} className="signup-form">
+              <TextField
+                label="이메일"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={changeHandler}
+                error={!!errorMessage.email}
+                helperText={errorMessage.email || " "}
+              />
+              <TextField
+                label="비밀번호"
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={changeHandler}
+                error={!!errorMessage.password}
+                helperText={errorMessage.password || " "}
+              />
+              <TextField
+                label="비밀번호 확인"
+                name="confirm"
+                type="password"
+                value={form.confirm}
+                onChange={changeHandler}
+                error={!!errorMessage.confirm}
+                helperText={errorMessage.confirm || " "}
+              />
 
-          <button
-            type='button'
-            className='signup-link'
+              <s.SignupSubmitButton
+                onClick={signUpHandler}
+                disabled={isDisabled}
+              >
+                회원가입
+              </s.SignupSubmitButton>
+            </Stack>
+          </s.SigupForm>
+
+          <s.SignupLinkButton
             onClick={() => {
-              navigate('/login', { replace: true });
+              navigate("/login", { replace: true });
             }}
           >
             이미 계정이 있으신가요?
-          </button>
-        </div>
-      </div>
+          </s.SignupLinkButton>
+        </s.SignupPanel>
+      </s.SignupPage>
 
       <Snackbar
         open={snack.open}
