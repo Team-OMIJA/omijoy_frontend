@@ -27,7 +27,8 @@ function PerformancePlaceMap() {
   const [_isLoading, setIsLoading] = useState(false);
   const [places, setPlaces] = useState<PlaceMarker[]>([]);
   const [isKakaoMapLoaded, setIsKakaoMapLoaded] = useState(false);
-  const [isLocationDenied, setIsLocationDenied] = useState(false);
+  //eslint-disable-next-line
+  const [_isLocationDenied, setIsLocationDenied] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tempSido, setTempSido] = useState<SidoKey | "">("");
   const [tempGugun, setTempGugun] = useState<string>("");
