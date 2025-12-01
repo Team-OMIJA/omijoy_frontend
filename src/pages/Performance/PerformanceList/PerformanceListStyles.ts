@@ -6,7 +6,7 @@ export const PerformanceListFullBox = styled.div`
   width: 100%;
   padding: 0px 60px;
   box-sizing: border-box;
-  background: #121212; 
+  background: #121212;
 `;
 
 export const PerformanceListSubBox = styled.div`
@@ -21,7 +21,7 @@ export const PerformanceListSubBox = styled.div`
   &::before {
     content: "";
     display: block;
-    height: 30px; 
+    height: 30px;
     background: #121212;
   }
 `;
@@ -54,7 +54,7 @@ export const PerformanceListDropdownButton = styled.div<{ open?: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
+
   &:after {
     content: "▼";
     margin-left: 8px;
@@ -64,9 +64,11 @@ export const PerformanceListDropdownButton = styled.div<{ open?: boolean }>`
   }
 `;
 
-  export const PerformanceListGenreDropdownButton = styled(PerformanceListDropdownButton)`
-    width: 200px;
-  `;
+export const PerformanceListGenreDropdownButton = styled(
+  PerformanceListDropdownButton
+)`
+  width: 200px;
+`;
 
 export const PerformanceListDropdownList = styled.ul`
   position: absolute;
@@ -149,9 +151,8 @@ export const PerformanceListClearIcon = styled(GrClose)`
 
 export const PerformanceListErrorMessage = styled.div`
   color: white;
-  marginTop: 20px;
+  margintop: 20px;
 `;
-
 
 export const PerformanceListGrid = styled.div`
   display: grid;
@@ -159,16 +160,47 @@ export const PerformanceListGrid = styled.div`
   gap: 30px;
 `;
 
-export const PerformanceListCard = styled.div`
-  text-align: left;
-  padding: 5px;
-  border-radius: 14px;
+export const PosterWrapper = styled.div`
+  position: relative;
+  margin-bottom: 16px;
+  overflow: hidden; 
+  border-radius: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-6px);
+  }
+`;
+
+export const PerformanceListPosterImg = styled.div`
+  width: 100%;
+  height: 260px;
+  border-radius: 10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+  }
+`;
+
+export const PerformanceListCard = styled.div`
+  padding: 5px;
+  border-radius: 14px;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
   }
+`;
+
+export const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
 `;
 
 export const PerformanceListClickableWrapper = styled.div`
@@ -197,29 +229,21 @@ export const PerformanceListPlaceDetail = styled.div`
   color: #dbdbdb;
   font-size: 13px;
   margin: 2px 0;
-  wordBreak: "keep-all";
-  overflowWrap: "break-word";
-  whiteSpace: "normal";
+  wordbreak: "keep-all";
+  overflowwrap: "break-word";
+  whitespace: "normal";
+
+   p {
+    margin: 0;   /* 기본 margin 완전 제거 */
+  }
 `;
 
 /* 기간 */
 export const PerformanceListPeriod = styled.div`
   color: #a3a3a3;
   font-size: 13px;
-  margin: 1px 0;
-`;
-
-export const PerformanceListPosterImg = styled.div`
-  width: 100%;
-  height: 260px;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 30px;
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    cursor: pointer;
+  p {
+    margin: 0;   /* 기본 margin 완전 제거 */
   }
 `;
 
@@ -228,14 +252,14 @@ export const PerformanceListName = styled.h4`
   color: #dbdbdb;
   font-size: 15px;
   font-weight: 600;
-  margin: 3px 0 4px 0;
+  /* margin: 3px 0 4px 0; */
+   margin: 2px 0 2px 0;
   line-height: 1.4;
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
   cursor: pointer;
 `;
-
 
 /* 상세2 */
 export const PerformanceListPlace = styled.div`
@@ -257,25 +281,24 @@ export const PerformanceListGenreNm = styled.div`
   pointer-events: none;
 `;
 
-export const PerformanceListAreaFilter = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'hasChips',
+export const PerformanceListAreaFilter = styled("div", {
+  shouldForwardProp: (prop) => prop !== "hasChips",
 })<{ hasChips?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: ${({ hasChips }) => (hasChips ? '20px' : '7.5px')};
-  margin-bottom: ${({ hasChips }) => (hasChips ? '10px' : '7.5px')};
+  margin-top: ${({ hasChips }) => (hasChips ? "20px" : "7.5px")};
+  margin-bottom: ${({ hasChips }) => (hasChips ? "10px" : "7.5px")};
 `;
 
-
-export const PerformanceListGenreFilter = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'hasChips',
+export const PerformanceListGenreFilter = styled("div", {
+  shouldForwardProp: (prop) => prop !== "hasChips",
 })<{ hasChips?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: ${({ hasChips }) => (hasChips ? '10px' : '7.5px')};
-  margin-bottom: ${({ hasChips }) => (hasChips ? '20px' : '7.5px')};
+  margin-top: ${({ hasChips }) => (hasChips ? "10px" : "7.5px")};
+  margin-bottom: ${({ hasChips }) => (hasChips ? "20px" : "7.5px")};
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`
