@@ -4,7 +4,7 @@ import { GrClose } from "react-icons/gr";
 
 export const PerformanceListFullBox = styled.div`
   width: 100%;
-  padding: 40px 60px;
+  padding: 0px 60px;
   box-sizing: border-box;
   background: #121212; 
 `;
@@ -14,9 +14,16 @@ export const PerformanceListSubBox = styled.div`
   flex-direction: column;
   gap: 0;
   position: sticky;
-  top: 105px;
+  top: 65px;
   background: #121212;
   z-index: 100;
+
+  &::before {
+    content: "";
+    display: block;
+    height: 30px; 
+    background: #121212;
+  }
 `;
 
 export const PerformanceListTopRow = styled.div`
@@ -248,15 +255,15 @@ export const PerformanceListAreaFilter = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 18px;
-  margin-bottom: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 export const PerformanceListGenreFilter = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 `;
 
 export const PerformanceListAreaFilterItem = styled.div`
