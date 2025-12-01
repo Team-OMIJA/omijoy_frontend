@@ -51,13 +51,23 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const navigate = useNavigate();
 
   // 버튼 클릭 시에는 화면의 상태만 변경
-  const handleToggleFlag = () => {
+  const handleToggleFlag = async () => {
     if (!principal) {
       alert("로그인 후 이용해주세요.");
       navigate("/login");
       return;
     }
-    setFlagged((prev) => !prev);
+    if( initialFlagged && flagged){
+      try{
+        await mutation.mutateAsync();
+        onClose(false);
+      }
+      catch(err){
+        console.log("플래그 업데이트 실패: " , err);
+    }
+    } else {
+      setFlagged((prev) => !prev);
+    }
   };
 
   // 모달이 닫힐 때 서버 업데이트 + 공연장 맵 쪽(부모)에게 상태 전달
@@ -155,17 +165,17 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         place.parkBarrier === "Y" ? (
           <S.AmenityIconsWrapper>
             {place.parkingLot === "Y" && (
-              <S.AmenityIcon color="#37c0ff" title="주차장">
+              <S.AmenityIcon color="#dbdbdb" title="주차장">
                 <FaParking />
               </S.AmenityIcon>
             )}
             {place.eleve === "Y" && (
-              <S.AmenityIcon color="#FFFFFF" title="엘리베이터">
+              <S.AmenityIcon color="#dbdbdb" title="엘리베이터">
                 <GrElevator />
               </S.AmenityIcon>
             )}
             {place.parkBarrier === "Y" && (
-              <S.AmenityIcon color="#FFFFFF" title="장애인 주차장">
+              <S.AmenityIcon color="#dbdbdb" title="장애인 주차장">
                 <TbDisabled />
               </S.AmenityIcon>
             )}

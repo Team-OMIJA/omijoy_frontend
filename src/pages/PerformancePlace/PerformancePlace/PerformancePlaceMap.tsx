@@ -172,7 +172,7 @@ function PerformancePlaceMap() {
   return (
     <S.MapWrapper>
       <S.MapContainer>
-        {isKakaoMapLoaded && !isLocationDenied && (
+        {isKakaoMapLoaded && (
           <>
             <RegionFilterSidebar
               selectedSido={tempSido}
