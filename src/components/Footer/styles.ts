@@ -28,3 +28,9 @@ export const Title = styled.div`
 export const Item = styled.div`
   margin-bottom: 6px;
 `;
+
+export const Copyright = styled.div`
+  margin-top: 12px;
+  opacity: 0.7;
+  font-size: 12px;
+`;

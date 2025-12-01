@@ -18,8 +18,8 @@ function AwardRecommendList() {
   const autoplay = useRef(
     Autoplay({
       delay: 8000,
-      stopOnInteraction: false,
-      stopOnMouseEnter: true,
+      stopOnInteraction: false, // 클릭, 드래그 등 해도 autoplay 유지
+      stopOnMouseEnter: true, // 마우스 올리면 일시정지
     })
   );
 
@@ -42,44 +42,41 @@ function AwardRecommendList() {
       {loading ? (
         <PrfListSkeleton />
       ) : (
-        <div style={{ width: "100%", position: "relative" }}>
-          {/* <s.gradientLeft style={{ height: "300px" }} />
-          <s.gradientRight style={{ height: "300px" }} /> */}
-          <Carousel
-            slideSize="20%"
-            slideGap="30px"
-            height={470}
-            withControls={false}
-            plugins={[autoplay.current]}
-            emblaOptions={{
-              align: "start",
-              dragFree: false,
-              slidesToScroll: 5,
-            }}
-          >
-            {allPerformances.map((p, i) => (
-              <Carousel.Slide key={i}>
-                <s.PerformanceCard>
-                  <s.Poster
-                    src={p.poster}
-                    alt={p.title}
-                    onClick={() => {
-                      setSelectedPrfId(p.id);
-                      setOpen(true);
-                    }}
-                  />
+        <Carousel
+          slideSize="20%" // 한 화면에 카드 5개
+          slideGap="30px"
+          height={470}
+          withControls={false} // 왼/오 화살표 숨기기
+          plugins={[autoplay.current]} // 오토플레이 연결
+          emblaOptions={{
+            align: "start", // 왼쪽부터 정렬
+            dragFree: false,
+            slidesToScroll: 5, // 한 번에 5개씩 이동
+          }}
+        >
+          {allPerformances.map((p, i) => (
+            //p = array의 현재 요소 i = array의 현재 index
+            <Carousel.Slide key={i}>
+              <s.PerformanceCard>
+                <s.Poster
+                  src={p.poster}
+                  alt={p.title}
+                  onClick={() => {
+                    setSelectedPrfId(p.id);
+                    setOpen(true);
+                  }}
+                />
 
-                  <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
-                  <s.PerformancePlace>{p.place}</s.PerformancePlace>
-                  <s.PerformancePeriod>
-                    {p.stDate} - {p.edDate}
-                  </s.PerformancePeriod>
-                  <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
-                </s.PerformanceCard>
-              </Carousel.Slide>
-            ))}
-          </Carousel>
-        </div>
+                <s.PerformanceTitle>{p.title}</s.PerformanceTitle>
+                <s.PerformancePlace>{p.place}</s.PerformancePlace>
+                <s.PerformancePeriod>
+                  {p.stDate} - {p.edDate}
+                </s.PerformancePeriod>
+                <s.PerformanceGenre>{p.genre}</s.PerformanceGenre>
+              </s.PerformanceCard>
+            </Carousel.Slide>
+          ))}
+        </Carousel>
       )}
 
       <PerformanceModal open={open} setOpen={setOpen} prfId={selectedPrfId} />
