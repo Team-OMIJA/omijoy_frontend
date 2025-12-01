@@ -65,3 +65,29 @@ export const MoreButton = styled.button`
     color: #e0e0e0;
   }
 `;
+
+
+// 장르 버튼
+interface GenreButtonProps {
+  selected?: boolean;
+}
+
+export const GenreButton = styled.button<GenreButtonProps>`
+  background: ${(props) => (props.selected ? "#5050508d" : "#505050")};
+  border: none;
+  color: #dbdbdb;
+  padding: 4px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #5050508d;
+  }
+`;
+
+export const GenreFilter = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+`;

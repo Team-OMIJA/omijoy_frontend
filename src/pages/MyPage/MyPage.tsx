@@ -10,8 +10,9 @@ function MyPage() {
       {/* <EditProfile /> */}
       <MantineProvider>
         <FavoriteList />
+         <Flaglist />
       </MantineProvider>
-      <Flaglist />
+     
     </>
   );
 }

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Carousel } from "@mantine/carousel";
-import { styled } from "@mui/material";
+import styled from "@emotion/styled";
 
 export const container = css`
   width: 100%;
@@ -30,6 +30,7 @@ export const empty = css`
   font-size: 16px;
   text-align: center;
   padding: 40px 0;
+  color: #e0e0e0;
 `;
 
 export const list = css`
@@ -41,6 +42,7 @@ export const list = css`
   list-style: none;
 `;
 
+// 포스터
 export const card = css`
   text-align: left;
   padding: 5px;
@@ -64,9 +66,7 @@ export const poster = css`
   }
 `;
 
-export const info = css`
-  text-align: left;
-`;
+
 
 /* 제목 */
 export const name = css`
@@ -78,6 +78,26 @@ export const name = css`
   word-break: keep-all;
   overflow-wrap: break-word;
   white-space: normal;
+`;
+
+// URL 복사 및 리스트 이동 아이콘 
+export const IconHover = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px); /* 살짝 위로 올라가기 */
+    opacity: 0.85; /* 살짝 어둡게(선택사항) */
+  }
+`;
+
+// 포스터 아래 정보
+export const info = css`
+  text-align: left;
 `;
 
 /* 장소 */
@@ -110,7 +130,6 @@ export const sliderWrapper = css`
   width: 100%; */
   position: relative;
   overflow: hidden;
-  padding: 0 20px; /* 좌우 여백 살짝 */
 `;
 
 /* 왼쪽 페이드 (투명 → 배경색) */

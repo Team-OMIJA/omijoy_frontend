@@ -5,7 +5,7 @@ import { removeRegionTag } from "../../../../components/removeRegionTag/removeRe
 import {
   formatDateRange,
   formatDateDot,
-} from "../../../../components/format/formatDate";
+} from "../../../../components/FormatDate/FormatDate";
 import { useNavigate } from "react-router-dom";
 import * as s from "./styles";
 

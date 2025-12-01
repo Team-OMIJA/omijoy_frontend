@@ -7,14 +7,15 @@ export const ProfileContainer = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 2rem;
-  min-height: 160px;
+  min-height: 300px;
   width: 100%;
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem 2.5rem;
+  max-width: 1450px;
+  border-radius: 20px;
+  /* margin: 0 2rem auto  0 0; */
+  margin-top: 5rem;
+  padding: 2rem 7rem;
 
-   background-color: #121212;
-
+  background-color: #151515;
 `;
 
 // 프로필 이미지
@@ -25,7 +26,7 @@ export const AvatarWrapper = styled.div`
   justify-content: center;
 `;
 
-// ✎ 아이콘
+//  아이콘
 export const EditLabel = styled.label`
   position: absolute;
   bottom: 6px;
@@ -46,14 +47,55 @@ export const EditLabel = styled.label`
   }
 `;
 
-// 오른쪽 영역 (닉네임 + 저장 버튼)
+// 유저명 + 수정버튼 + 이메일
 export const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
 `;
 
-export const BtnContainer = styled.div`
+// 유저 이름
+export const Username = styled.p`
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  margin: 0px;
+`;
+// 유저 이메일
+export const Email = styled.p`
+  font-size: 1rem;
+  color: #8e8e8e;
+  margin: 0px;
+  padding-bottom: 5px;
+`;
+
+
+// 유저명 - 수정버튼 컨테이너
+export const UsernameRow = styled.div`
   display: flex;
-  margin-top: 8px;
+  align-items: center;
+  gap: 10px; /* 이름과 버튼 사이 간격 */
+`;
+
+// 수정 버튼
+export const EditBtn = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 6px;
+  margin-top: 6px;
+  background-color: #b01c1c;
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  line-height: 26px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: #8f1515;
+  }
 `;

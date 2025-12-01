@@ -11,7 +11,7 @@ function FavoriteSharedList() {
   const { userId } = useParams<{ userId: string }>();
   const { favoriteList, setFavoriteList } = useFavoriteState();
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -35,7 +35,7 @@ function FavoriteSharedList() {
     <>
       <div css={s.container}>
         <ps.PerformanceTitle>
-        <h2 css={s.title}>❤️My Favorites</h2>
+        <h2 css={s.title}>FAVORITES</h2>
         </ps.PerformanceTitle>
         {favoriteList.length === 0 ? (
           <p css={s.empty}>아직 스크랩한 공연이 없습니다.</p>

@@ -15,12 +15,17 @@ type Performance = {
 type FavoriteStore = {
   favorites: Record<string, boolean>; // { [prfId]: true/false }
   favoriteList: Performance[];
+  // Record 알아볼 것
+  favoriteCount: Record<string, number>;
 
   setFavoriteList: (list: Performance[]) => void;
   removeFromFavoriteList: (prfId: string) => void;
 
   toggleFavorite: (prfId: string) => Promise<void>;
   fetchFavoriteState: (prfId: string) => Promise<boolean>;
+
+  // 상태 바로 업데이트 시 필요
+  fetchFavoriteCount: (prfId: string) => Promise<void>;
 };
 
 export const useFavoriteState = create<FavoriteStore>((set, get) => ({
@@ -28,6 +33,8 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
   favorites: {},
   // 좋아요 리스트
   favoriteList: [],
+  // 좋아요 갯수
+  favoriteCount: {},
 
   // 좋아요 리스트에 넣어줄 값
   setFavoriteList: (list) => set({ favoriteList: list }),
@@ -82,36 +89,22 @@ export const useFavoriteState = create<FavoriteStore>((set, get) => ({
   },
 
   // 좋아요 카운트
-  // favoriteCounts: {},
+  fetchFavoriteCount: async (prfId: string) => {
+    try {
+      const response = await instance.get(`/favorite/count/${prfId}`)
+      const count = response.data;
 
-  // fetchFavoriteCount: async (prfId) => {
-  //   try {
-  //     const res = await instance.get(`/commonmodal/${prfId}`)
-  //     const count = res.data.count;
-  //   }
-  // }
-  // 현재 스크랩 여부 - 공연 상세 페이지 사용
-  //  fetchDetailFavoriteState: async (prfId) => {
-  //   try {
-  //     const res = await instance.get(``)
-  //   }
-  //  }
+      set((state) => ({
+        favoriteCount: {
+          ...state.favoriteCount,
+          [prfId]: count
+        }
+      }))
+    } catch (error) {
+      console.error("좋아요 개수 조회 실패 : ", error)
 
-  //  async (prfId) => {
-  //     try {
-  //       const res = await instance.get(`/commonmodal/${prfId}`);
-  //       const favorited = res.data.favorited;
-
-  //       set((state) => ({
-  //         favorites: { ...state.favorites, [prfId]: favorited },
-  //       }));
-
-  //       return favorited;
-  //     } catch (err) {
-  //       console.error("스크랩 상태 조회 실패:", err);
-  //       return false;
-  //     }
-  //   },
+    }
+  }
 }));
 
 

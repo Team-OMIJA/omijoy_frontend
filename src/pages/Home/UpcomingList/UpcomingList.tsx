@@ -6,7 +6,7 @@ import PrfListSkeleton from "../../../components/skeleton/PrfListSkeleton";
 import {
   formatDateRange,
   formatUIDate,
-} from "../../../components/format/formatDate";
+} from "../../../components/FormatDate/FormatDate";
 import { Carousel } from "@mantine/carousel";
 import * as s from "../PerformanceStyles";
 import * as ts from "./styles";
@@ -14,7 +14,7 @@ import * as ts from "./styles";
 function UpcomingList() {
   const [performances, setPerformances] = useState<UpcomingPerformance[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

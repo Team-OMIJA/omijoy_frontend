@@ -4,7 +4,7 @@ import {
   PrfPlcModal,
   findPerformancesByPlaceId,
 } from "../../../apis/performanceplaceApi";
-import Slider from "react-slick";
+import Slider, { Settings } from "react-slick";
 import * as S from "./PerformancePlaceModal.styles";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,6 +15,9 @@ import { usePrincipalState } from "../../../stores/usePrincipalState";
 import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 import { FaFlagCheckered } from "react-icons/fa";
+import { FaParking } from "react-icons/fa";
+import { GrElevator } from "react-icons/gr";
+import { TbDisabled } from "react-icons/tb";
 
 interface PerformancePlaceModalProps {
   place: PlaceMarker;
@@ -33,15 +36,16 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     // 서버에 플래그 토글 요청
     mutationFn: () => toggleFlagReq(place.prfPlcId),
     // 요청 성공 후 flags quertKey 와 관련된 캐시된 데이터를 무효화
-    // 안써서 지움
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries(["flags"]);
-    // },
+    // myPage에서 사용함...
+    onSuccess: () => {
+      // queryClient.invalidateQueries(["flags"]);
+      queryClient.invalidateQueries({ queryKey: ["flags"] });
+    },
   });
 
   const navigate = useNavigate();
@@ -68,13 +72,11 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         return;
       }
       onClose();
-    } catch(err) {
-      console.error("플래그 업데이트 실패 : ", err)
+    } catch (err) {
+      console.error("플래그 업데이트 실패 : ", err);
       onClose();
     }
-  }
-
-
+  };
 
   useEffect(() => {
     if (!place.prfPlcId) return;
@@ -116,7 +118,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const settings = {
+  const settings: Settings = {
     dots: true,
     infinite: performances.length > 5,
     speed: 500,
@@ -148,19 +150,37 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         <S.ModalInfoItem>
           <strong>주소:</strong> {place.address || "정보 없음"}
         </S.ModalInfoItem>
-        <S.ModalInfoItem>
-          <strong>주차장:</strong> {place.parkingLot === "Y" ? "⭕" : "❌"}
-        </S.ModalInfoItem>
-        <S.ModalInfoItem>
-          <strong>엘리베이터:</strong> {place.eleve === "Y" ? "⭕" : "❌"}
-        </S.ModalInfoItem>
-        <S.ModalInfoItem>
-          <strong>장애인주차장:</strong>{" "}
-          {place.parkBarrier === "Y" ? "⭕" : "❌"}
-        </S.ModalInfoItem>
+        {place.parkingLot === "Y" ||
+        place.eleve === "Y" ||
+        place.parkBarrier === "Y" ? (
+          <S.AmenityIconsWrapper>
+            {place.parkingLot === "Y" && (
+              <S.AmenityIcon color="#37c0ff" title="주차장">
+                <FaParking />
+              </S.AmenityIcon>
+            )}
+            {place.eleve === "Y" && (
+              <S.AmenityIcon color="#FFFFFF" title="엘리베이터">
+                <GrElevator />
+              </S.AmenityIcon>
+            )}
+            {place.parkBarrier === "Y" && (
+              <S.AmenityIcon color="#FFFFFF" title="장애인 주차장">
+                <TbDisabled />
+              </S.AmenityIcon>
+            )}
+          </S.AmenityIconsWrapper>
+        ) : (
+          <S.ModalInfoItem>
+            <strong style={{ color: "#FFFFFF" }}>
+              편의시설이 존재하지 않습니다.
+            </strong>
+          </S.ModalInfoItem>
+        )}
         <S.ModalInfoItem>
           <strong>전화번호:</strong> {place.tel?.trim() || "정보 없음"}
         </S.ModalInfoItem>
+
         <S.ModalButtonGroup>
           <S.ModalUrlButton onClick={handleUrlClick} disabled={!hasValidUrl}>
             {hasValidUrl ? "공연장 상세페이지" : "공연장 정보 없음"}

@@ -16,24 +16,30 @@ function TopRankList() {
   const [performances, setPerformances] = useState<TopRankPerformance[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [selectedPrfId, setSelectedPrfId] = useState<string | null>(null);
+  const [selectedPrfId, setSelectedPrfId] = useState<string>("");
+
+  // 추가
+  const [selectedGenre, setSelectedGenre] = useState<string>("");
 
   const navigate = useNavigate();
 
-  const autoplay = useRef(
-    Autoplay({
-      delay: 4000,
-    })
-  );
+  // 추가
+  const autoplay = useRef(Autoplay({ delay: 4000 })); 
 
   useEffect(() => {
     const load = async () => {
-      const data = await fetchTopRankPerformances();
+      setLoading(true);
+      const data = await fetchTopRankPerformances(selectedGenre);
       setPerformances(data);
       setLoading(false);
     };
     load();
-  }, []);
+  }, [selectedGenre]); // selectedGenre 추가
+
+  // 추가
+  const handleGenreChange = (genreCode: string) => {
+    setSelectedGenre(genreCode);
+  };  
 
   return (
     <s.SectionContainer>
@@ -46,12 +52,22 @@ function TopRankList() {
         </ts.MoreButton>
       </s.SectionHeader>
 
+      <ts.GenreFilter>
+        <ts.GenreButton selected={selectedGenre === ""}onClick={() => handleGenreChange("")}>전체</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "BBBE"}onClick={() => handleGenreChange("BBBE")}>대중무용</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "CCCD"}onClick={() => handleGenreChange("CCCD")}>대중음악</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "BBBC"}onClick={() => handleGenreChange("BBBC")}>무용(서양/한국무용)</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "GGGA"}onClick={() => handleGenreChange("GGGA")}>뮤지컬</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "CCCA"}onClick={() => handleGenreChange("CCCA")}>서양음악(클래식)</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "EEEB"}onClick={() => handleGenreChange("EEEB")}>서커스/마술</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "AAAA"}onClick={() => handleGenreChange("AAAA")}>연극</ts.GenreButton>
+        <ts.GenreButton selected={selectedGenre === "CCCC"}onClick={() => handleGenreChange("CCCC")}>한국음악(국악)</ts.GenreButton>
+      </ts.GenreFilter>
+
       {loading ? (
         <PrfListSkeleton />
       ) : (
         <div style={{ width: "100%", position: "relative" }}>
-          {/* <s.gradientLeft style={{ height: "300px" }} />
-          <s.gradientRight style={{ height: "300px" }} /> */}
           <Carousel
             slideSize="20%"
             slideGap="30px"

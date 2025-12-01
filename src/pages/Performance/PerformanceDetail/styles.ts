@@ -166,18 +166,22 @@ export const TopRightButtons = styled.div`
 `;
 
 export const HeartWrapper = styled.div`
-  position: relative;
+  /* position: relative; */
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-export const ScrapCountText = styled.div`
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background-color: #b01c1c;
-  color: #dbdbdb;
-  font-size: 11px;
-  padding: 2px 5px;
-  border-radius: 10px;
+export const ScrapCountText = styled.p`
+  /* position: absolute; */
+  /* right: -4px;       */
+  /* bottom: -6px;       */
+  font-size: 1rem;
+  color: #a3a3a3;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
 `;
 
 export const HeartIconButton = styled.div<{ liked: boolean }>`

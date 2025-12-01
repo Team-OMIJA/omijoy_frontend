@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { formatMonthDay } from "../../../components/format/formatDate";
+import { formatMonthDay } from "../../../components/FormatDate/FormatDate";
 import * as s from "../SiteViews/styles";
 import CustomTooltip from "./CustomTooltip";
 

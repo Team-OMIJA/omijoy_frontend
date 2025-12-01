@@ -1,37 +1,33 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { PiMagnifyingGlass, PiXCircle } from "react-icons/pi";
-import { GrClose, GrPowerReset } from "react-icons/gr";
+import { GrPowerReset } from "react-icons/gr";
 import useInfiniteScroll from "../../../configs/useInfiniteScroll";
 import { useNavigate, useNavigationType } from "react-router-dom";
 import ScrollTop from "../../../components/common/Button/ScrollTopButton";
 import {
   formatDateDot,
   formatDateRange,
-} from "../../../components/format/formatDate";
+} from "../../../components/FormatDate/FormatDate";
 import { removeRegionTag } from "../../../components/removeRegionTag/removeRegionTag";
 import PrfList24Skeleton from "../../../components/skeleton/PrfList24Skeleton";
 import { Performance } from "../../../types/performancePageTypes";
-import * as s from "../../Home/PerformanceStyles";
-import * as ps from "./styles";
+import * as s from "./styles";
 
 function PerformanceList() {
+  // 기본 라우팅 / 초기 Ref
+  const navigate = useNavigate();
   const navigationType = useNavigationType();
   const isInitialMount = useRef(true);
 
-  const [performances, setPerformances] = useState<Performance[]>(() => {
-    const storedData = sessionStorage.getItem("scroll-performance-data");
-    return storedData ? JSON.parse(storedData) : [];
-  });
-
-  const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState(
-    () => sessionStorage.getItem("scroll-performance-sort") || "name_asc"
+  // 데이터 / 필터 / 페이지
+  const [performances, setPerformances] = useState<Performance[]>(() =>
+    JSON.parse(sessionStorage.getItem("scroll-performance-data") || "[]")
   );
-  const navigate = useNavigate();
   const [page, setPage] = useState(() =>
     Number(sessionStorage.getItem("scroll-performance-page") || 0)
   );
-  const [hasMore, setHasMore] = useState(true);
+  const [sort, setSort] = useState(
+    () => sessionStorage.getItem("scroll-performance-sort") || "name_asc"
+  );
   const [query, setQuery] = useState(
     () => sessionStorage.getItem("scroll-performance-query") || ""
   );
@@ -50,115 +46,23 @@ function PerformanceList() {
     JSON.parse(sessionStorage.getItem("scroll-performance-vtfilter") || "false")
   );
 
-  const getPerformance = useCallback(
-    async (searchQuery: string, append = false, pageToLoad = 0) => {
-      setLoading(true);
-      try {
-        const baseUrl = "http://localhost:8080/prfDetails";
-        const isSearch = searchQuery && searchQuery.trim() !== "";
+  // 로딩 / 스크롤
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
 
-        const params = new URLSearchParams();
-        if (isSearch) params.append("search", searchQuery);
-        params.append("sort", sort);
-        params.append("page", String(pageToLoad));
-        params.append("size", "30");
-        if (stFilter) params.append("stFilter", stFilter);
-        if (arfilter.length > 0) params.append("arFilter", arfilter.join(","));
-        if (gefilter.length > 0) params.append("geFilter", gefilter.join(","));
-        if (vtFilter) params.append("vtFilter", "Y");
+  // 드롭다운 UI & ref
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [areaOpen, setAreaOpen] = useState(false);
+  const [genreOpen, setGenreOpen] = useState(false);
 
-        const url = `${baseUrl}${
-          isSearch ? "/search" : ""
-        }?${params.toString()}`;
+  const sortRef = useRef<HTMLDivElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
+  const areaRef = useRef<HTMLDivElement>(null);
+  const genreRef = useRef<HTMLDivElement>(null);
 
-        const response = await fetch(url);
-        const json: Performance[] = await response.json();
-
-        if (append) setPerformances((prev) => [...prev, ...json]);
-        else setPerformances(json);
-
-        setHasMore(json.length > 0);
-      } catch (err) {
-        console.log("공연 정보 불러오는 중 오류 발생", err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [sort, stFilter, arfilter, gefilter, vtFilter]
-  );
-
-  useEffect(() => {
-    sessionStorage.setItem("scroll-performance-sort", sort);
-    sessionStorage.setItem("scroll-performance-query", query);
-    sessionStorage.setItem(
-      "scroll-performance-stfilter",
-      JSON.stringify(stFilter)
-    );
-    sessionStorage.setItem(
-      "scroll-performance-arfilter",
-      JSON.stringify(arfilter)
-    );
-    sessionStorage.setItem(
-      "scroll-performance-gefilter",
-      JSON.stringify(gefilter)
-    );
-    sessionStorage.setItem("scroll-performance-page", String(page));
-    sessionStorage.setItem(
-      "scroll-performance-data",
-      JSON.stringify(performances)
-    );
-    sessionStorage.setItem(
-      "scroll-performance-vtfilter",
-      JSON.stringify(vtFilter)
-    );
-  }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-
-      if (navigationType === "POP" && performances.length > 0) {
-        setLoading(false);
-        return;
-      }
-    }
-    setPage(0);
-    getPerformance(query, false, 0);
-  }, [
-    sort,
-    stFilter,
-    arfilter,
-    gefilter,
-    vtFilter,
-    getPerformance,
-    navigationType,
-  ]);
-
-  const handleStatusChange = (value: string) => {
-    setStFilter(value);
-    setStatusOpen(false);
-  };
-  const handleAreaChange = (value: string) => {
-    if (value && !arfilter.includes(value)) setArFilter([...arfilter, value]);
-  };
-  const handleGenreChange = (value: string) => {
-    if (value && !gefilter.includes(value)) setGeFilter([...gefilter, value]);
-  };
-  const removeFilter = (type: "area" | "genre", value: string) => {
-    if (type === "area") setArFilter(arfilter.filter((item) => item !== value));
-    else setGeFilter(gefilter.filter((item) => item !== value));
-  };
-
-  const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      getPerformance(query, true, nextPage);
-    }
-  }, [loading, hasMore, page, query, getPerformance]);
-
-  useInfiniteScroll(loadMore, hasMore);
-
+  // 옵션 상수
   const AREA_OPTIONS = [
     "서울",
     "부산",
@@ -190,121 +94,220 @@ function PerformanceList() {
     "한국음악(국악)",
   ];
 
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [statusOpen, setStatusOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
-  const [areaOpen, setAreaOpen] = useState(false);
-  const [genreOpen, setGenreOpen] = useState(false);
-
   const sortOptions = [
     { value: "name_asc", label: "이름순 ↑" },
     { value: "name_desc", label: "이름순 ↓" },
     { value: "date", label: "최신순" },
   ];
 
+  // 핸들러
+  const handleStatusChange = (v: string) => {
+    setStFilter(v);
+    setStatusOpen(false);
+  };
+  const handleAreaChange = (v: string) => {
+    if (!arfilter.includes(v)) setArFilter([...arfilter, v]);
+  };
+  const handleGenreChange = (v: string) => {
+    if (!gefilter.includes(v)) setGeFilter([...gefilter, v]);
+  };
+  const removeFilter = (type: "area" | "genre", value: string) =>
+    type === "area"
+      ? setArFilter(arfilter.filter((i) => i !== value))
+      : setGeFilter(gefilter.filter((i) => i !== value));
+  const handleSortChange = (value: string) => {
+    if (value === "name_asc" || value === "name_desc") setSort(value);
+    else if (value === "name")
+      setSort((prev) => (prev === "name_asc" ? "name_desc" : "name_asc"));
+    else setSort("date");
+  };
+
+  // 데이터 fetch + 무한 스크롤
+  const getPerformance = useCallback(
+    async (searchQuery: string, append = false, pageToLoad = 0) => {
+      setLoading(true);
+      try {
+        const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/prfDetails`;
+        const params = new URLSearchParams();
+        if (searchQuery.trim() !== "") params.append("search", searchQuery);
+        params.append("sort", sort);
+        params.append("page", String(pageToLoad));
+        params.append("size", "30");
+        if (stFilter) params.append("stFilter", stFilter);
+        if (arfilter.length) params.append("arFilter", arfilter.join(","));
+        if (gefilter.length) params.append("geFilter", gefilter.join(","));
+        if (vtFilter) params.append("vtFilter", "Y");
+
+        const response = await fetch(
+          `${baseUrl}${searchQuery ? "/search" : ""}?${params.toString()}`
+        );
+        const json: Performance[] = await response.json();
+
+        append
+          ? setPerformances((prev) => [...prev, ...json])
+          : setPerformances(json);
+        setHasMore(json.length > 0);
+      } catch (err) {
+        console.log("공연 정보 불러오는 중 오류 발생", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [sort, stFilter, arfilter, gefilter, vtFilter]
+  );
+
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      setPage((prev) => {
+        const next = prev + 1;
+        getPerformance(query, true, next);
+        return next;
+      });
+    }
+  }, [loading, hasMore, query, getPerformance]);
+
+  useInfiniteScroll(loadMore, hasMore);
+
+  // sessionStorage 자동 저장
+  useEffect(() => {
+    sessionStorage.setItem("scroll-performance-sort", sort);
+    sessionStorage.setItem("scroll-performance-query", query);
+    sessionStorage.setItem(
+      "scroll-performance-stfilter",
+      JSON.stringify(stFilter)
+    );
+    sessionStorage.setItem(
+      "scroll-performance-arfilter",
+      JSON.stringify(arfilter)
+    );
+    sessionStorage.setItem(
+      "scroll-performance-gefilter",
+      JSON.stringify(gefilter)
+    );
+    sessionStorage.setItem("scroll-performance-page", String(page));
+    sessionStorage.setItem(
+      "scroll-performance-data",
+      JSON.stringify(performances)
+    );
+    sessionStorage.setItem(
+      "scroll-performance-vtfilter",
+      JSON.stringify(vtFilter)
+    );
+  }, [sort, query, stFilter, arfilter, gefilter, page, performances, vtFilter]);
+
+  // mount + 필터 변경 + query 검색창
+  /* eslint-disable react-hooks/exhaustive-deps */
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (navigationType === "POP" && performances.length) {
+        setLoading(false);
+        return;
+      }
+    }
+    setPage(0);
+    getPerformance(query, false, 0);
+  }, [
+    sort,
+    stFilter,
+    arfilter,
+    gefilter,
+    vtFilter,
+    getPerformance,
+    navigationType,
+  ]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (query) setSearchOpen(true);
   }, []);
 
-  const handleSortChange = (value: string) => {
-    if (value === "name_asc" || value === "name_desc") {
-      setSort(value);
-    } else if (value === "name") {
-      setSort((prev) => (prev === "name_asc" ? "name_desc" : "name_asc"));
-    } else {
-      setSort("date");
-    }
-  };
-
-  const sortRef = useRef<HTMLDivElement>(null);
-  const statusRef = useRef<HTMLDivElement>(null);
-  const areaRef = useRef<HTMLDivElement>(null);
-  const genreRef = useRef<HTMLDivElement>(null);
-
+  // 드롭다운 바깥 클릭 감지
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (sortRef.current && !sortRef.current.contains(target))
-        setSortOpen(false);
-      if (statusRef.current && !statusRef.current.contains(target))
+    const handleClickOutside = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (sortRef.current && !sortRef.current.contains(t)) setSortOpen(false);
+      if (statusRef.current && !statusRef.current.contains(t))
         setStatusOpen(false);
-      if (areaRef.current && !areaRef.current.contains(target))
-        setAreaOpen(false);
-      if (genreRef.current && !genreRef.current.contains(target))
+      if (areaRef.current && !areaRef.current.contains(t)) setAreaOpen(false);
+      if (genreRef.current && !genreRef.current.contains(t))
         setGenreOpen(false);
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  // UI
   return (
-    <div
-      style={{ width: "100%", padding: "40px 60px", boxSizing: "border-box" }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          marginBottom: "-10px",
-        }}
-      >
+    <s.PerformanceListFullBox>
+      <s.PerformanceListSubBox>
         <ScrollTop />
-        <ps.DropdownWrapper ref={sortRef}>
-          <ps.DropdownButton
+
+        {/* 정렬 드롭다운 */}
+        <s.PerformanceListDropdownWrapper ref={sortRef}>
+          <s.PerformanceListDropdownButton
             open={sortOpen}
-            onClick={() => setSortOpen((prev) => !prev)}
+            onClick={() => setSortOpen(!sortOpen)}
           >
-            {sortOptions.find(
-              (o) => o.value === (sort.startsWith("name") ? sort : "date")
-            )?.label || "정렬"}
-          </ps.DropdownButton>
+            {
+              sortOptions.find(
+                (o) => o.value === (sort.startsWith("name") ? sort : "date")
+              )?.label
+            }
+          </s.PerformanceListDropdownButton>
           {sortOpen && (
-            <ps.DropdownList>
-              {sortOptions.map((option) => (
-                <ps.DropdownItem
-                  key={option.value}
+            <s.PerformanceListDropdownList>
+              {sortOptions.map((o) => (
+                <s.PerformanceListDropdownItem
+                  key={o.value}
                   onClick={() => {
-                    handleSortChange(option.value);
+                    handleSortChange(o.value);
                     setSortOpen(false);
                   }}
                 >
-                  {option.label}
-                </ps.DropdownItem>
+                  {o.label}
+                </s.PerformanceListDropdownItem>
               ))}
-            </ps.DropdownList>
+            </s.PerformanceListDropdownList>
           )}
-        </ps.DropdownWrapper>
-        <ps.DropdownWrapper ref={statusRef}>
-          <ps.DropdownButton
+        </s.PerformanceListDropdownWrapper>
+
+        {/* 공연 상태 */}
+        <s.PerformanceListDropdownWrapper ref={statusRef}>
+          <s.PerformanceListDropdownButton
             open={statusOpen}
-            onClick={() => setStatusOpen((prev) => !prev)}
+            onClick={() => setStatusOpen(!statusOpen)}
           >
             {stFilter}
-          </ps.DropdownButton>
+          </s.PerformanceListDropdownButton>
           {statusOpen && (
-            <ps.DropdownList>
-              <ps.DropdownItem onClick={() => handleStatusChange("공연중")}>
+            <s.PerformanceListDropdownList>
+              <s.PerformanceListDropdownItem
+                onClick={() => handleStatusChange("공연중")}
+              >
                 공연중
-              </ps.DropdownItem>
-              <ps.DropdownItem onClick={() => handleStatusChange("공연예정")}>
+              </s.PerformanceListDropdownItem>
+              <s.PerformanceListDropdownItem
+                onClick={() => handleStatusChange("공연예정")}
+              >
                 공연예정
-              </ps.DropdownItem>
-            </ps.DropdownList>
+              </s.PerformanceListDropdownItem>
+            </s.PerformanceListDropdownList>
           )}
-        </ps.DropdownWrapper>
-        <ps.DropdownWrapper ref={areaRef}>
-          <ps.DropdownButton
+        </s.PerformanceListDropdownWrapper>
+
+        {/* 지역 */}
+        <s.PerformanceListDropdownWrapper ref={areaRef}>
+          <s.PerformanceListDropdownButton
             open={areaOpen}
-            onClick={() => setAreaOpen((prev) => !prev)}
+            onClick={() => setAreaOpen(!areaOpen)}
           >
             지역
-          </ps.DropdownButton>
+          </s.PerformanceListDropdownButton>
           {areaOpen && (
-            <ps.DropdownList>
+            <s.PerformanceListDropdownList>
               {AREA_OPTIONS.map((area) => (
-                <ps.DropdownItem
+                <s.PerformanceListDropdownItem
                   key={area}
                   onClick={() => {
                     handleAreaChange(area);
@@ -312,23 +315,25 @@ function PerformanceList() {
                   }}
                 >
                   {area}
-                </ps.DropdownItem>
+                </s.PerformanceListDropdownItem>
               ))}
-            </ps.DropdownList>
+            </s.PerformanceListDropdownList>
           )}
-        </ps.DropdownWrapper>
-        <ps.DropdownWrapper ref={genreRef}>
-          <ps.DropdownButton
+        </s.PerformanceListDropdownWrapper>
+
+        {/* 장르 */}
+        <s.PerformanceListDropdownWrapper ref={genreRef}>
+          <s.PerformanceListGenreDropdownButton
             open={genreOpen}
-            onClick={() => setGenreOpen((prev) => !prev)}
-            style={{ minWidth: "200px" }}
+            onClick={() => setGenreOpen(!genreOpen)}
           >
             장르
-          </ps.DropdownButton>
+          </s.PerformanceListGenreDropdownButton>
+
           {genreOpen && (
-            <ps.DropdownList>
+            <s.PerformanceListDropdownList>
               {GENRE_OPTIONS.map((genre) => (
-                <ps.DropdownItem
+                <s.PerformanceListDropdownItem
                   key={genre}
                   onClick={() => {
                     handleGenreChange(genre);
@@ -336,24 +341,28 @@ function PerformanceList() {
                   }}
                 >
                   {genre}
-                </ps.DropdownItem>
+                </s.PerformanceListDropdownItem>
               ))}
-            </ps.DropdownList>
+            </s.PerformanceListDropdownList>
           )}
-        </ps.DropdownWrapper>
-        <s.PerformancePlace>
-          <div style={{ marginLeft: 10 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        </s.PerformanceListDropdownWrapper>
+
+        {/* 내한 */}
+        <s.PerformanceListPlaceFilter>
+          <s.PerformanceListPlaceInner>
+            <s.PerformanceListPlaceLabel>
               <input
                 type="checkbox"
                 checked={vtFilter}
                 onChange={(e) => setVtFilter(e.target.checked)}
               />
               내한 공연
-            </label>
-          </div>
-        </s.PerformancePlace>
-        <div
+            </s.PerformanceListPlaceLabel>
+          </s.PerformanceListPlaceInner>
+        </s.PerformanceListPlaceFilter>
+
+        {/* 리셋 */}
+        <s.PerformanceListResetButton
           onClick={() => {
             setSort("name_asc");
             setArFilter([]);
@@ -364,276 +373,150 @@ function PerformanceList() {
             setPage(0);
             getPerformance("", false, 0);
           }}
-          style={{
-            padding: "6px 12px",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            background: "#f0f0f0",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
         >
-          <GrPowerReset size={12} color="#333" />
-        </div>
-        <div style={{ position: "relative", marginLeft: "auto" }}>
-          <input
+          <GrPowerReset />
+        </s.PerformanceListResetButton>
+
+        {/* 검색 */}
+        <s.PerformanceListSearchWrapper>
+          <s.PerformanceListSearchInput
             type="text"
             placeholder="공연명 검색"
             value={query}
+            open={searchOpen || !!query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") getPerformance(query, false, 0);
-            }}
-            style={{
-              backgroundColor: "#fbfbfb",
-              padding: "8px 36px 8px 24px",
-              width: searchOpen || query ? 250 : 0,
-              opacity: searchOpen || query ? 1 : 0,
-              borderRadius: 10,
-              border: "2px solid #ccc",
-              outline: "none",
-              boxSizing: "border-box",
-              transition: "width 0.3s, opacity 0.3s",
-              pointerEvents: searchOpen || query ? "auto" : "none",
-            }}
+            onKeyDown={(e) =>
+              e.key === "Enter" && getPerformance(query, false, 0)
+            }
           />
-          <PiMagnifyingGlass
+          <s.PerformanceListSearchIcon
             size={18}
             onClick={() => {
-              if (!query) setSearchOpen((prev) => !prev);
+              if (!query) setSearchOpen(!searchOpen);
               else {
                 setPage(0);
                 getPerformance(query, false, 0);
               }
             }}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: 13,
-              color: "grey",
-              cursor: "pointer",
-            }}
           />
           {searchOpen && query && (
-            <GrClose
+            <s.PerformanceListClearIcon
               size={12}
               onClick={() => {
                 setQuery("");
                 getPerformance("", false, 0);
               }}
-              style={{
-                position: "absolute",
-                right: 40,
-                top: 16,
-                color: "grey",
-                cursor: "pointer",
-              }}
             />
           )}
-        </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          marginTop: "36px",
-          marginBottom: "25px",
-        }}
-      >
+        </s.PerformanceListSearchWrapper>
+      </s.PerformanceListSubBox>
+
+      {/* 지역 칩 */}
+      <s.PerformanceListAreaFilter>
         {arfilter.map((item) => (
-          <div
-            key={`area-${item}`}
-            style={{
-              color: "#dbdbdb",
-              display: "flex",
-              alignItems: "center",
-              background: "#3A3A3A",
-              borderRadius: "16px",
-              padding: "4px 8px",
-            }}
-          >
+          <s.PerformanceListAreaFilterItem key={`area-${item}`}>
             <span>{item}</span>
-            <PiXCircle
+            <s.PerformanceListAreaFilterRemove
               size={16}
-              style={{ marginLeft: 6, cursor: "pointer" }}
               onClick={() => removeFilter("area", item)}
             />
-          </div>
+          </s.PerformanceListAreaFilterItem>
         ))}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          marginBottom: "20px",
-        }}
-      >
+      </s.PerformanceListAreaFilter>
+
+      {/* 장르 칩 */}
+      <s.PerformanceListGenreFilter>
         {gefilter.map((item) => (
-          <div
-            key={`genre-${item}`}
-            style={{
-              color: "#dbdbdb",
-              display: "flex",
-              alignItems: "center",
-              background: "#3A3A3A",
-              borderRadius: "16px",
-              padding: "4px 8px",
-            }}
-          >
+          <s.PerformanceListGenreFilterItem key={`genre-${item}`}>
             <span>{item}</span>
-            <PiXCircle
+            <s.PerformanceListGenreFilterRemove
               size={14}
-              style={{ marginLeft: 6, cursor: "pointer" }}
               onClick={() => removeFilter("genre", item)}
             />
-          </div>
+          </s.PerformanceListGenreFilterItem>
         ))}
-      </div>
+      </s.PerformanceListGenreFilter>
 
+      {/* if 결과 없음 */}
       {performances.length === 0 && !loading && (
-        <div
-          className="detail-error"
-          style={{ color: "white", marginTop: "20px" }}
-        >
+        <s.PerformanceListErrorMessage className="detail-error">
           공연 정보를 찾을 수 없습니다.
-        </div>
+        </s.PerformanceListErrorMessage>
       )}
+
+      {/* 공연 리스트 */}
       {loading && page === 0 ? (
         <PrfList24Skeleton />
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-            gap: "30px",
-            marginTop: "30px",
-          }}
-        >
+        <s.PerformanceListGrid>
           {performances
             .filter((p) => new Date(p.prfEndDt) >= new Date())
             .map((p) => (
-              <div
-                key={p.prfId}
-                style={{
-                  textAlign: "left",
-                  padding: "5px",
-                  borderRadius: "14px",
-                }}
-              >
-                <div
+              <s.PerformanceListCard key={p.prfId}>
+                <s.PerformanceListClickableWrapper
                   onClick={() => navigate(`/performance/${p.prfId}`)}
-                  style={{ cursor: "pointer", position: "relative" }}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "8px",
-                      left: "8px",
-                      background: "rgba(0,0,0,0.6)",
-                      color: "white",
-                      padding: "4px 8px",
-                      fontSize: "14px",
-                      borderRadius: "12px",
-                      zIndex: 2,
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {p.genreNm}
-                  </div>
-                  {/* ───────────── 포스터 ───────────── */}
-                  <img
-                    src={p.posterImgUrl}
-                    alt={p.prfNm}
-                    style={{
-                      width: "100%",
-                      height: "260px",
-                      objectFit: "cover",
-                      borderRadius: "10px",
-                      marginBottom: "0px",
-                      // cursor: "pointer",
-                    }}
-                  />
+                  <s.PerformanceListGenreNm>
+                    <div>{p.genreNm}</div>
+                  </s.PerformanceListGenreNm>
 
-                  {/* ───────────── 공연명 ───────────── */}
-                  <s.PerformanceDetail1>
-                    <h4
-                      style={{
-                        fontSize: "15px",
-                        fontWeight: "600",
-                        marginBottom: "4px",
-                        lineHeight: "1.4",
-                        wordBreak: "keep-all",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {removeRegionTag(p.prfNm)}
-                    </h4>
-                  </s.PerformanceDetail1>
+                  <s.PerformanceListPosterImg>
+                    <img src={p.posterImgUrl} alt={p.prfNm} />
+                  </s.PerformanceListPosterImg>
 
-                  {/* ───────────── 공연장명 ───────────── */}
-                  <s.PerformancePlace>
-                    <p
-                      style={{
-                        fontSize: "13px",
-                        margin: "2px 0",
-                        wordBreak: "keep-all",
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
+                  <s.PerformanceListName>
+                    {removeRegionTag(p.prfNm)}
+                  </s.PerformanceListName>
+
+                  {/* 공연 장소*/}
+                  <s.PerformanceListPlaceDetail>
+                    <p>
                       {(() => {
                         const original = p.prfPlcNm;
                         let result = "";
                         const seen = new Set<string>();
+
                         original.split(/\s*(\([^)]+\))/).forEach((part) => {
                           if (!part) return;
                           if (!part.startsWith("(")) {
                             result += part;
                             return;
                           }
+
                           const content = part.slice(1, -1).trim();
-                          const normalizedContent = content.replace(/\s+/g, "");
+                          const normalized = content.replace(/\s+/g, "");
                           const normalizedResult = result.replace(/\s+/g, "");
+
                           if (
-                            seen.has(normalizedContent) ||
-                            normalizedResult.includes(normalizedContent)
-                          ) {
+                            seen.has(normalized) ||
+                            normalizedResult.includes(normalized)
+                          )
                             return;
-                          }
-                          seen.add(normalizedContent);
+
+                          seen.add(normalized);
                           result += `(${content})`;
                         });
+
                         return result.trim();
                       })()}
                     </p>
-                  </s.PerformancePlace>
+                  </s.PerformanceListPlaceDetail>
 
-                  {/* ───────────── 날짜 ───────────── */}
-                  <s.PerformancePeriod>
-                    <p
-                      style={{
-                        fontSize: "12.5px",
-                        margin: "2px 0",
-                      }}
-                    >
+                  {/* 공연 기간 */}
+                  <s.PerformanceListPeriod>
+                    <p>
                       {formatDateRange(
                         formatDateDot(p.prfStartDt),
                         formatDateDot(p.prfEndDt)
                       )}
                     </p>
-                  </s.PerformancePeriod>
-                </div>
-              </div>
+                  </s.PerformanceListPeriod>
+                </s.PerformanceListClickableWrapper>
+              </s.PerformanceListCard>
             ))}
-        </div>
+        </s.PerformanceListGrid>
       )}
-    </div>
+    </s.PerformanceListFullBox>
   );
 }
 
