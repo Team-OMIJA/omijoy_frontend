@@ -54,6 +54,7 @@ export const PerformanceTitle = styled.div`
   font-weight: 600;
   color: #e0e0e0;
   margin-bottom: 6px;
+  cursor: pointer;
 `;
 
 /* 포스터 이미지 */

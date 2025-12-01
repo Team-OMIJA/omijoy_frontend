@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import * as s from "./styles";
+import * as s from "./DiscountInfoStyles";
 import { useNavigate } from "react-router-dom";
 
 function DiscountInfoBanner() {

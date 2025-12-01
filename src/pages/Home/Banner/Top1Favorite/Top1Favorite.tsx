@@ -7,7 +7,7 @@ import {
   formatDateDot,
 } from "../../../../components/format/formatDate";
 import { removeRegionTag } from "../../../../components/removeRegionTag/removeRegionTag";
-import * as s from "./styles";
+import * as s from "./Top1FavoriteStyles";
 
 function Top1Favorite() {
   const [data, setData] = useState<ScrapRank | null>(null);
@@ -33,6 +33,7 @@ function Top1Favorite() {
     formatDateDot(data.prfStartDt),
     formatDateDot(data.prfEndDt)
   );
+
 
   return (
     <s.Container>
