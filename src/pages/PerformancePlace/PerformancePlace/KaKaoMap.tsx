@@ -1,17 +1,7 @@
-﻿﻿import { useEffect, useRef, useState } from "react";
+﻿﻿import { useEffect, useRef, useState, useCallback } from "react";
 import { PlaceMarker } from "../../../apis/performanceplaceApi";
 import * as S from "./KaKaoMap.styles";
-
-interface KakaoMapProps {
-  latitude: number;
-  longitude: number;
-  places: PlaceMarker[];
-  isKakaoMapLoaded: boolean;
-  level: number;
-  currentLocation: { lat: number; lng: number } | null;
-  onMarkerClick: (place: PlaceMarker) => void;
-  onMyLocationClick: () => void;
-}
+import { KakaoMapProps } from "../../../types/performancePlace";
 
 function KaKaoMap({
   latitude,
@@ -39,7 +29,7 @@ function KaKaoMap({
     if (!mapRef.current) {
       const mapOption = {
         center: new window.kakao.maps.LatLng(36.5, 127.5),
-        level: 9,
+        level: MAX_MAP_LEVEL,
       };
       const newMap = new window.kakao.maps.Map(mapContainer.current, mapOption);
       mapRef.current = newMap;
@@ -120,36 +110,38 @@ function KaKaoMap({
     }
   }, [currentLocation, isKakaoMapLoaded, mapRef]);
 
-  
-  const createPlaceMarker = ( // 마커 이미지 설정
-    place: PlaceMarker,
-    markerImage: kakao.maps.MarkerImage,
-    hoverImage: kakao.maps.MarkerImage
-  ) => {
-    const markerPosition = new window.kakao.maps.LatLng( // 마커 위치 
-      place.latitude,
-      place.longitude
-    );
-    const marker = new window.kakao.maps.Marker({ // 마커 생성
-      position: markerPosition,
-      title: place.prfPlcName,
-      image: markerImage,
-    });
+  const createPlaceMarker = useCallback(
+    (
+      place: PlaceMarker,
+      markerImage: kakao.maps.MarkerImage,
+      hoverImage: kakao.maps.MarkerImage
+    ) => {
+      const markerPosition = new window.kakao.maps.LatLng(
+        place.latitude,
+        place.longitude
+      );
+      const marker = new window.kakao.maps.Marker({
+        position: markerPosition,
+        title: place.prfPlcName,
+        image: markerImage,
+      });
 
-    window.kakao.maps.event.addListener(marker, "click", () =>
-      onMarkerClick(place)
-    );
-    window.kakao.maps.event.addListener(marker, "mouseover", () => { // 호버상태일 때 마커
-      marker.setImage(hoverImage);
-      marker.setZIndex(10);
-    });
-    window.kakao.maps.event.addListener(marker, "mouseout", () => { // 일반상태 마커
-      marker.setImage(markerImage);
-      marker.setZIndex(0);
-    });
+      window.kakao.maps.event.addListener(marker, "click", () =>
+        onMarkerClick(place)
+      );
+      window.kakao.maps.event.addListener(marker, "mouseover", () => {
+        marker.setImage(hoverImage);
+        marker.setZIndex(10);
+      });
+      window.kakao.maps.event.addListener(marker, "mouseout", () => {
+        marker.setImage(markerImage);
+        marker.setZIndex(0);
+      });
 
-    return marker;
-  };
+      return marker;
+    },
+    [onMarkerClick]
+  );
 
   useEffect(() => {
     const clusterer = clustererRef.current;
@@ -175,7 +167,7 @@ function KaKaoMap({
     );
 
     clusterer.addMarkers(newMarkers);
-  }, [places, onMarkerClick, clustererRef]);
+  }, [places, clustererRef, createPlaceMarker]);
 
   const handleZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const map = mapRef.current;
