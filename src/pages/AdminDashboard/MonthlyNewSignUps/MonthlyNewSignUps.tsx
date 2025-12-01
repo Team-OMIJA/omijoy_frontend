@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import CustomTooltip from "./CustomTooltip";
-import * as s from "./styles";
+import * as s from "./MonthlyNewSignUpsStyles";
 
 function MonthlyNewSignUps() {
   const [data, setData] = useState<{ name: string; value: number }[]>([]);

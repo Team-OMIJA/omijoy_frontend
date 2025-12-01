@@ -1,4 +1,4 @@
-import * as s from "./styles";
+import * as s from "./MonthlyNewSignUpsStyles";
 
 type CustomTooltipProps = {
   active?: boolean;

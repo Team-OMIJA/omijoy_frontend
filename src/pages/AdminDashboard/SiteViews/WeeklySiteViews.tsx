@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { formatMonthDay } from "../../../components/format/formatDate";
-import * as s from "../SiteViews/styles";
+import * as s from "./SiteViewsStyles";
 import CustomTooltip from "./CustomTooltip";
 
 function WeeklySiteViews() {

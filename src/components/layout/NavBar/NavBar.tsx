@@ -57,19 +57,17 @@ function NavBar() {
   return (
     <s.NavBar>
       {/* 로고 왼쪽 */}
-      <s.Logo onClick={() => navigate("/")}>
-        OMIJOY
-      </s.Logo>
+      <s.Logo onClick={() => navigate("/")}>OMIJOY</s.Logo>
 
       <s.NavList>
         {navItems.map((item) => (
-        <li key={item.path}>
-          <Link to={item.path}>
-            <s.StyledLink active={location.pathname === item.path}>
-              {item.label}
-            </s.StyledLink>
-          </Link>
-        </li>
+          <li key={item.path}>
+            <Link to={item.path}>
+              <s.StyledLink active={location.pathname === item.path}>
+                {item.label}
+              </s.StyledLink>
+            </Link>
+          </li>
         ))}
       </s.NavList>
 
@@ -102,16 +100,16 @@ function NavBar() {
         >
           {principal ? (
             <>
-              <MenuItem
-                onClick={() =>
-                  menuOnClickHandler(
-                    principal?.role === "ADMIN" ? "/adminpage" : "/mypage"
-                  )
-                }
-              >
-                마이페이지
-              </MenuItem>
-              {/* 구분선 추가 */}
+              {principal.role === "ADMIN" ? (
+                <MenuItem onClick={() => menuOnClickHandler("/adminpage")}>
+                  관리페이지
+                </MenuItem>
+              ) : (
+                <MenuItem onClick={() => menuOnClickHandler("/mypage")}>
+                  마이페이지
+                </MenuItem>
+              )}
+              {/* 구분선 */}
               <div
                 style={{
                   height: "2px",
