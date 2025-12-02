@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export const KakaoMapContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 90%;
+  height: 92%;
   margin: 0;
   padding: 0;
   overflow: hidden;

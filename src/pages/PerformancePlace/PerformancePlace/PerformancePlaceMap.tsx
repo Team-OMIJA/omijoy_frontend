@@ -5,12 +5,11 @@ import {
   findPlacesByGugun,
   PlaceMarker,
 } from "../../../apis/performanceplaceApi";
-import { KOREA_REGIONS } from "../../../utils/regions";
 import PerformancePlaceModal from "../PerformancePlaceModal/PerformancePlaceModal";
 import RegionFilterSidebar from "../PerformancePlaceModal/RegionFilterSidebarModal";
 import * as S from "./PerformancePlaceMapStyles";
+import { SidoKey } from "../../../types/performancePlace";
 
-type SidoKey = keyof typeof KOREA_REGIONS;
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
 const KOREA_LEVEL = 9;
@@ -69,7 +68,6 @@ function PerformancePlaceMap() {
   const getLocation = () => {
     setIsLoading(true);
     setErrorMessage(null);
-    setPlaces([]);
 
     if (!navigator.geolocation) {
       setErrorMessage("Geolocation이 지원되지 않습니다.");
