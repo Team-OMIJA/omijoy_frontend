@@ -214,7 +214,7 @@ function PerformanceDetail() {
 
         {showLinks && (
           <s.TicketDropdown>
-            {formatTicketProvider(performance.providerUrl).map(
+            {formatTicketProvider(performance.providerUrl).map( // providerUrl 문자열에서 유효한 예매처 URL 목록으로 변환 후 렌더링
               (validUrl, i) => (
                 <s.TicketLink
                   key={i}

@@ -21,32 +21,32 @@ function PerformanceList() {
   // 데이터 / 필터 / 페이지
   const [performances, setPerformances] = useState<Performance[]>(() =>
     JSON.parse(sessionStorage.getItem('scroll-performance-data') || '[]')
-  );
+  );  // 세션에 저장된 공연 데이터 불러오기, 없으면 빈 배열
   const [page, setPage] = useState(() =>
     Number(sessionStorage.getItem('scroll-performance-page') || 0)
-  );
+  );  // 현재 페이지, 세션에서 불러오기
   const [sort, setSort] = useState(
     () => sessionStorage.getItem('scroll-performance-sort') || 'name_asc'
-  );
+  );  // 정렬 기준 초기값
   const [query, setQuery] = useState(
     () => sessionStorage.getItem('scroll-performance-query') || ''
-  );
+  );  // 검색 쿼리 초기값
   const [stFilter, setStFilter] = useState(
     () => JSON.parse(sessionStorage.getItem('scroll-performance-stfilter') || '"공연중"')
-  );
+  );  // 상태 필터
   const [arfilter, setArFilter] = useState<string[]>(() =>
     JSON.parse(sessionStorage.getItem('scroll-performance-arfilter') || '[]')
-  );
+  );  // 지역 필터 배열
   const [gefilter, setGeFilter] = useState<string[]>(() =>
     JSON.parse(sessionStorage.getItem('scroll-performance-gefilter') || '[]')
-  );
+  );  // 장르 필터 배열
   const [vtFilter, setVtFilter] = useState(
     () => JSON.parse(sessionStorage.getItem('scroll-performance-vtfilter') || 'false')
-  );
+  );  // VT 필터
 
    // 로딩 / 스크롤
-  const [loading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true); // 데이터 요청 중 상태
+  const [hasMore, setHasMore] = useState(true); // 무한 스크롤 여부
 
   // 드롭다운 UI & ref
   const [searchOpen, setSearchOpen] = useState(false); // 검색창 열림 여부
@@ -100,15 +100,15 @@ function PerformanceList() {
   ];
 
   // 핸들러
-  const handleStatusChange = (v: string) => { setStFilter(v); setStatusOpen(false); };
-  const handleAreaChange = (v: string) => { if (!arfilter.includes(v)) setArFilter([...arfilter, v]); };
-  const handleGenreChange = (v: string) => { if (!gefilter.includes(v)) setGeFilter([...gefilter, v]); };
+  const handleStatusChange = (v: string) => { setStFilter(v); setStatusOpen(false); };  // 선택 후 드롭다운 닫기
+  const handleAreaChange = (v: string) => { if (!arfilter.includes(v)) setArFilter([...arfilter, v]); };    // 중복 방지
+  const handleGenreChange = (v: string) => { if (!gefilter.includes(v)) setGeFilter([...gefilter, v]); };     // 중복 방지
   const removeFilter = (type: 'area' | 'genre', value: string) =>
     type === 'area' ? setArFilter(arfilter.filter(i => i !== value)) : setGeFilter(gefilter.filter(i => i !== value));
   const handleSortChange = (value: string) => {
     if (value === 'name_asc' || value === 'name_desc') setSort(value);
     else if (value === 'name') setSort(prev => (prev === 'name_asc' ? 'name_desc' : 'name_asc'));
-    else setSort('date');
+    else setSort('date');       // 최신순
   };
 
   // 데이터 fetch + 무한 스크롤
@@ -121,7 +121,7 @@ function PerformanceList() {
       if (searchQuery.trim() !== '') params.append('search', searchQuery);
       params.append('sort', sort);
       params.append('page', String(pageToLoad));
-      params.append('size', '30');
+      params.append('size', '30');  // 한 번에 30개 로드
       if (stFilter) params.append('stFilter', stFilter);
       if (arfilter.length) params.append('arFilter', arfilter.join(','));
       if (gefilter.length) params.append('geFilter', gefilter.join(','));
@@ -133,7 +133,7 @@ function PerformanceList() {
         const json: Performance[] = await response.json();
 
       append ? setPerformances(prev => [...prev, ...json]) : setPerformances(json);
-      setHasMore(json.length > 0);
+      setHasMore(json.length > 0);  // 더 가져올 데이터 존재 여부
     } catch (err) { console.log('공연 정보 불러오는 중 오류 발생', err); }
     finally { setLoading(false); }
   }, [sort, stFilter, arfilter, gefilter, vtFilter]);
@@ -143,7 +143,7 @@ function PerformanceList() {
     if (!loading && hasMore) { 
       setPage(prev => { 
         const next = prev + 1; 
-        getPerformance(query, true, next); 
+        getPerformance(query, true, next);  // 다음 페이지 가져오기
         return next; 
       }); 
     }
@@ -190,10 +190,10 @@ function PerformanceList() {
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-      if (navigationType === 'POP' && performances.length) { setLoading(false); return; }
+      if (navigationType === 'POP' && performances.length) { setLoading(false); return; } // 뒤로가기 시 기존 데이터 유지
     }
-    setPage(0);
-    getPerformance(query, false, 0);
+    setPage(0);   // 필터 변경 시 페이지 초기화
+    getPerformance(query, false, 0);  // 새로운 데이터 fetch
   }, [sort, stFilter, arfilter, gefilter, vtFilter, getPerformance, navigationType]);
 
   // 검색창 초기 열기 처리
@@ -440,7 +440,7 @@ function PerformanceList() {
           {performances
             .filter((p) => new Date(p.prfEndDt) >= new Date())
             .map((p) => (
-                 <s.PerformanceListCard key={p.prfId}>
+                <s.PerformanceListCard key={p.prfId}>
         
         {/* 이미지 */}
         <s.PosterWrapper onClick={() => navigate(`/performance/${p.prfId}`)}>
@@ -462,32 +462,36 @@ function PerformanceList() {
           <s.PerformanceListPlaceDetail>
             <p>
               {(() => {
-                const original = p.prfPlcNm;
-                let result = "";
-                const seen = new Set<string>();
+                const original = p.prfPlcNm;       // 원본 문자열
+                let result = "";                   // 최종 출력 문자열
+                const seen = new Set<string>();    // 이미 추가한 괄호 내용을 저장
 
                 original.split(/\s*(\([^)]+\))/).forEach((part) => {
-                  if (!part) return;
+                  if (!part) return;     // 빈 문자열은 무시
+
+                  // 괄호로 시작하지 않는 일반 텍스트면 그대로 붙임
                   if (!part.startsWith("(")) {
                     result += part;
-                    return;
+                    return; 
                   }
-
+                  
+                  // 괄호 내용만 추출 → "(서울)" → "서울"
                   const content = part.slice(1, -1).trim();
                   const normalized = content.replace(/\s+/g, "");
                   const normalizedResult = result.replace(/\s+/g, "");
 
                   if (
-                    seen.has(normalized) ||
-                    normalizedResult.includes(normalized)
+                    seen.has(normalized) ||               // 동일한 괄호 내용 중복
+                    normalizedResult.includes(normalized) // 본문에 이미 들어있는 내용
                   )
                     return;
-
+                  
+                  // 처음 등장한 괄호 → 기록 & result에 추가
                   seen.add(normalized);
                   result += `(${content})`;
                 });
 
-                return result.trim();
+                return result.trim(); // 앞뒤 공백 제거하여 반환
               })()}
             </p>
           </s.PerformanceListPlaceDetail>
