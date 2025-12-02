@@ -13,7 +13,7 @@ import * as S from "./PerformancePlaceMapStyles";
 type SidoKey = keyof typeof KOREA_REGIONS;
 
 const KOREA_CENTER = { lat: 36.5, lng: 127.5 };
-const KOREA_LEVEL = 12;
+const KOREA_LEVEL = 9;
 const LOCAL_LEVEL = 3;
 const GU_LEVEL = 7;
 
@@ -160,7 +160,7 @@ function PerformancePlaceMap() {
           lat: markerList[0].latitude,
           lng: markerList[0].longitude,
         });
-        setMapLevel(tempGugun ? GU_LEVEL : 10);
+        setMapLevel(tempGugun ? GU_LEVEL : 9);
       } else {
         setErrorMessage("해당 지역에 공연장이 없습니다.");
       }

@@ -23,6 +23,7 @@ function KaKaoMap({
 
   const MIN_MAP_LEVEL = 1;
   const MAX_MAP_LEVEL = 9;
+
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
 
@@ -75,7 +76,8 @@ function KaKaoMap({
   }, [mapType, mapRef]);
 
   useEffect(() => {
-    if (!isKakaoMapLoaded || !window.kakao) return;
+    if (!isKakaoMapLoaded || !window.kakao) 
+      return;
     const map = mapRef.current;
 
     if (currentLocation && map) {
