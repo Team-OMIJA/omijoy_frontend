@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  PlaceMarker,
   PrfPlcModal,
   findPerformancesByPlaceId,
 } from "../../../apis/performanceplaceApi";
