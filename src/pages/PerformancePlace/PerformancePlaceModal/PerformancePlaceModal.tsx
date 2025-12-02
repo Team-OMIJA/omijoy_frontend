@@ -25,7 +25,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
   // 처음 상태 기억 (모달이 닫힐 때 비교하기 위함)
   const initialFlagged = place.flagged;
   const [flagged, setFlagged] = useState(place.flagged || false);
-  const hasValidUrl = place.url && place.url.trim() !== "";
+  const hasValidUrl = place.url && place.url.trim() !== ""; 
   const [isLoading, setIsLoading] = useState(false);
   const [performances, setPerformances] = useState<PrfPlcModal[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -99,15 +99,12 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
         setIsLoading(false);
       }
     };
-
     fetchPerformances();
   }, [place.prfPlcId]);
 
   const handleUrlClick = () => {
     if (hasValidUrl && place.url) {
-      if (place.url) {
         window.open(place.url, "_blank", "noopener,noreferrer");
-      }
     }
   };
   const handlePosterClick = (prfId: string) => {
@@ -132,7 +129,7 @@ function PerformancePlaceModal({ place, onClose }: PerformancePlaceModalProps) {
     arrows: true,
     beforeChange: () => setIsDragging(true),
     afterChange: () => setIsDragging(false),
-    responsive: [
+    responsive: [ // 재확인
       {
         breakpoint: 600,
         settings: {
