@@ -14,6 +14,7 @@ import { PerformanceDetail } from "../../../types/homePageTypes";
 import { removeRegionTag } from "../../removeRegionTag/removeRegionTag";
 import * as s from "./PerformanceModalStyles";
 import { usePrincipalState } from "../../../stores/usePrincipalState";
+import { formatTicketProvider } from "../../format/formatTicketProvider";
 
 type CommonModalProps = {
   open: boolean;
@@ -117,8 +118,17 @@ function CommonModal({
 
   // 티켓 판매처 페이지
   const goTicketHandler = () => {
-    if (data?.providerUrl) {
-      window.open(data.providerUrl, "_blank", "noopener,noreferrer");
+    if (!data?.providerUrl) return;
+
+    const urls = formatTicketProvider(data.providerUrl);
+
+    // 배열의 첫 번째 URL만 사용
+    const firstUrl = urls[0];
+
+    if (firstUrl) {
+      window.open(firstUrl, "_blank", "noopener,noreferrer");
+    } else {
+      alert("유효한 예매처 링크가 없습니다.");
     }
   };
 
