@@ -41,6 +41,9 @@ function KaKaoMap({
         minLevel: 5,
         gridSize: 120,
         minClusterSize: 1,
+        
+        calculator: S.CLUSTER_CALCULATOR, 
+        styles: S.CLUSTER_STYLES 
       });
 
       const updateZoomUI = () => {

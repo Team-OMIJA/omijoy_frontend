@@ -108,3 +108,57 @@ export const CustomVSlider = styled.input`
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 `;
+
+export const CLUSTER_CALCULATOR = [10, 50];
+
+export const CLUSTER_STYLES = [
+  //10개 미만 
+  {
+    width: "40px",
+    height: "40px",
+    background: "crimson",
+    borderRadius: "50%",
+    color: "#ffffffff", 
+    textAlign: "center",
+    lineHeight: "40px",
+    fontWeight: "bold",
+    border: "2px solid white",
+    boxShadow: "0px 2px 5px rgba(0,0,0,0.3)",
+
+    display: "flex",
+    justifyContent: "center", 
+    alignItems: "center",
+  },
+  //10개 이상 ~ 50개 미만 
+  {
+    width: "50px",
+    height: "50px",
+    background: "rgba(254, 250, 6, 0.9)",
+    borderRadius: "50%",
+    color: "#000", 
+    textAlign: "center",
+    lineHeight: "50px",
+    fontWeight: "bold",
+    border: "2px solid white",
+    boxShadow: "0px 2px 5px rgba(0,0,0,0.3)",
+    display: "flex",
+    justifyContent: "center", 
+    alignItems: "center",
+  },
+  //50개 이상 (
+  {
+    width: "60px",
+    height: "60px",
+    background: "rgba(0, 252, 63, 0.8)",
+    borderRadius: "50%",
+    color: "#000",
+    textAlign: "center",
+    lineHeight: "60px",
+    fontWeight: "bold",
+    border: "2px solid white",
+    boxShadow: "0px 2px 5px rgba(0,0,0,0.3)",
+    display: "flex",
+    justifyContent: "center", 
+    alignItems: "center",
+  },
+];
