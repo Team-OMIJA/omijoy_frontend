@@ -19,9 +19,10 @@ function KaKaoMap({
   const myLocationMarkerRef = useRef<kakao.maps.Marker | null>(null);
 
   const [mapType, setMapType] = useState<"ROADMAP" | "HYBRID">("ROADMAP");
-  const [currentMapLevel, setCurrentMapLevel] = useState(level);
+  //eslint-disable-next-line
+  const [_currentMapLevel, setCurrentMapLevel] = useState(level);
 
-  const MIN_MAP_LEVEL = 1;
+  // const MIN_MAP_LEVEL = 1
   const MAX_MAP_LEVEL = 9;
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
@@ -173,13 +174,13 @@ function KaKaoMap({
     clusterer.addMarkers(newMarkers);
   }, [places, clustererRef, createPlaceMarker]);
 
-  const handleZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const map = mapRef.current;
-    if (!map) return;
-    const newLevel =
-      MAX_MAP_LEVEL - parseInt(e.target.value, 10) + MIN_MAP_LEVEL;
-    map.setLevel(newLevel);
-  };
+  // const handleZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const map = mapRef.current;
+  //   if (!map) return;
+  //   const newLevel =
+  //     MAX_MAP_LEVEL - parseInt(e.target.value, 10) + MIN_MAP_LEVEL;
+  //   map.setLevel(newLevel);
+  // }; 
 
   return (
     <S.KakaoMapContainer>
@@ -210,7 +211,7 @@ function KaKaoMap({
         />
       </S.MyLocationButton>
 
-      <S.MapZoomControlContainer>
+      {/* <S.MapZoomControlContainer>
         <S.MapLevelLabel>레벨: {currentMapLevel}</S.MapLevelLabel>
         <S.CustomVSlider
           type="range"
@@ -219,7 +220,7 @@ function KaKaoMap({
           value={MAX_MAP_LEVEL - currentMapLevel + MIN_MAP_LEVEL}
           onChange={handleZoomChange}
         />
-      </S.MapZoomControlContainer>
+      </S.MapZoomControlContainer> */}
     </S.KakaoMapContainer>
   );
 }
