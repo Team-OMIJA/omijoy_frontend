@@ -22,7 +22,7 @@ function KaKaoMap({
   //eslint-disable-next-line
   const [_currentMapLevel, setCurrentMapLevel] = useState(level);
 
-  // const MIN_MAP_LEVEL = 1;
+  // const MIN_MAP_LEVEL = 1
   const MAX_MAP_LEVEL = 9;
   useEffect(() => {
     if (!isKakaoMapLoaded || !window.kakao || !mapContainer.current) return;
